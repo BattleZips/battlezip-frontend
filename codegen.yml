@@ -1,0 +1,12 @@
+overwrite: true
+schema: 'https://api.thegraph.com/subgraphs/name/ian-bright/zk_battleship_rinkeby'
+generates:
+  ./src/graphql/autogen/types.tsx:
+    documents:
+      - ./src/graphql/**/(!(*.d)).ts
+    plugins:
+      - typescript
+      - typescript-operations
+      - typescript-urql
+      - add:
+          content: '/* eslint-disable */'

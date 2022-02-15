@@ -2,6 +2,8 @@ import { createUseStyles } from 'react-jss';
 import GameList from './components/GameList';
 import { useNavigate } from 'react-router-dom';
 import { GameLocation } from 'Locations';
+// import { useGames } from 'hooks/useGames';
+// import { GameStatus } from 'web3/constants';
 
 const useStyles = createUseStyles({
   contentContainer: {
@@ -37,6 +39,7 @@ const useStyles = createUseStyles({
 export default function Home(): JSX.Element {
   const navigate = useNavigate();
   const styles = useStyles();
+  // const { games } = useGames(1000, GameStatus.STARTED);
   return (
     <div>
       <div className={styles.header}>
