@@ -4,7 +4,7 @@ import Header from 'components/Header';
 
 const useStyles = createUseStyles({
   content: {
-    marginBottom: '40px',
+    marginBlock: '177px 40px',
     minHeight: 'calc(100vh - 112px)',
     width: '100%',
   },

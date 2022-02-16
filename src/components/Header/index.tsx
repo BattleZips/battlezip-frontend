@@ -9,8 +9,11 @@ const useStyles = createUseStyles({
     display: 'flex',
     height: '122px',
     justifyContent: 'space-between',
+    left: 0,
     paddingInline: '54px',
-    // position: 'fixed',
+    position: 'fixed',
+    top: 0,
+    width: 'calc(100% - 108px)',
   },
   left: {
     alignItems: 'center',

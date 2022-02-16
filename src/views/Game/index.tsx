@@ -13,9 +13,9 @@ import destroyer from './images/destroyerSelection.svg';
 const useStyles = createUseStyles({
   content: {
     display: 'flex',
-    marginTop: '55px',
     gap: '114px',
     marginInline: 'auto',
+    width: 'fit-content',
   },
   fleetLabel: {
     borderRadius: '3px',
@@ -114,7 +114,7 @@ export default function Game(): JSX.Element {
     <MainLayout>
       <div
         onKeyDown={(e) => handleRotate(e)}
-        style={{ outline: 'none', width: '100%' }}
+        style={{ outline: 'none' }}
         tabIndex={0}
       >
         <div className={styles.content}>
