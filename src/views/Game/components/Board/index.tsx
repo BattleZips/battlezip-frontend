@@ -1,6 +1,6 @@
 import { CSSProperties, useEffect, useState } from 'react';
 import { createUseStyles } from 'react-jss';
-import { Ship } from '../types';
+import { Ship } from '../../types';
 
 const useStyles = createUseStyles({
   section: {
