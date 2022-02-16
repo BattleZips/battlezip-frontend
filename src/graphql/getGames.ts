@@ -1,12 +1,12 @@
 import gql from 'fake-tag';
 import { BattleshipGameDetails } from './fragments';
 import { CLIENTS } from './client';
-import { BattleshipGame } from './autogen/types';
+import { GameStatus, GetBattlesipGamesQuery, GetBattlesipGamesQueryVariables } from './autogen/types';
 
 const battleshipGameQuery = gql`
     query GetBattlesipGames(
         $limit: Int!
-        $status: String
+        $status: GameStatus
     ) {
         battleshipGames (
             first: $limit
@@ -18,14 +18,14 @@ const battleshipGameQuery = gql`
     ${BattleshipGameDetails}
 `
 
-export const getGames = async (chainId: number, limit: number, status: string): Promise<Array<BattleshipGame>> => {
-    const { data, error } = await CLIENTS[chainId].query<any>(battleshipGameQuery, { chainId, limit, status }).toPromise()
+export const getGames = async (chainId: number, limit: number, status: GameStatus): Promise<GetBattlesipGamesQuery | null> => {
+    const { data, error } = await CLIENTS[chainId].query<GetBattlesipGamesQuery, GetBattlesipGamesQueryVariables>(battleshipGameQuery, { limit, status }).toPromise()
     if (!data) {
         if (error) {
             throw error;
         }
 
-        return [];
+        return null;
     }
     return data;
 }
