@@ -42,35 +42,35 @@ const SHIPS: Ship[] = [
   {
     color: '#8204D6',
     image: carrier,
-    name: 'Carrier',
+    name: 'carrier',
     length: 5,
     sections: [],
   },
   {
     color: '#1C04D3',
     image: battleship,
-    name: 'Battleship',
+    name: 'battleship',
     length: 4,
     sections: [],
   },
   {
     color: '#09D1E8',
     image: cruiser,
-    name: 'Cruiser',
+    name: 'cruiser',
     length: 3,
     sections: [],
   },
   {
     color: '#26F207',
     image: submarine,
-    name: 'Submarine',
+    name: 'submarine',
     length: 3,
     sections: [],
   },
   {
     color: '#EFE707',
     image: destroyer,
-    name: 'Destroyer',
+    name: 'destroyer',
     length: 2,
     sections: [],
   },
@@ -81,10 +81,6 @@ export default function Game(): JSX.Element {
   const [placedShips, setPlacedShips] = useState<Ship[]>([]);
   const [rotationAxis, setRotationAxis] = useState('y');
   const [selectedShip, setSelectedShip] = useState<Ship>(EMPTY_SHIP);
-
-  const isPlaced = (ship: Ship) => {
-    return placedShips.find((placedShip) => placedShip.name === ship.name);
-  };
 
   const handleShipSelect = (ship: Ship) => {
     setSelectedShip(ship.name === selectedShip.name ? EMPTY_SHIP : ship);
@@ -109,7 +105,7 @@ export default function Game(): JSX.Element {
     }
   };
 
-  const logBoard = () => {
+  const startGame = () => {
     const board: number[][] = [];
     placedShips.forEach((ship: Ship) => {
       const x = Math.floor(ship.sections[0] / 10);
@@ -136,10 +132,12 @@ export default function Game(): JSX.Element {
               DEPLOY YOUR FLEET
             </div>
             <ShipSelection
+              placedShips={placedShips}
               removeShip={handleRemoveShip}
               selectShip={handleShipSelect}
               selectedShip={selectedShip}
               ships={SHIPS}
+              startGame={startGame}
             />
           </div>
           <div style={{ width: '523px' }}>

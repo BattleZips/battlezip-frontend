@@ -45,16 +45,21 @@ const useStyles = createUseStyles({
 });
 
 type ShipSelectionProps = {
+  placedShips: Ship[];
   removeShip: (ship: Ship) => void;
   selectShip: (ship: Ship) => void;
   selectedShip: Ship;
   ships: Ship[];
+  startGame: () => void;
 };
 
 export default function ShipSelection({
+  placedShips,
+  removeShip,
   selectShip,
   selectedShip,
   ships,
+  startGame,
 }: ShipSelectionProps): JSX.Element {
   const styles = useStyles();
 
@@ -66,24 +71,38 @@ export default function ShipSelection({
     }
   };
 
+  const isPlaced = (ship: Ship) => {
+    return placedShips.find((placedShip) => placedShip.name === ship.name);
+  };
+
   return (
     <div>
       <div className={styles.ships}>
-        {ships.map((ship) => (
-          <div className={styles.row}>
-            <div>
-              <img alt='Ship' src={ship.image} />
-              <div className={styles.spaces}>
-                {new Array(ship.length).fill('').map((_) => (
-                  <div className={styles.space} />
-                ))}
+        {ships.map((ship) => {
+          const placed = isPlaced(ship);
+          return (
+            <div className={styles.row}>
+              <div>
+                <img alt='Ship' src={ship.image} />
+                <div className={styles.spaces}>
+                  {new Array(ship.length).fill('').map((_) => (
+                    <div className={styles.space} />
+                  ))}
+                </div>
+              </div>
+              <div
+                className={styles.select}
+                onClick={() => (placed ? removeShip(ship) : handleSelect(ship))}
+              >
+                {placed
+                  ? '[REMOVE]'
+                  : ship.name === selectedShip.name
+                  ? '[SELECTED]'
+                  : '[SELECT]'}
               </div>
             </div>
-            <div className={styles.select} onClick={() => handleSelect(ship)}>
-              {ship.name === selectedShip.name ? '[SELECTED]' : '[SELECT]'}
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
       <div className={styles.startButton}>START GAME</div>
     </div>

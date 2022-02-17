@@ -1,5 +1,5 @@
 import { createUseStyles } from 'react-jss';
-import GameList from './components/GameList';
+// import GameList from './components/GameList';
 import { useNavigate } from 'react-router-dom';
 import { GameLocation } from 'Locations';
 import MainLayout from 'layouts/MainLayout';

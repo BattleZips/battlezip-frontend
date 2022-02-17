@@ -1,6 +1,8 @@
-import { CSSProperties, useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { createUseStyles } from 'react-jss';
-import { Ship } from '../../types';
+import { EMPTY_SHIP, Ship } from '../../types';
+import { DISPLAY_IMAGES } from './images';
+import { SHIP_STYLES } from './shipStyles';
 
 const useStyles = createUseStyles({
   label: {
@@ -19,10 +21,19 @@ const useStyles = createUseStyles({
     gap: '7px',
     marginTop: '7px',
   },
+  ship: {
+    pointerEvents: 'none',
+    position: 'absolute',
+    transformOrigin: 'top left',
+    transition: '.2s transform',
+    zIndex: 1,
+  },
   tile: {
+    background: '#DFF4FF',
     borderRadius: '3px',
     cursor: 'crosshair',
     height: '46px',
+    position: 'relative',
     width: '46px',
   },
   wrapper: {
@@ -73,9 +84,7 @@ export default function Board({
     row: number,
     sections: number[]
   ) => {
-    const occupied = sections.find(
-      (section) => occupiedSpace(section).occupied
-    );
+    const occupied = sections.find((section) => occupiedSpace(section).length);
     if (occupied) {
       setInvalidPlacement(true);
     } else {
@@ -92,24 +101,24 @@ export default function Board({
     }
   };
 
-  const determineHighlightColor = (
-    index: number,
-    occupied: boolean,
-    shipColor: string
-  ): string => {
-    if (invalidPlacement && highlightedSections.includes(index)) {
-      return '#FF5151';
-    } else if (occupied) {
-      return shipColor;
-    } else {
-      return highlightedSections.includes(index) ? '#606060' : '#DFF4FF';
-    }
-  };
+  //   const determineHighlightColor = (
+  //     index: number,
+  //     occupied: boolean,
+  //     shipColor: string
+  //   ): string => {
+  //     if (invalidPlacement && highlightedSections.includes(index)) {
+  //       return '#FF5151';
+  //     } else if (occupied) {
+  //       return shipColor;
+  //     } else {
+  //       return highlightedSections.includes(index) ? '#606060' : '#DFF4FF';
+  //     }
+  //   };
 
   const handleHover = (index: number, row: number) => {
     const sections = calculateSections(index, row);
     if (rotationAxis === 'y') {
-      setHighlightedSections(sections);
+      setHighlightedSections(sections.filter((section) => section < 100));
     } else {
       const rowStart = row * 10;
       const rowEnd = rowStart + 9;
@@ -128,24 +137,37 @@ export default function Board({
       orientation: rotationAxis,
       sections,
     } as Ship);
+    setHighlightedSections([]);
   };
 
-  const occupiedSpace = (
-    pos: number
-  ): { occupied: boolean; shipColor: string } => {
-    let occupied = false;
-    let shipColor = '';
+  const invalidSections = useMemo(() => {
+    return selectedShip.length - highlightedSections.length;
+  }, [highlightedSections, selectedShip]);
+
+  const occupiedSpace = (pos: number): Ship => {
+    let placedShip = EMPTY_SHIP;
     placedShips.forEach((ship) => {
       ship.sections.forEach((section) => {
         if (section === pos) {
-          occupied = true;
-          shipColor = ship.color;
+          placedShip = ship;
           return;
         }
-        if (occupied) return;
+        if (placedShip.name) return;
       });
     });
-    return { occupied, shipColor };
+    return placedShip;
+  };
+
+  const shipHeads = useMemo(() => {
+    const heads: number[] = [];
+    placedShips.forEach((ship) => {
+      heads.push(ship.sections[0]);
+    });
+    return heads;
+  }, [placedShips]);
+
+  const calculateShipWidth = (len: number) => {
+    return `${len * 46}px`;
   };
 
   useEffect(() => {
@@ -157,39 +179,78 @@ export default function Board({
   }, [rotationAxis]);
 
   return (
-    <div className={styles.wrapper}>
+    <div
+      className={styles.wrapper}
+      onMouseLeave={() => setHighlightedSections([])}
+    >
       <div className={styles.row} style={{ marginLeft: '46px' }}>
         {new Array(10).fill('').map((_, index) => (
           <div className={styles.label}>{String.fromCharCode(65 + index)}</div>
         ))}
       </div>
-      {BOARD.map((row, rowIndex) => (
-        <div className={styles.row}>
-          <div className={styles.label}>{++rowIndex}</div>
-          {row.map((_, colIndex) => {
-            const index = rowIndex * 10 + colIndex;
-            const { occupied, shipColor } = occupiedSpace(index);
-            const validPlacement =
-              !occupied && !invalidPlacement && selectedShip.name;
-            return (
-              <div
-                className={styles.tile}
-                onClick={() =>
-                  validPlacement && handleShipPlacement(index, rowIndex)
-                }
-                onMouseOver={() => handleHover(index, rowIndex)}
-                style={{
-                  background: determineHighlightColor(
-                    index,
-                    occupied,
-                    shipColor
-                  ),
-                }}
-              />
-            );
-          })}
-        </div>
-      ))}
+      {BOARD.map((row, rowIndex) => {
+        return (
+          <div className={styles.row} key={rowIndex}>
+            <div className={styles.label}>{rowIndex + 1}</div>
+            {row.map((_, colIndex) => {
+              const index = rowIndex * 10 + colIndex;
+              const occupied = occupiedSpace(index);
+              const validPlacement =
+                !occupied.length && !invalidPlacement && selectedShip.name;
+              const yOrinetation = rotationAxis === 'y';
+              return (
+                <div
+                  className={styles.tile}
+                  key={colIndex}
+                  onClick={() =>
+                    validPlacement && handleShipPlacement(index, rowIndex)
+                  }
+                  onMouseOver={() => handleHover(index, rowIndex)}
+                  //   style={{
+                  //     background: determineHighlightColor(
+                  //       index,
+                  //       occupied,
+                  //       shipColor
+                  //     ),
+                  //   }}
+                >
+                  {shipHeads.includes(index) && (
+                    <img
+                      alt='Ship'
+                      className={styles.ship}
+                      style={{
+                        transform:
+                          occupied.orientation === 'y'
+                            ? `rotate(90deg) translateY(-${
+                                SHIP_STYLES[occupied.name].translate
+                              }px)`
+                            : 'rotate(0deg)',
+                        width: calculateShipWidth(occupied.length),
+                      }}
+                      src={DISPLAY_IMAGES[occupied.name].placed}
+                    />
+                  )}
+                  {highlightedSections[0] === index && (
+                    <img
+                      alt='Ship'
+                      className={styles.ship}
+                      style={{
+                        transform: yOrinetation
+                          ? `rotate(90deg) translateY(-${
+                              SHIP_STYLES[selectedShip.name].translate
+                            }px)`
+                          : 'rotate(0deg)',
+                        width: calculateShipWidth(highlightedSections.length),
+                      }}
+                      src={DISPLAY_IMAGES[selectedShip.name][invalidSections]}
+                    />
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        );
+      })}
     </div>
   );
 }

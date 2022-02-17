@@ -1,5 +1,4 @@
 import { createUseStyles } from 'react-jss';
-import { useNavigate } from 'react-router-dom';
 import headerLogo from './images/headerLogo.svg';
 
 const useStyles = createUseStyles({
@@ -14,6 +13,7 @@ const useStyles = createUseStyles({
     position: 'fixed',
     top: 0,
     width: 'calc(100% - 108px)',
+    zIndex: 10,
   },
   left: {
     alignItems: 'center',
@@ -49,7 +49,6 @@ const useStyles = createUseStyles({
 });
 
 export default function Header(): JSX.Element {
-  const navigate = useNavigate;
   const styles = useStyles();
   return (
     <div className={styles.container}>
