@@ -1,5 +1,6 @@
 export type Ship = {
     color: string;
+    image: string;
     length: number;
     name: string;
     orientation?: 'x' | 'y';
@@ -8,6 +9,7 @@ export type Ship = {
 
 export const EMPTY_SHIP: Ship = {
     color: '',
+    image: '',
     length: 0,
     name: '',
     sections: []

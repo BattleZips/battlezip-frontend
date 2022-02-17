@@ -1,7 +1,8 @@
 import { createUseStyles } from 'react-jss';
-import GameList from './components/GameList';
+// import GameList from './components/GameList';
 import { useNavigate } from 'react-router-dom';
 import { GameLocation } from 'Locations';
+import MainLayout from 'layouts/MainLayout';
 // import { useGames } from 'hooks/useGames';
 // import { GameStatus } from 'web3/constants';
 
@@ -10,7 +11,6 @@ const useStyles = createUseStyles({
     alignItems: 'center',
     display: 'flex',
     justifyContent: 'center',
-    minHeight: 'calc(100vh - 64px)',
   },
   header: {
     alignItems: 'center',
@@ -41,19 +41,21 @@ export default function Home(): JSX.Element {
   const styles = useStyles();
   // const { games } = useGames(1000, GameStatus.STARTED);
   return (
-    <div>
-      <div className={styles.header}>
-        <div />
-        <div className={styles.start} onClick={() => navigate(GameLocation)}>
-          Start game
+    <MainLayout>
+      <div>
+        <div className={styles.header}>
+          <div />
+          <div className={styles.start} onClick={() => navigate(GameLocation)}>
+            Start game
+          </div>
         </div>
+        {/* <div className={styles.contentContainer}>
+          <div className={styles.innerContainer}>
+            <div className={styles.title}>Battlezip</div>
+            <GameList />
+          </div>
+        </div> */}
       </div>
-      <div className={styles.contentContainer}>
-        <div className={styles.innerContainer}>
-          <div className={styles.title}>Battlezip</div>
-          <GameList />
-        </div>
-      </div>
-    </div>
+    </MainLayout>
   );
 }
