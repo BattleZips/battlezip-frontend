@@ -26,6 +26,16 @@ const useStyles = createUseStyles({
     paddingInline: '11px',
     textAlign: 'center',
   },
+  rotateText: {
+    fontSize: '24px',
+    fontWeight: '',
+    letterSpacing: '3.6px',
+    marginTop: '55px',
+    textAlign: 'center',
+  },
+  wrapper: {
+    outline: 'none',
+  },
 });
 
 const SHIPS: Ship[] = [
@@ -113,8 +123,8 @@ export default function Game(): JSX.Element {
   return (
     <MainLayout>
       <div
+        className={styles.wrapper}
         onKeyDown={(e) => handleRotate(e)}
-        style={{ outline: 'none' }}
         tabIndex={0}
       >
         <div className={styles.content}>
@@ -126,6 +136,7 @@ export default function Game(): JSX.Element {
               DEPLOY YOUR FLEET
             </div>
             <ShipSelection
+              removeShip={handleRemoveShip}
               selectShip={handleShipSelect}
               selectedShip={selectedShip}
               ships={SHIPS}
@@ -137,6 +148,15 @@ export default function Game(): JSX.Element {
               style={{ background: '#FF0055' }}
             >
               YOUR FLEET
+            </div>
+            <Board
+              selectedShip={selectedShip}
+              setPlacedShip={handlePlacedShip}
+              placedShips={placedShips}
+              rotationAxis={rotationAxis}
+            />
+            <div className={styles.rotateText}>
+              [PRESS THE SPACE BAR TO ROTATE]
             </div>
           </div>
         </div>

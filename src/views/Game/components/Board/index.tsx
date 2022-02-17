@@ -3,33 +3,34 @@ import { createUseStyles } from 'react-jss';
 import { Ship } from '../../types';
 
 const useStyles = createUseStyles({
-  section: {
-    border: '1px solid #848484',
-    cursor: 'crosshair',
-    height: '50px',
-    width: '50px',
+  label: {
+    alignItems: 'center',
+    color: '#9CA3B6',
+    display: 'flex',
+    fontSize: '24px',
+    fontWeight: 700,
+    justifyContent: 'center',
+    lineHeight: '34.68px',
+    width: '46px',
   },
   row: {
+    alignItems: 'center',
     display: 'flex',
+    gap: '7px',
+    marginTop: '7px',
+  },
+  tile: {
+    borderRadius: '3px',
+    cursor: 'crosshair',
+    height: '46px',
+    width: '46px',
+  },
+  wrapper: {
+    marginTop: '24px',
   },
 });
 
 const BOARD = new Array(10).fill('').map((_) => new Array(10).fill(''));
-
-const CORNER_STYLES: { [key: number]: CSSProperties } = {
-  0: {
-    borderTopLeftRadius: '16px',
-  },
-  9: {
-    borderTopRightRadius: '16px',
-  },
-  90: {
-    borderBottomLeftRadius: '16px',
-  },
-  99: {
-    borderBottomRightRadius: '16px',
-  },
-};
 
 type BoardProps = {
   placedShips: Ship[];
@@ -101,7 +102,7 @@ export default function Board({
     } else if (occupied) {
       return shipColor;
     } else {
-      return highlightedSections.includes(index) ? '#606060' : '#C9C9C9';
+      return highlightedSections.includes(index) ? '#606060' : '#DFF4FF';
     }
   };
 
@@ -156,9 +157,15 @@ export default function Board({
   }, [rotationAxis]);
 
   return (
-    <div>
+    <div className={styles.wrapper}>
+      <div className={styles.row} style={{ marginLeft: '46px' }}>
+        {new Array(10).fill('').map((_, index) => (
+          <div className={styles.label}>{String.fromCharCode(65 + index)}</div>
+        ))}
+      </div>
       {BOARD.map((row, rowIndex) => (
         <div className={styles.row}>
+          <div className={styles.label}>{++rowIndex}</div>
           {row.map((_, colIndex) => {
             const index = rowIndex * 10 + colIndex;
             const { occupied, shipColor } = occupiedSpace(index);
@@ -166,7 +173,7 @@ export default function Board({
               !occupied && !invalidPlacement && selectedShip.name;
             return (
               <div
-                className={styles.section}
+                className={styles.tile}
                 onClick={() =>
                   validPlacement && handleShipPlacement(index, rowIndex)
                 }
@@ -177,7 +184,6 @@ export default function Board({
                     occupied,
                     shipColor
                   ),
-                  ...CORNER_STYLES[index],
                 }}
               />
             );

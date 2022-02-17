@@ -45,7 +45,8 @@ const useStyles = createUseStyles({
 });
 
 type ShipSelectionProps = {
-  selectShip: (sgip: Ship) => void;
+  removeShip: (ship: Ship) => void;
+  selectShip: (ship: Ship) => void;
   selectedShip: Ship;
   ships: Ship[];
 };
