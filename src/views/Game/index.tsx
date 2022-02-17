@@ -158,60 +158,6 @@ export default function Game(): JSX.Element {
             </div>
           </div>
         </div>
-        {/* <div className={styles.header}>
-          <div className={styles.selectedShipContainer}>
-            {selectedShip.name && (
-              <>
-                <div>Press space to rotate</div>
-                <div>Ship: {selectedShip.name}</div>{' '}
-              </>
-            )}
-          </div>
-          <div>
-            {placedShips.length === 5 && (
-              <div className={styles.start} onClick={() => logBoard()}>
-                Start game
-              </div>
-            )}
-          </div>
-        </div>
-        <div className={styles.actionContainer}>
-          <div className={styles.shipSelection}>
-            {SHIPS.map((ship) => {
-              const selected = selectedShip.name === ship.name;
-              const placed = isPlaced(ship);
-              return (
-                <div
-                  className={styles.ship}
-                  onClick={() => !selected && !placed && handleShipSelect(ship)}
-                  style={{ cursor: placed ? 'initial' : 'pointer' }}
-                >
-                  <div
-                    className={styles.shipIcon}
-                    style={{
-                      background: selected || placed ? '#C9C9C9' : ship.color,
-                    }}
-                  />
-                  <div>{ship.name}</div>
-                  {placed && (
-                    <img
-                      alt='Remove'
-                      className={styles.remove}
-                      onClick={() => handleRemoveShip(ship)}
-                      src={remove}
-                    />
-                  )}
-                </div>
-              );
-            })}
-          </div>
-          <Board
-            placedShips={placedShips}
-            rotationAxis={rotationAxis}
-            selectedShip={selectedShip}
-            setPlacedShip={handlePlacedShip}
-          />
-        </div> */}
       </div>
     </MainLayout>
   );
