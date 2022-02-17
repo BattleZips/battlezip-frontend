@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { createUseStyles } from 'react-jss';
 import Board from './components/Board';
 import { EMPTY_SHIP, Ship } from './types';
@@ -82,6 +82,10 @@ export default function Game(): JSX.Element {
   const [rotationAxis, setRotationAxis] = useState('y');
   const [selectedShip, setSelectedShip] = useState<Ship>(EMPTY_SHIP);
 
+  const allPlaced = useMemo(() => {
+    return placedShips.length === 5;
+  }, [placedShips]);
+
   const handleShipSelect = (ship: Ship) => {
     setSelectedShip(ship.name === selectedShip.name ? EMPTY_SHIP : ship);
   };
@@ -132,6 +136,7 @@ export default function Game(): JSX.Element {
               DEPLOY YOUR FLEET
             </div>
             <ShipSelection
+              allPlaced={allPlaced}
               placedShips={placedShips}
               removeShip={handleRemoveShip}
               selectShip={handleShipSelect}
@@ -148,6 +153,7 @@ export default function Game(): JSX.Element {
               YOUR FLEET
             </div>
             <Board
+              allPlaced={allPlaced}
               selectedShip={selectedShip}
               setPlacedShip={handlePlacedShip}
               placedShips={placedShips}

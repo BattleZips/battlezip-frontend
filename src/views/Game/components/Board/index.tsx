@@ -3,6 +3,8 @@ import { createUseStyles } from 'react-jss';
 import { EMPTY_SHIP, Ship } from '../../types';
 import { DISPLAY_IMAGES } from './images';
 import { SHIP_STYLES } from './shipStyles';
+import hitIcon from '../../images/hit.svg';
+import missIcon from '../../images/miss.svg';
 
 const useStyles = createUseStyles({
   label: {
@@ -22,6 +24,7 @@ const useStyles = createUseStyles({
     marginTop: '7px',
   },
   ship: {
+    left: 0,
     pointerEvents: 'none',
     position: 'absolute',
     transformOrigin: 'top left',
@@ -29,9 +32,12 @@ const useStyles = createUseStyles({
     zIndex: 1,
   },
   tile: {
+    alignItems: 'center',
     background: '#DFF4FF',
     borderRadius: '3px',
     cursor: 'crosshair',
+    display: 'flex',
+    justifyContent: 'center',
     height: '46px',
     position: 'relative',
     width: '46px',
@@ -42,8 +48,10 @@ const useStyles = createUseStyles({
 });
 
 const BOARD = new Array(10).fill('').map((_) => new Array(10).fill(''));
+const FAKE_SHOTS = [0, 15, 36, 48, 78];
 
 type BoardProps = {
+  allPlaced: boolean;
   placedShips: Ship[];
   rotationAxis: string;
   selectedShip: Ship;
@@ -51,6 +59,7 @@ type BoardProps = {
 };
 
 export default function Board({
+  allPlaced,
   placedShips,
   rotationAxis,
   selectedShip,
@@ -100,20 +109,6 @@ export default function Board({
       }
     }
   };
-
-  //   const determineHighlightColor = (
-  //     index: number,
-  //     occupied: boolean,
-  //     shipColor: string
-  //   ): string => {
-  //     if (invalidPlacement && highlightedSections.includes(index)) {
-  //       return '#FF5151';
-  //     } else if (occupied) {
-  //       return shipColor;
-  //     } else {
-  //       return highlightedSections.includes(index) ? '#606060' : '#DFF4FF';
-  //     }
-  //   };
 
   const handleHover = (index: number, row: number) => {
     const sections = calculateSections(index, row);
@@ -181,7 +176,7 @@ export default function Board({
   return (
     <div
       className={styles.wrapper}
-      onMouseLeave={() => setHighlightedSections([])}
+      onMouseLeave={() => !allPlaced && setHighlightedSections([])}
     >
       <div className={styles.row} style={{ marginLeft: '46px' }}>
         {new Array(10).fill('').map((_, index) => (
@@ -195,6 +190,14 @@ export default function Board({
             {row.map((_, colIndex) => {
               const index = rowIndex * 10 + colIndex;
               const occupied = occupiedSpace(index);
+              const HoverImage = selectedShip.length
+                ? DISPLAY_IMAGES[selectedShip.name][invalidSections]
+                : undefined;
+              const PlacedImage = occupied.length
+                ? DISPLAY_IMAGES[occupied.name].default
+                : undefined;
+              const shot = FAKE_SHOTS.includes(index);
+              const hit = shot && occupied.length;
               const validPlacement =
                 !occupied.length && !invalidPlacement && selectedShip.name;
               const yOrinetation = rotationAxis === 'y';
@@ -205,20 +208,19 @@ export default function Board({
                   onClick={() =>
                     validPlacement && handleShipPlacement(index, rowIndex)
                   }
-                  onMouseOver={() => handleHover(index, rowIndex)}
-                  //   style={{
-                  //     background: determineHighlightColor(
-                  //       index,
-                  //       occupied,
-                  //       shipColor
-                  //     ),
-                  //   }}
+                  onMouseOver={() => !allPlaced && handleHover(index, rowIndex)}
                 >
-                  {shipHeads.includes(index) && (
+                  {shot && (
                     <img
-                      alt='Ship'
+                      alt={hit ? 'Hit' : 'Miss'}
+                      src={hit ? hitIcon : missIcon}
+                    />
+                  )}
+                  {PlacedImage && shipHeads.includes(index) && (
+                    <PlacedImage
                       className={styles.ship}
                       style={{
+                        fill: '#000000',
                         transform:
                           occupied.orientation === 'y'
                             ? `rotate(90deg) translateY(-${
@@ -227,22 +229,21 @@ export default function Board({
                             : 'rotate(0deg)',
                         width: calculateShipWidth(occupied.length),
                       }}
-                      src={DISPLAY_IMAGES[occupied.name].placed}
                     />
                   )}
-                  {highlightedSections[0] === index && (
-                    <img
-                      alt='Ship'
+                  {HoverImage && highlightedSections[0] === index && (
+                    <HoverImage
                       className={styles.ship}
                       style={{
+                        fill: validPlacement ? '#717C96' : '#FF0055',
                         transform: yOrinetation
                           ? `rotate(90deg) translateY(-${
                               SHIP_STYLES[selectedShip.name].translate
                             }px)`
                           : 'rotate(0deg)',
                         width: calculateShipWidth(highlightedSections.length),
+                        zIndex: 2,
                       }}
-                      src={DISPLAY_IMAGES[selectedShip.name][invalidSections]}
                     />
                   )}
                 </div>

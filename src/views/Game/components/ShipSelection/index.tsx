@@ -32,7 +32,6 @@ const useStyles = createUseStyles({
     marginTop: '9px',
   },
   startButton: {
-    background: '#C7C7C7',
     borderRadius: '3px',
     color: '#FFFFFF',
     fontSize: '24px',
@@ -45,6 +44,7 @@ const useStyles = createUseStyles({
 });
 
 type ShipSelectionProps = {
+  allPlaced: boolean;
   placedShips: Ship[];
   removeShip: (ship: Ship) => void;
   selectShip: (ship: Ship) => void;
@@ -54,6 +54,7 @@ type ShipSelectionProps = {
 };
 
 export default function ShipSelection({
+  allPlaced,
   placedShips,
   removeShip,
   selectShip,
@@ -104,7 +105,16 @@ export default function ShipSelection({
           );
         })}
       </div>
-      <div className={styles.startButton}>START GAME</div>
+      <div
+        className={styles.startButton}
+        onClick={() => allPlaced && startGame()}
+        style={{
+          background: allPlaced ? '#2861E9' : '#C7C7C7',
+          cursor: allPlaced ? 'pointer' : 'not-allowed',
+        }}
+      >
+        START GAME
+      </div>
     </div>
   );
 }
