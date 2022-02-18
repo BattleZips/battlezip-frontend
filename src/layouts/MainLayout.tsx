@@ -6,8 +6,8 @@ const useStyles = createUseStyles({
   content: {
     marginBlock: '177px 40px',
     minHeight: 'calc(100vh - 112px)',
-    width: '100%',
-  },
+    width: '100%'
+  }
 });
 
 type MainLayoutProps = {

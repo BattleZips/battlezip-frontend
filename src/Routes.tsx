@@ -6,12 +6,12 @@ import Home from 'views/Home';
 const routeList = [
   {
     path: RootLocation,
-    element: <Home />,
+    element: <Home />
   },
   {
     path: GameLocation,
-    element: <Game />,
-  },
+    element: <Game />
+  }
 ];
 
 export default function Routes(): JSX.Element {

@@ -15,13 +15,13 @@ const useStyles = createUseStyles({
     fontWeight: 700,
     justifyContent: 'center',
     lineHeight: '34.68px',
-    width: '46px',
+    width: '46px'
   },
   row: {
     alignItems: 'center',
     display: 'flex',
     gap: '7px',
-    marginTop: '7px',
+    marginTop: '7px'
   },
   ship: {
     left: 0,
@@ -31,8 +31,8 @@ const useStyles = createUseStyles({
     transition: '.2s transform',
     zIndex: 1,
     '& > circle': {
-      fill: '#FFFFFF',
-    },
+      fill: '#FFFFFF'
+    }
   },
   tile: {
     alignItems: 'center',
@@ -43,11 +43,11 @@ const useStyles = createUseStyles({
     justifyContent: 'center',
     height: '46px',
     position: 'relative',
-    width: '46px',
+    width: '46px'
   },
   wrapper: {
-    marginTop: '24px',
-  },
+    marginTop: '24px'
+  }
 });
 
 const BOARD = new Array(10).fill('').map((_) => new Array(10).fill(''));
@@ -66,7 +66,7 @@ export default function Board({
   placedShips,
   rotationAxis,
   selectedShip,
-  setPlacedShip,
+  setPlacedShip
 }: BoardProps): JSX.Element {
   const styles = useStyles();
   const [highlightedSections, setHighlightedSections] = useState<number[]>([]);
@@ -121,31 +121,31 @@ export default function Board({
     const hits: any = ship.sections.map((section, index) => [
       section,
       FAKE_SHOTS.includes(section),
-      index + 1,
+      index + 1
     ]);
     const defaultClass = {
       '& > circle': {
-        fill: '#FFFFFF',
-      },
+        fill: '#FFFFFF'
+      }
     };
     const pseudoClasses = hits
       .filter((hit: any) => hit[1])
       .map((hit: any) => ({
         [`& > circle:nth-of-type(${hit[2]})`]: {
-          fill: '#FF0055',
-        },
+          fill: '#FF0055'
+        }
       }));
     const obj = [defaultClass].concat(pseudoClasses).reduce(
       (obj, item) => ({
         ...obj,
-        [Object.keys(item)[0]]: Object.values(item)[0],
+        [Object.keys(item)[0]]: Object.values(item)[0]
       }),
       {}
     );
     const sheet = jss
       .createStyleSheet(
         {
-          circle: obj,
+          circle: obj
         },
         { link: true }
       )
@@ -173,7 +173,7 @@ export default function Board({
     setPlacedShip({
       ...selectedShip,
       orientation: rotationAxis,
-      sections,
+      sections
     } as Ship);
     setHighlightedSections([]);
   };
@@ -267,7 +267,7 @@ export default function Board({
                                 SHIP_STYLES[occupied.name].translate
                               }px)`
                             : 'rotate(0deg)',
-                        width: calculateShipWidth(occupied.length),
+                        width: calculateShipWidth(occupied.length)
                       }}
                     />
                   )}
@@ -282,7 +282,7 @@ export default function Board({
                             }px)`
                           : 'rotate(0deg)',
                         width: calculateShipWidth(highlightedSections.length),
-                        zIndex: 2,
+                        zIndex: 2
                       }}
                     />
                   )}

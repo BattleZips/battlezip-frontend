@@ -10,30 +10,30 @@ const useStyles = createUseStyles({
   contentContainer: {
     alignItems: 'center',
     display: 'flex',
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
   header: {
     alignItems: 'center',
     display: 'flex',
     height: '64px',
     justifyContent: 'space-between',
-    paddingInline: '32px',
+    paddingInline: '32px'
   },
   innerContainer: {
     alignItems: 'flex-start',
     display: 'flex',
-    gap: '200px',
+    gap: '200px'
   },
   start: {
     background: '#808687',
     color: '#fdfdfd',
     cursor: 'pointer',
-    padding: '10px 15px',
+    padding: '10px 15px'
   },
   title: {
     fontSize: '48px',
-    fontWeight: '600',
-  },
+    fontWeight: '600'
+  }
 });
 
 export default function Home(): JSX.Element {

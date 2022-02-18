@@ -4,7 +4,7 @@ const useStyles = createUseStyles({
   container: {
     borderRadius: '12px',
     color: '#fdfdfd',
-    width: '400px',
+    width: '400px'
   },
   listHeader: {
     background: '#606060',
@@ -12,8 +12,8 @@ const useStyles = createUseStyles({
     borderRadius: '12px',
     fontSize: '24px',
     fontWeight: 500,
-    padding: '12px',
-  },
+    padding: '12px'
+  }
 });
 
 export default function GameList(): JSX.Element {
