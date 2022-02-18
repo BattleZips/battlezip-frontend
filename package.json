@@ -26,6 +26,7 @@
   "scripts": {
     "start": "concurrently \"react-scripts start\" \"yarn generate --watch\"",
     "build": "yarn generate && react-scripts build",
+    "format": "prettier --config .prettierrc 'src/' --write",
     "generate": "graphql-codegen --config=codegen.yml",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
@@ -54,6 +55,7 @@
     "@graphql-codegen/typescript": "^2.4.3",
     "@graphql-codegen/typescript-operations": "^2.3.0",
     "@graphql-codegen/typescript-urql": "^3.5.1",
-    "concurrently": "^7.0.0"
+    "concurrently": "^7.0.0",
+    "prettier": "^2.5.1"
   }
 }

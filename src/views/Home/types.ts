@@ -1,4 +1,4 @@
 export type Game = {
-    address: string;
-    ens?: string;
-}
+  address: string;
+  ens?: string;
+};

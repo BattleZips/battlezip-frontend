@@ -13,12 +13,12 @@ const useStyles = createUseStyles({
     position: 'fixed',
     top: 0,
     width: 'calc(100% - 108px)',
-    zIndex: 10,
+    zIndex: 10
   },
   left: {
     alignItems: 'center',
     display: 'flex',
-    gap: '19px',
+    gap: '19px'
   },
   loginButton: {
     alignItems: 'center',
@@ -29,23 +29,23 @@ const useStyles = createUseStyles({
     cursor: 'pointer',
     display: 'flex',
     letterSpacing: '2.1px',
-    padding: '6px 8px',
+    padding: '6px 8px'
   },
   logo: {
     heigth: '86px',
-    width: '75px',
+    width: '75px'
   },
   logoText: {
     fontSize: '36px',
     fontWeight: 700,
     letterSpacing: '5.4px',
-    lineHieght: '52px',
+    lineHieght: '52px'
   },
   separator: {
     background: '#D1D2DE',
     height: '44px',
-    width: '1px',
-  },
+    width: '1px'
+  }
 });
 
 export default function Header(): JSX.Element {
@@ -53,7 +53,7 @@ export default function Header(): JSX.Element {
   return (
     <div className={styles.container}>
       <div className={styles.left}>
-        <img alt='Logo' className={styles.logo} src={headerLogo} />
+        <img alt="Logo" className={styles.logo} src={headerLogo} />
         <div className={styles.separator} />
         <div className={styles.logoText}>BATTLEZIPS</div>
       </div>

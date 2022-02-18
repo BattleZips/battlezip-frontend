@@ -16,7 +16,7 @@ const useStyles = createUseStyles({
     display: 'flex',
     gap: '114px',
     marginInline: 'auto',
-    width: 'fit-content',
+    width: 'fit-content'
   },
   fleetLabel: {
     borderRadius: '3px',
@@ -25,11 +25,11 @@ const useStyles = createUseStyles({
     fontWeight: 700,
     lineHeight: '34.68px',
     paddingBlock: '2px',
-    textAlign: 'center',
+    textAlign: 'center'
   },
   wrapper: {
-    outline: 'none',
-  },
+    outline: 'none'
+  }
 });
 
 const SHIPS: Ship[] = [
@@ -38,36 +38,36 @@ const SHIPS: Ship[] = [
     image: carrier,
     name: 'carrier',
     length: 5,
-    sections: [],
+    sections: []
   },
   {
     color: '#1C04D3',
     image: battleship,
     name: 'battleship',
     length: 4,
-    sections: [],
+    sections: []
   },
   {
     color: '#09D1E8',
     image: cruiser,
     name: 'cruiser',
     length: 3,
-    sections: [],
+    sections: []
   },
   {
     color: '#26F207',
     image: submarine,
     name: 'submarine',
     length: 3,
-    sections: [],
+    sections: []
   },
   {
     color: '#EFE707',
     image: destroyer,
     name: 'destroyer',
     length: 2,
-    sections: [],
-  },
+    sections: []
+  }
 ];
 
 export default function Game(): JSX.Element {

@@ -5,8 +5,8 @@ const useStyles = createUseStyles({
   avatar: {
     borderRadius: '50%',
     height: '33px',
-    width: '33px',
-  },
+    width: '33px'
+  }
 });
 
 type AvatarProps = {
