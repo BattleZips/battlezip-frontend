@@ -1,4 +1,4 @@
-import { CSSProperties, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { createUseStyles, jss } from 'react-jss';
 import { EMPTY_SHIP, Ship } from '../../types';
 import { DISPLAY_IMAGES } from './images';
