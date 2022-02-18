@@ -17,6 +17,13 @@ const useStyles = createUseStyles({
     lineHeight: '34.68px',
     width: '46px',
   },
+  rotateText: {
+    fontSize: '24px',
+    fontWeight: 400,
+    letterSpacing: '3.6px',
+    margin: '55px auto 0 auto',
+    width: 'fit-content',
+  },
   row: {
     alignItems: 'center',
     display: 'flex',
@@ -213,85 +220,92 @@ export default function Board({
   }, [rotationAxis]);
 
   return (
-    <div
-      className={styles.wrapper}
-      onMouseLeave={() => !allPlaced && setHighlightedSections([])}
-    >
-      <div className={styles.row} style={{ marginLeft: '46px' }}>
-        {new Array(10).fill('').map((_, index) => (
-          <div className={styles.label}>{String.fromCharCode(65 + index)}</div>
-        ))}
-      </div>
-      {BOARD.map((row, rowIndex) => {
-        return (
-          <div className={styles.row} key={rowIndex}>
-            <div className={styles.label}>{rowIndex + 1}</div>
-            {row.map((_, colIndex) => {
-              const index = rowIndex * 10 + colIndex;
-              const containsHead = shipHeads.includes(index);
-              const occupied = occupiedSpace(index);
-              const HoverImage = selectedShip.length
-                ? DISPLAY_IMAGES[selectedShip.name][invalidSections]
-                : undefined;
-              const PlacedImage = occupied.length
-                ? DISPLAY_IMAGES[occupied.name].default
-                : undefined;
-              const shot = FAKE_SHOTS.includes(index);
-              const hit = shot && occupied.length;
-              const validPlacement =
-                !occupied.length && !invalidPlacement && selectedShip.name;
-              const yOrinetation = rotationAxis === 'y';
-              return (
-                <div
-                  className={styles.tile}
-                  key={colIndex}
-                  onClick={() =>
-                    validPlacement && handleShipPlacement(index, rowIndex)
-                  }
-                  onMouseOver={() => !allPlaced && handleHover(index, rowIndex)}
-                >
-                  {shot && !occupied.length && (
-                    <img
-                      alt={hit ? 'Hit' : 'Miss'}
-                      src={hit ? hitIcon : missIcon}
-                    />
-                  )}
-                  {PlacedImage && containsHead && (
-                    <PlacedImage
-                      className={`${styles.ship} ${circleStyles(occupied)}`}
-                      style={{
-                        fill: '#000000',
-                        transform:
-                          occupied.orientation === 'y'
+    <div>
+      <div className={styles.wrapper}>
+        <div className={styles.row} style={{ marginLeft: '46px' }}>
+          {new Array(10).fill('').map((_, index) => (
+            <div className={styles.label}>
+              {String.fromCharCode(65 + index)}
+            </div>
+          ))}
+        </div>
+        {BOARD.map((row, rowIndex) => {
+          return (
+            <div className={styles.row} key={rowIndex}>
+              <div className={styles.label}>{rowIndex + 1}</div>
+              {row.map((_, colIndex) => {
+                const index = rowIndex * 10 + colIndex;
+                const containsHead = shipHeads.includes(index);
+                const occupied = occupiedSpace(index);
+                const HoverImage = selectedShip.length
+                  ? DISPLAY_IMAGES[selectedShip.name][invalidSections]
+                  : undefined;
+                const PlacedImage = occupied.length
+                  ? DISPLAY_IMAGES[occupied.name].default
+                  : undefined;
+                const shot = FAKE_SHOTS.includes(index);
+                const hit = shot && occupied.length;
+                const validPlacement =
+                  !occupied.length && !invalidPlacement && selectedShip.name;
+                const yOrinetation = rotationAxis === 'y';
+                return (
+                  <div
+                    className={styles.tile}
+                    key={colIndex}
+                    onClick={() =>
+                      validPlacement && handleShipPlacement(index, rowIndex)
+                    }
+                    onMouseOver={() =>
+                      !allPlaced && handleHover(index, rowIndex)
+                    }
+                    onMouseLeave={() =>
+                      !allPlaced && setHighlightedSections([])
+                    }
+                  >
+                    {shot && !occupied.length && (
+                      <img
+                        alt={hit ? 'Hit' : 'Miss'}
+                        src={hit ? hitIcon : missIcon}
+                      />
+                    )}
+                    {PlacedImage && containsHead && (
+                      <PlacedImage
+                        className={`${styles.ship} ${circleStyles(occupied)}`}
+                        style={{
+                          fill: '#000000',
+                          transform:
+                            occupied.orientation === 'y'
+                              ? `rotate(90deg) translateY(-${
+                                  SHIP_STYLES[occupied.name].translate
+                                }px)`
+                              : 'rotate(0deg)',
+                          width: calculateShipWidth(occupied.length),
+                        }}
+                      />
+                    )}
+                    {HoverImage && highlightedSections[0] === index && (
+                      <HoverImage
+                        className={styles.ship}
+                        style={{
+                          fill: validPlacement ? '#717C96' : '#FF0055',
+                          transform: yOrinetation
                             ? `rotate(90deg) translateY(-${
-                                SHIP_STYLES[occupied.name].translate
+                                SHIP_STYLES[selectedShip.name].translate
                               }px)`
                             : 'rotate(0deg)',
-                        width: calculateShipWidth(occupied.length),
-                      }}
-                    />
-                  )}
-                  {HoverImage && highlightedSections[0] === index && (
-                    <HoverImage
-                      className={styles.ship}
-                      style={{
-                        fill: validPlacement ? '#717C96' : '#FF0055',
-                        transform: yOrinetation
-                          ? `rotate(90deg) translateY(-${
-                              SHIP_STYLES[selectedShip.name].translate
-                            }px)`
-                          : 'rotate(0deg)',
-                        width: calculateShipWidth(highlightedSections.length),
-                        zIndex: 2,
-                      }}
-                    />
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        );
-      })}
+                          width: calculateShipWidth(highlightedSections.length),
+                          zIndex: 2,
+                        }}
+                      />
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          );
+        })}
+      </div>
+      <div className={styles.rotateText}>[PRESS THE SPACE BAR TO ROTATE]</div>
     </div>
   );
 }

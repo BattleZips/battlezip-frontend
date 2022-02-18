@@ -9,6 +9,22 @@ export const BattleshipGameDetails = gql`
     }
 `
 
+export const ENSDetails = gql`
+    fragment ENSDetails on Account {
+        domains(first: 1) {
+            labelhash
+            labelName
+            name
+            resolver {
+                texts
+            }
+            owner {
+                id
+            }
+        }
+    }
+`
+
 export const ShotDetails = gql`
     fragment ShotDetails on Shot {
         id

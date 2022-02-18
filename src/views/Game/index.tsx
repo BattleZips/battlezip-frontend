@@ -9,6 +9,7 @@ import battleship from './images/battleshipSelection.svg';
 import submarine from './images/submarineSelection.svg';
 import cruiser from './images/cruiserSelection.svg';
 import destroyer from './images/destroyerSelection.svg';
+import OpponentBoard from './components/Board/OpponentBoard';
 
 const useStyles = createUseStyles({
   content: {
@@ -23,14 +24,7 @@ const useStyles = createUseStyles({
     fontSize: '24px',
     fontWeight: 700,
     lineHeight: '34.68px',
-    paddingInline: '11px',
-    textAlign: 'center',
-  },
-  rotateText: {
-    fontSize: '24px',
-    fontWeight: '',
-    letterSpacing: '3.6px',
-    marginTop: '55px',
+    paddingBlock: '2px',
     textAlign: 'center',
   },
   wrapper: {
@@ -78,9 +72,13 @@ const SHIPS: Ship[] = [
 
 export default function Game(): JSX.Element {
   const styles = useStyles();
+  // const [opponentShots, setOpponentShots] = useState<number[]>([]);
   const [placedShips, setPlacedShips] = useState<Ship[]>([]);
   const [rotationAxis, setRotationAxis] = useState('y');
   const [selectedShip, setSelectedShip] = useState<Ship>(EMPTY_SHIP);
+  const [started, setStarted] = useState(false);
+  const [yourShots, setYourShots] = useState<number[]>([]);
+  // const yourTurn = false;
 
   const allPlaced = useMemo(() => {
     return placedShips.length === 5;
@@ -118,6 +116,7 @@ export default function Game(): JSX.Element {
       board.push([x, y, z]);
     });
     console.table(board);
+    setStarted(true);
   };
 
   return (
@@ -128,22 +127,30 @@ export default function Game(): JSX.Element {
         tabIndex={0}
       >
         <div className={styles.content}>
-          <div style={{ width: '551px' }}>
+          <div style={{ width: started ? '523px' : '551px' }}>
             <div
               className={styles.fleetLabel}
               style={{ background: '#717C96' }}
             >
-              DEPLOY YOUR FLEET
+              {started ? 'OPPONENT' : 'DEPLOY YOUR FLEET'}
             </div>
-            <ShipSelection
-              allPlaced={allPlaced}
-              placedShips={placedShips}
-              removeShip={handleRemoveShip}
-              selectShip={handleShipSelect}
-              selectedShip={selectedShip}
-              ships={SHIPS}
-              startGame={startGame}
-            />
+            {started ? (
+              <OpponentBoard
+                shots={yourShots}
+                takeShot={setYourShots}
+                yourTurn={true}
+              />
+            ) : (
+              <ShipSelection
+                allPlaced={allPlaced}
+                placedShips={placedShips}
+                removeShip={handleRemoveShip}
+                selectShip={handleShipSelect}
+                selectedShip={selectedShip}
+                ships={SHIPS}
+                startGame={startGame}
+              />
+            )}
           </div>
           <div style={{ width: '523px' }}>
             <div
@@ -159,9 +166,6 @@ export default function Game(): JSX.Element {
               placedShips={placedShips}
               rotationAxis={rotationAxis}
             />
-            <div className={styles.rotateText}>
-              [PRESS THE SPACE BAR TO ROTATE]
-            </div>
           </div>
         </div>
       </div>

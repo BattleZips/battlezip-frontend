@@ -9,5 +9,6 @@ export enum GameStatus {
 }
 
 export const SUBGRAPH_URLS: StringInfo = {
+    1: 'https://api.thegraph.com/subgraphs/name/ensdomains/ens',
     4: 'https://api.thegraph.com/subgraphs/name/ian-bright/zk_battleship_rinkeby',
 };

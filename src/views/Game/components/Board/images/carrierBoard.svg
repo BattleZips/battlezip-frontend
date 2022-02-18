@@ -1,7 +1,7 @@
 <svg width="254" height="46" viewBox="0 0 254 46" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M0 40.25L6.10352e-05 11.5H60L60.1393 5.75H119.925V1.98276L123.462 0H146.457L150.702 1.98276V5.75H175.111V4.16379H233.128L254 18.2414V46H31.4847L0 40.25Z" />
-<circle r="8" transform="matrix(-1 0 0 1 75 23)" />
 <circle r="8" transform="matrix(-1 0 0 1 21 23)" />
+<circle r="8" transform="matrix(-1 0 0 1 75 23)" />
 <circle r="8" transform="matrix(-1 0 0 1 127 23)" />
 <circle r="8" transform="matrix(-1 0 0 1 180 23)" />
 <circle r="8" transform="matrix(-1 0 0 1 233 23)" />

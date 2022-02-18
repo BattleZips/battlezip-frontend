@@ -6,7 +6,7 @@ import { GameStatus, GetBattlesipGamesQuery, GetBattlesipGamesQueryVariables } f
 const battleshipGameQuery = gql`
     query GetBattlesipGames(
         $limit: Int!
-        $status: GameStatus
+        $status: GameStatus!
     ) {
         battleshipGames (
             first: $limit
