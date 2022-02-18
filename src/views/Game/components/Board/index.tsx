@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useState } from 'react';
-import { createUseStyles } from 'react-jss';
+import { CSSProperties, useEffect, useMemo, useState } from 'react';
+import { createUseStyles, jss } from 'react-jss';
 import { EMPTY_SHIP, Ship } from '../../types';
 import { DISPLAY_IMAGES } from './images';
-import { SHIP_STYLES } from './shipStyles';
+import { SHIP_STYLES } from './styles';
 import hitIcon from '../../images/hit.svg';
 import missIcon from '../../images/miss.svg';
 
@@ -30,6 +30,9 @@ const useStyles = createUseStyles({
     transformOrigin: 'top left',
     transition: '.2s transform',
     zIndex: 1,
+    '& > circle': {
+      fill: '#FFFFFF',
+    },
   },
   tile: {
     alignItems: 'center',
@@ -88,6 +91,10 @@ export default function Board({
     return sections;
   };
 
+  const calculateShipWidth = (len: number) => {
+    return `${len * 46}px`;
+  };
+
   const checkValidPlacement = (
     pos: number,
     row: number,
@@ -108,6 +115,42 @@ export default function Board({
         setInvalidPlacement(!!outOfBoundsElement);
       }
     }
+  };
+
+  const circleStyles = (ship: Ship) => {
+    const hits: any = ship.sections.map((section, index) => [
+      section,
+      FAKE_SHOTS.includes(section),
+      index + 1,
+    ]);
+    const defaultClass = {
+      '& > circle': {
+        fill: '#FFFFFF',
+      },
+    };
+    const pseudoClasses = hits
+      .filter((hit: any) => hit[1])
+      .map((hit: any) => ({
+        [`& > circle:nth-of-type(${hit[2]})`]: {
+          fill: '#FF0055',
+        },
+      }));
+    const obj = [defaultClass].concat(pseudoClasses).reduce(
+      (obj, item) => ({
+        ...obj,
+        [Object.keys(item)[0]]: Object.values(item)[0],
+      }),
+      {}
+    );
+    const sheet = jss
+      .createStyleSheet(
+        {
+          circle: obj,
+        },
+        { link: true }
+      )
+      .attach();
+    return sheet.classes.circle;
   };
 
   const handleHover = (index: number, row: number) => {
@@ -161,10 +204,6 @@ export default function Board({
     return heads;
   }, [placedShips]);
 
-  const calculateShipWidth = (len: number) => {
-    return `${len * 46}px`;
-  };
-
   useEffect(() => {
     if (highlightedSections[0] !== undefined) {
       const row = Math.floor(highlightedSections[0] / 10);
@@ -189,6 +228,7 @@ export default function Board({
             <div className={styles.label}>{rowIndex + 1}</div>
             {row.map((_, colIndex) => {
               const index = rowIndex * 10 + colIndex;
+              const containsHead = shipHeads.includes(index);
               const occupied = occupiedSpace(index);
               const HoverImage = selectedShip.length
                 ? DISPLAY_IMAGES[selectedShip.name][invalidSections]
@@ -210,15 +250,15 @@ export default function Board({
                   }
                   onMouseOver={() => !allPlaced && handleHover(index, rowIndex)}
                 >
-                  {shot && (
+                  {shot && !occupied.length && (
                     <img
                       alt={hit ? 'Hit' : 'Miss'}
                       src={hit ? hitIcon : missIcon}
                     />
                   )}
-                  {PlacedImage && shipHeads.includes(index) && (
+                  {PlacedImage && containsHead && (
                     <PlacedImage
-                      className={styles.ship}
+                      className={`${styles.ship} ${circleStyles(occupied)}`}
                       style={{
                         fill: '#000000',
                         transform:

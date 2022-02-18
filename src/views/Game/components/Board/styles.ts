@@ -17,4 +17,4 @@ export const SHIP_STYLES: any = {
     submarine: {
         translate: 39
     }
-} 
+}
