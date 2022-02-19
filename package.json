@@ -17,7 +17,7 @@
     "ethereum-blockies-base64": "^1.0.2",
     "ethers": "^5.5.4",
     "fake-tag": "^4.0.0",
-    "fs": "^2.0.0",
+    "fs": "^1.0.0",
     "graphql": "^16.3.0",
     "https-browserify": "^1.0.0",
     "os": "^0.1.2",
