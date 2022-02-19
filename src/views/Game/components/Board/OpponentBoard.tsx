@@ -6,11 +6,11 @@ import { ReactComponent as CrosshairIcon } from './images/crosshair.svg';
 
 const useStyles = createUseStyles({
   board: {
-    marginTop: '25px',
+    marginTop: '25px'
   },
   crossHair: {
     stroke: '#FF0055',
-    width: '100%',
+    width: '100%'
   },
   fire: {
     borderRadius: '3px',
@@ -20,7 +20,7 @@ const useStyles = createUseStyles({
     letterSpacing: '3.6px',
     margin: '46px auto 0 auto',
     padding: '5px 15px',
-    width: 'fit-content',
+    width: 'fit-content'
   },
   label: {
     alignItems: 'center',
@@ -30,13 +30,13 @@ const useStyles = createUseStyles({
     fontWeight: 700,
     justifyContent: 'center',
     lineHeight: '34.68px',
-    width: '46px',
+    width: '46px'
   },
   row: {
     alignItems: 'center',
     display: 'flex',
     gap: '7px',
-    marginTop: '7px',
+    marginTop: '7px'
   },
   tile: {
     alignItems: 'center',
@@ -46,8 +46,8 @@ const useStyles = createUseStyles({
     display: 'flex',
     height: '46px',
     justifyContent: 'center',
-    width: '46px',
-  },
+    width: '46px'
+  }
 });
 
 const BOARD = new Array(10).fill('').map((_) => new Array(10).fill(''));
@@ -61,7 +61,7 @@ type OpponentBoardProps = {
 export default function OpponentBoard({
   shots,
   takeShot,
-  yourTurn,
+  yourTurn
 }: OpponentBoardProps): JSX.Element {
   const styles = useStyles();
   const [hoveredTile, setHoveredTile] = useState(-1);
@@ -97,7 +97,7 @@ export default function OpponentBoard({
                     onMouseOver={() => setHoveredTile(index)}
                     onMouseLeave={() => setHoveredTile(-1)}
                   >
-                    {wasShot && <img alt='Shot' src={missIcon} />}
+                    {wasShot && <img alt="Shot" src={missIcon} />}
                     {index === selectedTile && (
                       <CrosshairIcon className={styles.crossHair} />
                     )}
@@ -121,7 +121,7 @@ export default function OpponentBoard({
         onClick={() => selectedTile >= 0 && handleShot()}
         style={{
           background: selectedTile >= 0 ? '#FF0055' : '#C7C7C7',
-          cursor: selectedTile >= 0 ? 'pointer' : 'not-allowed',
+          cursor: selectedTile >= 0 ? 'pointer' : 'not-allowed'
         }}
       >
         {selectedTile >= 0 ? 'FIRE' : 'SELECT POSITION'}

@@ -22,36 +22,36 @@ import { ReactComponent as submarineBoardInvalidHoverTwo } from './submarineBoar
 import { ReactComponent as submarineBoard } from './submarineBoard.svg';
 
 export const DISPLAY_IMAGES: any = {
-    battleship: {
-        default: battleshipBoard,
-        0: battleshipBoard,
-        1: battleshipBoardInvalidHoverOne,
-        2: battleshipBoardInvalidHoverTwo,
-        3: battleshipBoardInvalidHoverThree,
-    },
-    carrier: {
-        default: carrierBoard,
-        0: carrierBoard,
-        1: carrierBoardInvalidHoverOne,
-        2: carrierBoardInvalidHoverTwo,
-        3: carrierBoardInvalidHoverThree,
-        4: carrierBoardInvalidHoverFour,
-    },
-    cruiser: {
-        default: cruiserBoard,
-        0: cruiserBoard,
-        1: cruiserBoardInvalidHoverOne,
-        2: cruiserBoardInvalidHoverTwo,
-    },
-    destroyer: {
-        default: destroyerBoard,
-        0: destroyerBoard,
-        1: destroyerBoardInvalidHoverOne,
-    },
-    submarine: {
-        default: submarineBoard,
-        0: submarineBoard,
-        1: submarineBoardInvalidHoverOne,
-        2: submarineBoardInvalidHoverTwo,
-    }
-}
+  battleship: {
+    default: battleshipBoard,
+    0: battleshipBoard,
+    1: battleshipBoardInvalidHoverOne,
+    2: battleshipBoardInvalidHoverTwo,
+    3: battleshipBoardInvalidHoverThree
+  },
+  carrier: {
+    default: carrierBoard,
+    0: carrierBoard,
+    1: carrierBoardInvalidHoverOne,
+    2: carrierBoardInvalidHoverTwo,
+    3: carrierBoardInvalidHoverThree,
+    4: carrierBoardInvalidHoverFour
+  },
+  cruiser: {
+    default: cruiserBoard,
+    0: cruiserBoard,
+    1: cruiserBoardInvalidHoverOne,
+    2: cruiserBoardInvalidHoverTwo
+  },
+  destroyer: {
+    default: destroyerBoard,
+    0: destroyerBoard,
+    1: destroyerBoardInvalidHoverOne
+  },
+  submarine: {
+    default: submarineBoard,
+    0: submarineBoard,
+    1: submarineBoardInvalidHoverOne,
+    2: submarineBoardInvalidHoverTwo
+  }
+};

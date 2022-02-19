@@ -9,7 +9,7 @@ const useStyles = createUseStyles({
     height: '523px',
     marginTop: '65px',
     overflowY: 'auto',
-    width: '100%',
+    width: '100%'
   },
   row: (props: any) => ({
     alignItems: 'center',
@@ -21,8 +21,8 @@ const useStyles = createUseStyles({
     padding: '7px 23px',
     transition: '.3s background',
     '&:hover': {
-      background: props.gameOption === 1 ? '#DFF4FF' : '',
-    },
+      background: props.gameOption === 1 ? '#DFF4FF' : ''
+    }
   }),
   selectText: {
     fontSize: '24px',
@@ -30,8 +30,8 @@ const useStyles = createUseStyles({
     letterSpacing: '3.6px',
     lineHeight: '34.68px',
     marginTop: '55px',
-    textAlign: 'center',
-  },
+    textAlign: 'center'
+  }
 });
 
 type GameListProps = {
@@ -45,7 +45,7 @@ export default function GameList({
   games,
   gameOption,
   selectedGame,
-  setSelectedGame,
+  setSelectedGame
 }: GameListProps): JSX.Element {
   const styles = useStyles({ gameOption, selectedGame });
   return (
@@ -54,10 +54,11 @@ export default function GameList({
         {games.map((game) => (
           <div
             className={styles.row}
+            key={game.address}
             onClick={() => gameOption === 1 && setSelectedGame(game)}
             style={{
               background:
-                selectedGame?.address === game.address ? '#DFF4FF' : '',
+                selectedGame?.address === game.address ? '#DFF4FF' : ''
             }}
           >
             <Avatar address={game.address} />

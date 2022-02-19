@@ -5,31 +5,31 @@ const useStyles = createUseStyles({
   row: {
     alignItems: 'flex-end',
     display: 'flex',
-    justifyContent: 'space-between',
+    justifyContent: 'space-between'
   },
   select: {
     cursor: 'pointer',
     fontSize: '24px',
     fontWeight: 400,
     letterSpacing: '3.6px',
-    lineHeight: '34.68px',
+    lineHeight: '34.68px'
   },
   ships: {
     display: 'flex',
     flexDirection: 'column',
     gap: '4px',
-    marginTop: '18px',
+    marginTop: '18px'
   },
   space: {
     background: '#EBEBEB',
     borderRadius: '3px',
     height: '46px',
-    width: '46px',
+    width: '46px'
   },
   spaces: {
     display: 'flex',
     gap: '7px',
-    marginTop: '9px',
+    marginTop: '9px'
   },
   startButton: {
     borderRadius: '3px',
@@ -39,8 +39,8 @@ const useStyles = createUseStyles({
     letterSpacing: '3.6px',
     margin: '46px auto 0 auto',
     padding: '5px 15px',
-    width: 'fit-content',
-  },
+    width: 'fit-content'
+  }
 });
 
 type ShipSelectionProps = {
@@ -60,7 +60,7 @@ export default function ShipSelection({
   selectShip,
   selectedShip,
   ships,
-  startGame,
+  startGame
 }: ShipSelectionProps): JSX.Element {
   const styles = useStyles();
 
@@ -84,7 +84,7 @@ export default function ShipSelection({
           return (
             <div className={styles.row}>
               <div>
-                <img alt='Ship' src={ship.image} />
+                <img alt="Ship" src={ship.image} />
                 <div className={styles.spaces}>
                   {new Array(ship.length).fill('').map((_) => (
                     <div className={styles.space} />
@@ -110,7 +110,7 @@ export default function ShipSelection({
         onClick={() => allPlaced && startGame()}
         style={{
           background: allPlaced ? '#2861E9' : '#C7C7C7',
-          cursor: allPlaced ? 'pointer' : 'not-allowed',
+          cursor: allPlaced ? 'pointer' : 'not-allowed'
         }}
       >
         START GAME
