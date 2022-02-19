@@ -3,28 +3,28 @@ import { getGame } from 'graphql/getGame';
 import { useWallet } from 'contexts/WalletContext';
 
 export const useGame = (
-  isNewGame: boolean,
   id: string
 ): { fetching: boolean; error: Error | null; game: any | null } => {
   const { chainId } = useWallet();
   const [error, setError] = useState<Error | null>(null);
-  const [fetching, setFecthing] = useState(false);
+  const [fetching, setFecthing] = useState(true);
   const [game, setGame] = useState<any | null>(null);
 
   const fetchData = useCallback(async () => {
     if (!chainId) return;
     try {
-      const game = await getGame(chainId, id);
       setFecthing(true);
+      const game = await getGame(chainId, id);
       setGame(game.battleshipGame);
     } catch (err) {
       setGame(null);
       setError(error as Error);
+    } finally {
+      setFecthing(false);
     }
-  }, [error]);
+  }, [chainId, error]);
 
   useEffect(() => {
-    if (isNewGame) return;
     fetchData();
   }, [fetchData]);
   return { error, fetching, game };

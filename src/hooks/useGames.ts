@@ -3,11 +3,12 @@ import { getGames } from 'graphql/getGames';
 import { Game } from 'views/Home/types';
 import { getENSDomains } from 'graphql/getENSNames';
 import { useWallet } from 'contexts/WalletContext';
-import { GameStatus, GetBattleshipGamesQuery } from 'graphql/autogen/types';
+import { GameStatus } from 'graphql/autogen/types';
 
 export const useGames = (
   limit = 1000,
-  status: GameStatus
+  status: GameStatus,
+  isPlaying: boolean
 ): {
   fetching: boolean;
   error: Error | null;
@@ -19,7 +20,7 @@ export const useGames = (
   const [games, setGames] = useState<Array<Game> | null>(null);
 
   const fetchData = useCallback(async () => {
-    if (!chainId) return;
+    if (!chainId || isPlaying) return;
     try {
       setFecthing(true);
       const res = (await getGames(chainId, limit, status)) as any;
@@ -48,6 +49,8 @@ export const useGames = (
     fetchData();
   }, [fetchData]);
   return {
-    error, fetching, games
+    error,
+    fetching,
+    games
   };
 };

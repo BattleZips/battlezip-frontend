@@ -9,6 +9,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useWallet } from 'contexts/WalletContext';
 import { ActiveGameLocation, RootLocation } from 'Locations';
 import { useGame } from 'hooks/useGame';
+import GameSkeleton from './components/GameSkeleton';
 
 const useStyles = createUseStyles({
   content: {
@@ -35,33 +36,15 @@ export default function Game(): JSX.Element {
   const { address, provider } = useWallet();
   const [gameStatus, setGameStatus] = useState('');
   const [opponentShots, setOpponentShots] = useState<number[]>([]);
-  const [isNewGameView, setIsNewGameView] = useState(false);
   const [placedShips, setPlacedShips] = useState<Ship[]>([]);
-  const [rotationAxis, setRotationAxis] = useState('y');
-  const [selectedShip, setSelectedShip] = useState<Ship>(EMPTY_SHIP);
   const [yourShots, setYourShots] = useState<number[]>([]);
-  const { fetching, game } = useGame(!id, id ?? '');
-
-  // const startGame = async () => {
-  //   if (!provider) return;
-  //   const board: number[][] = [];
-  //   placedShips.forEach((ship: Ship) => {
-  //     const x = Math.floor(ship.sections[0] / 10);
-  //     const y = ship.sections[0] % 10;
-  //     const z = ship.orientation === 'x' ? 0 : 1;
-  //     board.push([x, y, z]);
-  //   });
-  //   if (isNewGameView) {
-  //     const tx = await createGame(provider, 0, [0, 0], [0, 0], [0, 0], [0, 0]);
-  //     await tx.wait();
-  //     navigate(ActiveGameLocation('1'));
-  //   }
-  // };
+  const { fetching, game } = useGame(id ?? '');
 
   const yourTurn = useMemo(() => {}, [game]);
 
   useEffect(() => {
     if (!fetching) {
+      console.log('GAME: ', game);
       if (!game) {
         navigate(RootLocation);
       } else if (game.status === 'STARTED' && game.startedBy !== address) {
@@ -73,7 +56,7 @@ export default function Game(): JSX.Element {
   return (
     <MainLayout>
       {fetching ? (
-        <div>Loading</div>
+        <GameSkeleton />
       ) : (
         <div>
           <div className={styles.content}>
@@ -102,7 +85,7 @@ export default function Game(): JSX.Element {
                 opponentShots={opponentShots}
                 placedShips={placedShips}
                 rotationAxis={''}
-                selectedShip={selectedShip}
+                selectedShip={{} as Ship}
                 setPlacedShip={() => null}
               />
             </div>

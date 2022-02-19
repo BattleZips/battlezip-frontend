@@ -11,7 +11,6 @@ export const createGame = async (
   b_1: number[],
   c: number[]
 ) => {
-  console.log('CONTRACT: ', BATTLESHIP_GAME_CONTRACT);
   if (!BATTLESHIP_GAME_CONTRACT || !ethersProvider) return;
   const abi = new utils.Interface([
     'function newGame(uint256 _boardHash, uint256[2] a, uint256[2] b_0, uint256[2] b_1, uint256[2] c,) external'
@@ -22,4 +21,20 @@ export const createGame = async (
     ethersProvider.getSigner()
   );
   return contract.newGame(boardHash, a, b_0, b_1, c);
+};
+
+export const playingGame = async (
+  ethersProvider: providers.Web3Provider,
+  player: string
+) => {
+  if (!BATTLESHIP_GAME_CONTRACT || !ethersProvider) return;
+  const abi = new utils.Interface([
+    'function playing(address player) public view returns(uint256)'
+  ]);
+  const contract = new Contract(
+    BATTLESHIP_GAME_CONTRACT,
+    abi,
+    ethersProvider
+  );
+  return contract.playing(player);
 };

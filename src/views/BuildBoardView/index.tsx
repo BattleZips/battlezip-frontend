@@ -83,7 +83,7 @@ export default function BuildBoard(): JSX.Element {
   const [placedShips, setPlacedShips] = useState<Ship[]>([]);
   const [rotationAxis, setRotationAxis] = useState('y');
   const [selectedShip, setSelectedShip] = useState<Ship>(EMPTY_SHIP);
-  const { game } = useGame(!id, id ?? '');
+  // const { game } = useGame(!id, id ?? '');
 
   const allPlaced = useMemo(() => {
     return placedShips.length === 5;

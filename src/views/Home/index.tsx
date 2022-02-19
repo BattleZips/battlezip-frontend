@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { createUseStyles } from 'react-jss';
 import { useNavigate } from 'react-router-dom';
 import { ActiveGameLocation, NewGameLocation } from 'Locations';
@@ -9,7 +9,8 @@ import GameList from './components/GameList';
 import { useGames } from 'hooks/useGames';
 import { GameStatus } from 'web3/constants';
 import HomeSkeleton from './components/HomeSkeleton';
-// import { getRandomInt } from 'utils';
+import { useWallet } from 'contexts/WalletContext';
+import { playingGame } from 'web3/battleshipGame';
 
 const useStyles = createUseStyles({
   content: {
@@ -51,6 +52,19 @@ const useStyles = createUseStyles({
     display: 'flex',
     flexDirection: 'column',
     width: '551px'
+  },
+  rejoin: {
+    background: '#FF0055',
+    borderRadius: '3px',
+    color: '#FFFFFF',
+    cursor: 'pointer',
+    fontSize: '24px',
+    fontWeight: 700,
+    letterSpacing: '3.6px',
+    lineHeight: '34.68px',
+    margin: '48px auto 0 auto',
+    padding: '6px 12px',
+    textAlign: 'center'
   },
   right: {
     width: '523px'
@@ -98,16 +112,27 @@ const useStyles = createUseStyles({
 const GAME_OPTIONS = ['HOST GAME', 'JOIN GAME', 'JOIN RANDOM GAME'];
 
 export default function Home(): JSX.Element {
+  const { address, provider } = useWallet();
   const navigate = useNavigate();
   const styles = useStyles();
+  const [activeGame, setActiveGame] = useState(0);
   const [gameOption, setGameOption] = useState(0);
-  const [isInGame, setIsInGame] = useState(false);
   const [selectedGame, setSelectedGame] = useState<Game | null>(null);
-  const { fetching, games } = useGames(1000, GameStatus.Started);
+  const { fetching, games } = useGames(
+    1000,
+    GameStatus.Started,
+    activeGame < 0
+  );
 
   const disabled = useMemo(() => {
     return false;
   }, []);
+
+  const playing = async () => {
+    if (!address || !provider) return;
+    const playing = await playingGame(provider, address);
+    setActiveGame(playing || -1);
+  };
 
   const handleOptionSelected = (option: number) => {
     if (option === gameOption) return;
@@ -138,13 +163,23 @@ export default function Home(): JSX.Element {
     // navigate(GameLocation);
   };
 
+  useEffect(() => {
+    playing();
+  }, [address, provider]);
+
   return (
     <MainLayout>
       {fetching ? (
         <HomeSkeleton />
-      ) : isInGame ? (
+      ) : activeGame > 0 ? (
         <div className={styles.isInGame}>
           <div>YOU ARE ALREADY IN A GAME</div>
+          <div
+            className={styles.rejoin}
+            onClick={() => navigate(ActiveGameLocation(`${activeGame}`))}
+          >
+            REJOIN
+          </div>
         </div>
       ) : (
         <div className={styles.content}>
