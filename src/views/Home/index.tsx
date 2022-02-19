@@ -169,6 +169,7 @@ export default function Home(): JSX.Element {
 
   useEffect(() => {
     playing();
+    // eslint-disable-next-line
   }, [address, provider]);
 
   return (

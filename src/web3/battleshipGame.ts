@@ -1,4 +1,4 @@
-import { BigNumber, constants, Contract, providers, utils } from 'ethers';
+import { Contract, providers, utils } from 'ethers';
 
 const { REACT_APP_BATTLESHIP_GAME_CONTRACT: BATTLESHIP_GAME_CONTRACT } =
   process.env;

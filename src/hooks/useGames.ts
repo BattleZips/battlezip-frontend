@@ -44,7 +44,7 @@ export const useGames = (
     } finally {
       setFecthing(false);
     }
-  }, [chainId, error, limit]);
+  }, [chainId, error, isPlaying, limit, status]);
 
   useEffect(() => {
     fetchData();

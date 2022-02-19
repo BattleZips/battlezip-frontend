@@ -93,7 +93,9 @@ export default function OpponentBoard({
                 return (
                   <div
                     className={styles.tile}
-                    onClick={() => !wasShot && setSelectedTile(index)}
+                    onClick={() =>
+                      yourTurn && !wasShot && setSelectedTile(index)
+                    }
                     onMouseOver={() => setHoveredTile(index)}
                     onMouseLeave={() => setHoveredTile(-1)}
                   >
@@ -118,10 +120,10 @@ export default function OpponentBoard({
       </div>
       <div
         className={styles.fire}
-        onClick={() => selectedTile >= 0 && handleShot()}
+        onClick={() => yourTurn && selectedTile >= 0 && handleShot()}
         style={{
-          background: selectedTile >= 0 ? '#FF0055' : '#C7C7C7',
-          cursor: selectedTile >= 0 ? 'pointer' : 'not-allowed'
+          background: yourTurn && selectedTile >= 0 ? '#FF0055' : '#C7C7C7',
+          cursor: yourTurn && selectedTile >= 0 ? 'pointer' : 'not-allowed'
         }}
       >
         {selectedTile >= 0 ? 'FIRE' : 'SELECT POSITION'}

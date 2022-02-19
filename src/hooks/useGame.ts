@@ -22,7 +22,7 @@ export const useGame = (
     } finally {
       setFecthing(false);
     }
-  }, [chainId, error]);
+  }, [chainId, error, id]);
 
   useEffect(() => {
     fetchData();

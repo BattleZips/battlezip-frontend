@@ -1,13 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
 import { createUseStyles } from 'react-jss';
 import Board from '../../components/Board';
-import { EMPTY_SHIP, Ship } from 'components/Board/types';
+import { Ship } from 'components/Board/types';
 import MainLayout from 'layouts/MainLayout';
 import OpponentBoard from 'components/Board/OpponentBoard';
-import { createGame } from 'web3/battleshipGame';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useWallet } from 'contexts/WalletContext';
-import { ActiveGameLocation, RootLocation } from 'Locations';
+import { RootLocation } from 'Locations';
 import { useGame } from 'hooks/useGame';
 import GameSkeleton from './components/GameSkeleton';
 
@@ -33,21 +32,40 @@ export default function Game(): JSX.Element {
   const { id } = useParams();
   const styles = useStyles();
   const navigate = useNavigate();
-  const { address, provider } = useWallet();
-  const [gameStatus, setGameStatus] = useState('');
+  const { address } = useWallet();
   const [opponentShots, setOpponentShots] = useState<number[]>([]);
   const [placedShips, setPlacedShips] = useState<Ship[]>([]);
   const [yourShots, setYourShots] = useState<number[]>([]);
   const { fetching, game } = useGame(id ?? '');
 
   const restoreBoardState = () => {
-    const storedBoard = localStorage.getItem('BOARD_STATE');
+    if (!game) return;
+    const storedBoard = localStorage.getItem(`BOARD_STATE_${id}`);
     if (storedBoard) {
       setPlacedShips(JSON.parse(storedBoard));
     }
+    const evenShots = game.shots
+      .filter((shot: any, index: number) => index % 2 === 0)
+      .map((shot: any) => shot.y * 10 + shot.x);
+    const oddShots = game.shots
+      .filter((shot: any, index: number) => index % 2 === 1)
+      .map((shot: any) => shot.y * 10 + shot.x);
+    if (game.startedBy === address) {
+      setOpponentShots(oddShots);
+      setYourShots(evenShots);
+    } else {
+      setOpponentShots(evenShots);
+      setYourShots(oddShots);
+    }
   };
 
-  const yourTurn = useMemo(() => {}, [game]);
+  const yourTurn = useMemo(() => {
+    if (!game) return false;
+    const totalShots = game.shots.length;
+    return game.startedBy === address
+      ? totalShots % 2 === 0
+      : totalShots % 2 === 1;
+  }, [address, game]);
 
   useEffect(() => {
     if (!fetching) {
@@ -63,7 +81,8 @@ export default function Game(): JSX.Element {
         navigate(RootLocation);
       }
     }
-  }, [fetching, id]);
+    // eslint-disable-next-line
+  }, [address, fetching, game, id, navigate]);
 
   return (
     <MainLayout>
@@ -82,7 +101,7 @@ export default function Game(): JSX.Element {
               <OpponentBoard
                 shots={yourShots}
                 takeShot={setYourShots}
-                yourTurn={true}
+                yourTurn={yourTurn}
               />
             </div>
             <div style={{ width: '523px' }}>
