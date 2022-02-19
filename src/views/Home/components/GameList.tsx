@@ -54,6 +54,7 @@ export default function GameList({
         {games.map((game) => (
           <div
             className={styles.row}
+            key={game.address}
             onClick={() => gameOption === 1 && setSelectedGame(game)}
             style={{
               background:

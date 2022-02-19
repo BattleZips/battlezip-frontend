@@ -135,7 +135,7 @@ export default function Home(): JSX.Element {
           </div>
           <div className={styles.gameOptions}>
             {GAME_OPTIONS.map((option, index) => (
-              <div className={styles.gameOption}>
+              <div className={styles.gameOption} key={option}>
                 <div
                   className={styles.select}
                   onClick={() => handleOptionSelected(index)}

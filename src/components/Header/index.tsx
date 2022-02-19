@@ -1,5 +1,7 @@
+import { useWallet } from 'contexts/WalletContext';
 import { createUseStyles } from 'react-jss';
 import headerLogo from './images/headerLogo.svg';
+import { formatAddress } from 'utils';
 
 const useStyles = createUseStyles({
   container: {
@@ -50,6 +52,7 @@ const useStyles = createUseStyles({
 
 export default function Header(): JSX.Element {
   const styles = useStyles();
+  const { address, connectWallet, isConnected, isConnecting } = useWallet();
   return (
     <div className={styles.container}>
       <div className={styles.left}>
@@ -57,7 +60,13 @@ export default function Header(): JSX.Element {
         <div className={styles.separator} />
         <div className={styles.logoText}>BATTLEZIPS</div>
       </div>
-      <div className={styles.loginButton}>Connet Wallet</div>
+      <div className={styles.loginButton} onClick={() => connectWallet()}>
+        {isConnected
+          ? formatAddress(address, undefined)
+          : isConnecting
+          ? 'Connecting...'
+          : 'Connect'}
+      </div>
     </div>
   );
 }
