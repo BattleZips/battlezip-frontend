@@ -40,14 +40,26 @@ export default function Game(): JSX.Element {
   const [yourShots, setYourShots] = useState<number[]>([]);
   const { fetching, game } = useGame(id ?? '');
 
+  const restoreBoardState = () => {
+    const storedBoard = localStorage.getItem('BOARD_STATE');
+    if (storedBoard) {
+      setPlacedShips(JSON.parse(storedBoard));
+    }
+  };
+
   const yourTurn = useMemo(() => {}, [game]);
 
   useEffect(() => {
     if (!fetching) {
-      console.log('GAME: ', game);
-      if (!game) {
-        navigate(RootLocation);
-      } else if (game.status === 'STARTED' && game.startedBy !== address) {
+      if (game) {
+        const historic = game.status === 'OVER';
+        const inGame = game.startedBy === address || game.joinedBy === address;
+        if (!historic && !inGame) {
+          navigate(RootLocation);
+        } else {
+          restoreBoardState();
+        }
+      } else {
         navigate(RootLocation);
       }
     }

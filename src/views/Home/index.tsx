@@ -1,7 +1,11 @@
 import { useEffect, useState } from 'react';
 import { createUseStyles } from 'react-jss';
 import { useNavigate } from 'react-router-dom';
-import { ActiveGameLocation, NewGameLocation } from 'Locations';
+import {
+  ActiveGameLocation,
+  JoinGameLocation,
+  NewGameLocation
+} from 'Locations';
 import MainLayout from 'layouts/MainLayout';
 import { useMemo } from 'react';
 import { Game } from './types';
@@ -11,6 +15,7 @@ import { GameStatus } from 'web3/constants';
 import HomeSkeleton from './components/HomeSkeleton';
 import { useWallet } from 'contexts/WalletContext';
 import { playingGame } from 'web3/battleshipGame';
+import { getRandomInt } from 'utils';
 
 const useStyles = createUseStyles({
   content: {
@@ -125,8 +130,8 @@ export default function Home(): JSX.Element {
   );
 
   const disabled = useMemo(() => {
-    return false;
-  }, []);
+    return gameOption === 1 && !selectedGame;
+  }, [gameOption, selectedGame]);
 
   const playing = async () => {
     if (!address || !provider) return;
@@ -149,18 +154,17 @@ export default function Home(): JSX.Element {
         break;
       }
       case 1: {
-        if (!games) break;
-        // TODO: Add smart contract function to join game
+        if (!games || !selectedGame) break;
+        navigate(JoinGameLocation(`${selectedGame.id}`));
         break;
       }
       case 2: {
         if (!games) break;
-        // const gameId = getRandomInt(0, games.length - 1);
-        // TODO: Add smart contract function to join game
+        const gameId = getRandomInt(1, games.length - 1);
+        navigate(JoinGameLocation(`${gameId}`));
         break;
       }
     }
-    // navigate(GameLocation);
   };
 
   useEffect(() => {

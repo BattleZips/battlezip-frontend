@@ -34,7 +34,8 @@ export const useGames = (
       const ensObj = Object.assign({}, ...ensDomains);
       const gameArr = res.battleshipGames.map((game: any) => ({
         address: game.startedBy,
-        ens: ensObj[game.address]
+        ens: ensObj[game.address],
+        id: game.id
       }));
       setGames(gameArr);
     } catch (err) {

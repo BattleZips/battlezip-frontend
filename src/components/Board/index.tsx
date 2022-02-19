@@ -306,7 +306,9 @@ export default function Board({
           );
         })}
       </div>
-      <div className={styles.rotateText}>[PRESS THE SPACE BAR TO ROTATE]</div>
+      {!allPlaced && (
+        <div className={styles.rotateText}>[PRESS THE SPACE BAR TO ROTATE]</div>
+      )}
     </div>
   );
 }

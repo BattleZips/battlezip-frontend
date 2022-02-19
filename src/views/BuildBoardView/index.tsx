@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { createUseStyles } from 'react-jss';
 import Board from 'components/Board';
 import { EMPTY_SHIP, Ship } from 'components/Board/types';
@@ -9,11 +9,10 @@ import battleship from 'components/Board/images/battleshipSelection.svg';
 import submarine from 'components/Board/images/submarineSelection.svg';
 import cruiser from 'components/Board/images/cruiserSelection.svg';
 import destroyer from 'components/Board/images/destroyerSelection.svg';
-import { createGame } from 'web3/battleshipGame';
+import { createGame, joinGame } from 'web3/battleshipGame';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useWallet } from 'contexts/WalletContext';
 import { ActiveGameLocation } from 'Locations';
-import { useGame } from 'hooks/useGame';
 
 const useStyles = createUseStyles({
   content: {
@@ -83,7 +82,6 @@ export default function BuildBoard(): JSX.Element {
   const [placedShips, setPlacedShips] = useState<Ship[]>([]);
   const [rotationAxis, setRotationAxis] = useState('y');
   const [selectedShip, setSelectedShip] = useState<Ship>(EMPTY_SHIP);
-  // const { game } = useGame(!id, id ?? '');
 
   const allPlaced = useMemo(() => {
     return placedShips.length === 5;
@@ -122,7 +120,17 @@ export default function BuildBoard(): JSX.Element {
       board.push([x, y, z]);
     });
     if (id) {
-      // TODO: Join game
+      const tx = await joinGame(
+        provider,
+        +id,
+        0,
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0]
+      );
+      await tx.wait();
+      navigate(ActiveGameLocation(id));
     } else {
       // TODO: Fetch game id from event
       // TOOD: Add notification other player has already joined game
@@ -130,9 +138,9 @@ export default function BuildBoard(): JSX.Element {
       await tx.wait();
       navigate(ActiveGameLocation('1'));
     }
+    const boardState = JSON.stringify(placedShips);
+    localStorage.setItem('BOARD_STATE', boardState);
   };
-
-  useEffect(() => {}, [id]);
 
   return (
     <MainLayout>

@@ -20,7 +20,11 @@ const routeList = (isConnected: boolean) => [
     element: isConnected ? <Game /> : <Navigate to={RootLocation} />
   },
   {
-    path: NewGameLocation || JoinGameLocationTemplate,
+    path: JoinGameLocationTemplate,
+    element: isConnected ? <BuildBoard /> : <Navigate to={RootLocation} />
+  },
+  {
+    path: NewGameLocation,
     element: isConnected ? <BuildBoard /> : <Navigate to={RootLocation} />
   }
 ];
