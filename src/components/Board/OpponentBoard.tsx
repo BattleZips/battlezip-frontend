@@ -1,7 +1,7 @@
 import { SetStateAction, useState } from 'react';
 import { createUseStyles } from 'react-jss';
 // import hitIcon from '../../images/hit.svg';
-import missIcon from '../../images/miss.svg';
+import missIcon from './images/miss.svg';
 import { ReactComponent as CrosshairIcon } from './images/crosshair.svg';
 
 const useStyles = createUseStyles({

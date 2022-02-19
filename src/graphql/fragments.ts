@@ -3,6 +3,22 @@ import gql from 'fake-tag';
 export const BattleshipGameDetails = gql`
   fragment BattleshipGameDetails on BattleshipGame {
     id
+    joinedBy
+    startedBy
+    status
+    shots(first: 200) {
+      id
+      hit
+      x
+      y
+    }
+  }
+`;
+
+export const BattleshipGamesDetails = gql`
+  fragment BattleshipGamesDetails on BattleshipGame {
+    startedBy
+    id
     status
     totalShots
     winner
@@ -25,13 +41,12 @@ export const ENSDetails = gql`
   }
 `;
 
-export const ShotDetails = gql`
-  fragment ShotDetails on Shot {
-    id
-    game {
-      id
-    }
-    hit
-    turn
-  }
-`;
+// export const ShotDetails = gql`
+//   fragment ShotDetails on Shot {
+//     id
+//     game {
+//       id
+//     }
+//     hit
+//   }
+// `;

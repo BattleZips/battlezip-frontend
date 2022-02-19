@@ -26,12 +26,12 @@ type MainLayoutProps = {
 
 export default function MainLayout({ children }: MainLayoutProps): JSX.Element {
   const styles = useStyles();
-  const { isConnected } = useWallet();
+  const { isConnected, isConnecting } = useWallet();
   return (
     <div>
       <Header />
       <div className={styles.content}>
-        {isConnected ? (
+        {isConnected || isConnecting ? (
           children
         ) : (
           <div className={styles.connectWallet}>Connect Wallet</div>

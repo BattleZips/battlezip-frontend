@@ -104,7 +104,7 @@ export const WalletProvider: React.FC = ({ children }) => {
       rawProvider: prov,
       provider: ethersProvider,
       chainId: network,
-      address: signerAddress,
+      address: signerAddress.toLowerCase(),
       ensName: signerName
     });
   }, []);

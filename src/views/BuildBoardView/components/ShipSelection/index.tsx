@@ -1,5 +1,5 @@
 import { createUseStyles } from 'react-jss';
-import { EMPTY_SHIP, Ship } from '../../types';
+import { EMPTY_SHIP, Ship } from 'components/Board/types';
 
 const useStyles = createUseStyles({
   row: {

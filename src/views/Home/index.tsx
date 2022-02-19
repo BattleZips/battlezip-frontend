@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import { createUseStyles } from 'react-jss';
 import { useNavigate } from 'react-router-dom';
-import { GameLocation } from 'Locations';
+import { ActiveGameLocation, NewGameLocation } from 'Locations';
 import MainLayout from 'layouts/MainLayout';
 import { useMemo } from 'react';
 import { Game } from './types';
 import GameList from './components/GameList';
 import { useGames } from 'hooks/useGames';
 import { GameStatus } from 'web3/constants';
+import HomeSkeleton from './components/HomeSkeleton';
 // import { getRandomInt } from 'utils';
 
 const useStyles = createUseStyles({
@@ -35,6 +36,16 @@ const useStyles = createUseStyles({
     letterSpacing: '3.6px',
     lineHeight: '34.68px',
     marginTop: '221px'
+  },
+  isInGame: {
+    alignItems: 'center',
+    display: 'flex',
+    flexDirection: 'column',
+    fontSize: '48px',
+    fontWeight: 700,
+    height: '400px',
+    justifyContent: 'center',
+    letterSpacing: '3.6px'
   },
   left: {
     display: 'flex',
@@ -90,8 +101,9 @@ export default function Home(): JSX.Element {
   const navigate = useNavigate();
   const styles = useStyles();
   const [gameOption, setGameOption] = useState(0);
+  const [isInGame, setIsInGame] = useState(false);
   const [selectedGame, setSelectedGame] = useState<Game | null>(null);
-  const { games } = useGames(1000, GameStatus.STARTED);
+  const { fetching, games } = useGames(1000, GameStatus.Started);
 
   const disabled = useMemo(() => {
     return false;
@@ -108,7 +120,7 @@ export default function Home(): JSX.Element {
   const startGame = () => {
     switch (gameOption) {
       case 0: {
-        // TODO: Add smart contract function to start game
+        navigate(NewGameLocation);
         break;
       }
       case 1: {
@@ -123,53 +135,69 @@ export default function Home(): JSX.Element {
         break;
       }
     }
-    navigate(GameLocation);
+    // navigate(GameLocation);
   };
 
   return (
     <MainLayout>
-      <div className={styles.content}>
-        <div className={styles.left}>
-          <div className={styles.sectionHead} style={{ background: '#FF0055' }}>
-            PLAY GAME
-          </div>
-          <div className={styles.gameOptions}>
-            {GAME_OPTIONS.map((option, index) => (
-              <div className={styles.gameOption} key={option}>
-                <div
-                  className={styles.select}
-                  onClick={() => handleOptionSelected(index)}
-                >
-                  {index === gameOption && <div className={styles.selected} />}
+      {fetching ? (
+        <HomeSkeleton />
+      ) : isInGame ? (
+        <div className={styles.isInGame}>
+          <div>YOU ARE ALREADY IN A GAME</div>
+        </div>
+      ) : (
+        <div className={styles.content}>
+          <div className={styles.left}>
+            <div
+              className={styles.sectionHead}
+              style={{ background: '#FF0055' }}
+            >
+              PLAY GAME
+            </div>
+            <div className={styles.gameOptions}>
+              {GAME_OPTIONS.map((option, index) => (
+                <div className={styles.gameOption} key={option}>
+                  <div
+                    className={styles.select}
+                    onClick={() => handleOptionSelected(index)}
+                  >
+                    {index === gameOption && (
+                      <div className={styles.selected} />
+                    )}
+                  </div>
+                  <div>{option}</div>
                 </div>
-                <div>{option}</div>
-              </div>
-            ))}
+              ))}
+            </div>
+            <div
+              className={styles.startButton}
+              onClick={() => startGame()}
+              style={{
+                background: disabled ? '#C7C7C7' : '#2861E9',
+                cursor: disabled ? 'not-allowed' : 'pointer'
+              }}
+            >
+              START GAME
+            </div>
           </div>
-          <div
-            className={styles.startButton}
-            onClick={() => startGame()}
-            style={{
-              background: disabled ? '#C7C7C7' : '#2861E9',
-              cursor: disabled ? 'not-allowed' : 'pointer'
-            }}
-          >
-            START GAME
-          </div>
-        </div>
-        <div className={styles.right}>
-          <div className={styles.sectionHead} style={{ background: '#717C96' }}>
-            OPEN GAMES
-          </div>
+          <div className={styles.right}>
+            <div
+              className={styles.sectionHead}
+              style={{ background: '#717C96' }}
+            >
+              OPEN GAMES
+            </div>
 
-          <GameList
-            games={games ?? []}
-            gameOption={gameOption}
-            selectedGame={selectedGame}
-            setSelectedGame={setSelectedGame}
-          />
+            <GameList
+              games={games ?? []}
+              gameOption={gameOption}
+              selectedGame={selectedGame}
+              setSelectedGame={setSelectedGame}
+            />
+          </div>
         </div>
-      </div>
+      )}
     </MainLayout>
   );
 }

@@ -1,6 +1,12 @@
 import { useWallet } from 'contexts/WalletContext';
-import { GameLocation, RootLocation } from 'Locations';
+import {
+  ActiveGameLocationTemplate,
+  JoinGameLocationTemplate,
+  NewGameLocation,
+  RootLocation
+} from 'Locations';
 import { Navigate, useRoutes } from 'react-router-dom';
+import BuildBoard from 'views/BuildBoardView';
 import Game from 'views/Game';
 import Home from 'views/Home';
 
@@ -10,13 +16,17 @@ const routeList = (isConnected: boolean) => [
     element: <Home />
   },
   {
-    path: GameLocation,
+    path: ActiveGameLocationTemplate,
     element: isConnected ? <Game /> : <Navigate to={RootLocation} />
+  },
+  {
+    path: NewGameLocation || JoinGameLocationTemplate,
+    element: isConnected ? <BuildBoard /> : <Navigate to={RootLocation} />
   }
 ];
 
 export default function Routes(): JSX.Element {
-  const { isConnected } = useWallet();
-  const routes = useRoutes(routeList(isConnected));
+  const { isConnected, isConnecting } = useWallet();
+  const routes = useRoutes(routeList(isConnected || isConnecting));
   return <div>{routes}</div>;
 }

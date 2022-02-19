@@ -24,33 +24,34 @@ export const RPC_URLS: StringInfo = {
 export const EXPLORER_URLS: StringInfo = {
   1: 'https://etherscan.io',
   4: 'https://rinkeby.etherscan.io',
-  5: 'https://goerli.etherscan.io',
+  5: 'https://goerli.etherscan.io'
 };
 
 export const NETWORK_CURRENCIES: CurrencyInfo = {
   1: {
     name: 'Ethereum',
-    symbol: 'ETH',
+    symbol: 'ETH'
   },
   4: {
     name: 'Ethereum',
-    symbol: 'ETH',
+    symbol: 'ETH'
   },
   5: {
     name: 'Ethereum',
-    symbol: 'ETH',
-  },
+    symbol: 'ETH'
+  }
 };
 
 export enum GameStatus {
-  STARTED = 'STARTED',
-  JOINED = 'JOINED',
-  OVER = 'OVER'
+  Joined = 'JOINED',
+  Over = 'OVER',
+  Started = 'STARTED'
 }
 
 export const SUBGRAPH_URLS: StringInfo = {
   1: 'https://api.thegraph.com/subgraphs/name/ensdomains/ens',
-  4: 'https://api.thegraph.com/subgraphs/name/ian-bright/zk_battleship_rinkeby'
+  4: 'https://api.thegraph.com/subgraphs/name/ian-bright/zk_battleship_rinkeby',
+  5: 'https://api.thegraph.com/subgraphs/name/ian-bright/battlezips_goerli'
 };
 
 export const NETWORK_NAMES: StringInfo = {

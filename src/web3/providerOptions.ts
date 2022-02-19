@@ -7,10 +7,10 @@ export const providerOptions: IProviderOptions = {
     options: {
       rpc: {
         1: process.env.REACT_APP_MAINNET_RPC,
-        4: process.env.REACT_APP_RINKEBY_RPC,
-      },
-    },
-  },
+        4: process.env.REACT_APP_RINKEBY_RPC
+      }
+    }
+  }
   /*'custom-torus-rinkeby': {
     display: {
       logo: TorusLogo,
