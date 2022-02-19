@@ -39,7 +39,9 @@ export const WalletContext = createContext<WalletContextType>({
   chainId: null,
   address: null,
   ensName: null,
-  connectWallet: async () => {},
+  connectWallet: async () => {
+    return;
+  },
   disconnect: () => undefined,
   isConnecting: true,
   isConnected: false,
@@ -60,10 +62,8 @@ const isMetamaskProvider = (
 ) => provider?.connection?.url === 'metamask';
 
 export const WalletProvider: React.FC = ({ children }) => {
-  const [
-    { rawProvider, provider, chainId, address, authToken, ensName },
-    setWalletState
-  ] = useState<WalletStateType>({});
+  const [{ rawProvider, provider, chainId, address, ensName }, setWalletState] =
+    useState<WalletStateType>({});
 
   const isConnected: boolean = useMemo(
     () => !!provider && !!address && !!chainId,
@@ -115,7 +115,8 @@ export const WalletProvider: React.FC = ({ children }) => {
 
       const modalProvider = await (async () => {
         const choosenProvider = await web3Modal.connect();
-        return choosenProvider.instance.rpcProvider;
+        await setWalletProvider(choosenProvider);
+        return choosenProvider;
       })();
 
       modalProvider.on('accountsChanged', () => {

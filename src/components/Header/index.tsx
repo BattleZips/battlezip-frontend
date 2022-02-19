@@ -2,6 +2,7 @@ import { useWallet } from 'contexts/WalletContext';
 import { createUseStyles } from 'react-jss';
 import headerLogo from './images/headerLogo.svg';
 import { formatAddress } from 'utils';
+import Avatar from 'components/Avatar';
 
 const useStyles = createUseStyles({
   container: {
@@ -30,6 +31,7 @@ const useStyles = createUseStyles({
     color: '#9CA3B6',
     cursor: 'pointer',
     display: 'flex',
+    gap: '8px',
     letterSpacing: '2.1px',
     padding: '6px 8px'
   },
@@ -52,7 +54,8 @@ const useStyles = createUseStyles({
 
 export default function Header(): JSX.Element {
   const styles = useStyles();
-  const { address, connectWallet, isConnected, isConnecting } = useWallet();
+  const { address, connectWallet, disconnect, isConnected, isConnecting } =
+    useWallet();
   return (
     <div className={styles.container}>
       <div className={styles.left}>
@@ -60,12 +63,20 @@ export default function Header(): JSX.Element {
         <div className={styles.separator} />
         <div className={styles.logoText}>BATTLEZIPS</div>
       </div>
-      <div className={styles.loginButton} onClick={() => connectWallet()}>
-        {isConnected
-          ? formatAddress(address, undefined)
-          : isConnecting
-          ? 'Connecting...'
-          : 'Connect'}
+      <div
+        className={styles.loginButton}
+        onClick={() =>
+          !isConnecting && (!isConnected ? connectWallet() : disconnect())
+        }
+      >
+        {address && <Avatar address={address} />}
+        <div>
+          {isConnected
+            ? formatAddress(address, undefined)
+            : isConnecting
+            ? 'Connecting...'
+            : 'Connect'}
+        </div>
       </div>
     </div>
   );
