@@ -2,7 +2,6 @@ const webpack = require('webpack');
 module.exports = function override(config, env) {
   config.resolve.fallback = {
     url: require.resolve('url'),
-    fs: require.resolve('fs'),
     assert: require.resolve('assert'),
     crypto: require.resolve('crypto-browserify'),
     http: require.resolve('stream-http'),
