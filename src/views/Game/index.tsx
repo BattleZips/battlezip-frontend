@@ -17,6 +17,7 @@ import { toast } from 'react-hot-toast';
 import { useMiMCSponge } from 'hooks/useMiMCSponge';
 import { groth16 } from 'snarkjs';
 import { buildProofArgs } from 'utils';
+import GameOver from './components/GameOver';
 
 const useStyles = createUseStyles({
   content: {
@@ -58,6 +59,7 @@ export default function Game(): JSX.Element {
   const navigate = useNavigate();
   const { address, provider } = useWallet();
   const { mimcSponge } = useMiMCSponge();
+  const [gameOver, setGameOver] = useState({ over: false, winner: '' });
   const [opponentShots, setOpponentShots] = useState<Shot[]>([]);
   const [placedShips, setPlacedShips] = useState<Ship[]>([]);
   const [yourShots, setYourShots] = useState<Shot[]>([]);
@@ -95,7 +97,11 @@ export default function Game(): JSX.Element {
       board.push([x, y, z]);
     });
     const switchedBoard = board.map((entry) => [entry[1], entry[0], entry[2]]);
-    const { proof } = await shotProof(switchedBoard, [shotCoords[0], shotCoords[1]], hit);
+    const { proof } = await shotProof(
+      switchedBoard,
+      [shotCoords[0], shotCoords[1]],
+      hit
+    );
     return proof;
   };
 
@@ -212,6 +218,8 @@ export default function Game(): JSX.Element {
         const inGame = playing();
         if (!historic && !inGame) {
           navigate(RootLocation);
+        } else if (historic && inGame) {
+          setGameOver({ over: true, winner: game.winner });
         } else {
           restoreBoardState();
         }
@@ -226,6 +234,8 @@ export default function Game(): JSX.Element {
     <MainLayout>
       {fetching && !refreshCount ? (
         <GameSkeleton />
+      ) : gameOver.over ? (
+        <GameOver winner={gameOver.winner === address} />
       ) : (
         <div>
           <div className={styles.content}>
