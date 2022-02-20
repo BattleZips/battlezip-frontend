@@ -188,7 +188,7 @@ export default function Game(): JSX.Element {
     <MainLayout>
       {fetching && !refreshCount ? (
         <GameSkeleton />
-      ) : !gameOver.over ? (
+      ) : gameOver.over ? (
         <GameOver winner={gameOver.winner === address} />
       ) : (
         <div>

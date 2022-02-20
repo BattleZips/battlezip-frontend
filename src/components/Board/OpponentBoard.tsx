@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { createUseStyles } from 'react-jss';
 import { ReactComponent as HitIcon } from './images/hit.svg';
 import { ReactComponent as MissIcon } from './images/miss.svg';
+import { ReactComponent as PendingShot } from './images/pendingShot.svg';
 import { ReactComponent as CrosshairIcon } from './images/crosshair.svg';
 import { Shot } from 'views/Game/types';
 
@@ -108,7 +109,7 @@ export default function OpponentBoard({
                   >
                     {wasShot &&
                       (wasShot.hit === null || wasShot.hit === undefined ? (
-                        <HitIcon style={{ opacity: 0.5 }} />
+                        <PendingShot />
                       ) : wasShot.hit ? (
                         <HitIcon />
                       ) : (
