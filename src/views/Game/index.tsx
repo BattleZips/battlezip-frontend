@@ -64,19 +64,22 @@ export default function Game(): JSX.Element {
   const { fetching, game, refreshCount } = useGame(id ?? '');
 
   // given a board, return mimcSponge hash and zk proof of board integrity
-  const boardProof = async (
-    board: number[][]
+  const shotProof = async (
+    board: number[][],
+    shot: number[],
+    hit: boolean
   ): Promise<{ hash: BigInt; proof: number[][] }> => {
     const _shipHash = mimcSponge.F.toObject(
       await mimcSponge.multiHash(board.flat())
     );
+    console.log({ ships: board, hash: _shipHash, shot, hit });
     const { proof, publicSignals } = await groth16.fullProve(
-      { ships: board, hash: _shipHash },
-      'https://ipfs.infura.io/ipfs/QmRt4Uzi5w57fUne4cgPoBdSDJzQhEgHNisnib4iKTQ7Xt',
-      'https://ipfs.infura.io/ipfs/Qmaope4n6y4zCSnLDNAHJYnPq1Kdf3yapbRPzGiFd11EUj'
+      { ships: board, hash: _shipHash, shot, hit },
+      'https://ipfs.infura.io/ipfs/QmW4GhGVofT9o1bGcGajuamWgY8QhMAp2vE8mKu4yfw3oW',
+      'https://ipfs.infura.io/ipfs/QmZFkHjGeCHfhE4xLYo3gAgRaqpTCm5YEmCWGtGFHfWTha'
     );
     await groth16.verify(
-      require('zk/board_verification_key.json'),
+      require('zk/shot_verification_key.json'),
       publicSignals,
       proof
     );
@@ -84,7 +87,8 @@ export default function Game(): JSX.Element {
     return { hash: _shipHash, proof: proofArgs };
   };
 
-  const getBoardProof = async () => {
+  const getShotProof = async (shotCoords: number[], hit: boolean) => {
+    console.log('COORDS: ', shotCoords);
     const board: number[][] = [];
     placedShips.forEach((ship: Ship) => {
       const x = Math.floor(ship.sections[0] / 10);
@@ -93,7 +97,7 @@ export default function Game(): JSX.Element {
       board.push([x, y, z]);
     });
     const switchedBoard = board.map((entry) => [entry[1], entry[0], entry[2]]);
-    const { proof } = await boardProof(switchedBoard);
+    const { proof } = await shotProof(switchedBoard, shotCoords, hit);
     return proof;
   };
 
@@ -150,7 +154,6 @@ export default function Game(): JSX.Element {
     setYourShots((prev) => [...prev, shot].sort((a, b) => b.turn - a.turn));
     let loadingToast = '';
     try {
-      const proof = await getBoardProof();
       const first = !opponentShots.length && !yourShots.length;
       loadingToast = toast.loading('Firing shot...');
       if (first) {
@@ -159,6 +162,7 @@ export default function Game(): JSX.Element {
       } else {
         const lastShot = opponentShots[opponentShots.length - 1];
         const hit = !!wasHit(lastShot.x + lastShot.y * 10);
+        const proof = await getShotProof([shot.x, shot.y], hit);
         const tx = await turn(
           provider,
           +game.id,
@@ -174,6 +178,7 @@ export default function Game(): JSX.Element {
       toast.remove(loadingToast);
       toast.success('Shot fired');
     } catch (err) {
+      console.log('ERROR: ', err);
       toast.remove(loadingToast);
       toast.error('Error firing shot');
       setYourShots((prev) => prev.filter((prevShot) => prevShot !== shot));
