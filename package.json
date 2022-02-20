@@ -47,7 +47,7 @@
     "generate": "graphql-codegen --config=codegen.yml",
     "test": "react-app-rewired test",
     "eject": "react-app-rewired eject",
-    "postinstall": "./postinstall.sh"
+    "prebuild": "./postinstall.sh"
   },
   "eslintConfig": {
     "extends": [
