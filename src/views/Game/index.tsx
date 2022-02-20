@@ -14,6 +14,9 @@ import eth from 'images/eth.svg';
 import { firstTurn, turn } from 'web3/battleshipGame';
 import { Shot } from './types';
 import { toast } from 'react-hot-toast';
+import { useMiMCSponge } from 'hooks/useMiMCSponge';
+import { groth16 } from 'snarkjs';
+import { buildProofArgs } from 'utils';
 import GameOver from './components/GameOver';
 
 const useStyles = createUseStyles({
@@ -55,11 +58,52 @@ export default function Game(): JSX.Element {
   const styles = useStyles();
   const navigate = useNavigate();
   const { address, provider } = useWallet();
+  const { mimcSponge } = useMiMCSponge();
   const [gameOver, setGameOver] = useState({ over: false, winner: '' });
   const [opponentShots, setOpponentShots] = useState<Shot[]>([]);
   const [placedShips, setPlacedShips] = useState<Ship[]>([]);
   const [yourShots, setYourShots] = useState<Shot[]>([]);
   const { fetching, game, refreshCount } = useGame(id ?? '');
+
+  // given a board, return mimcSponge hash and zk proof of board integrity
+  const shotProof = async (
+    board: number[][],
+    shot: number[],
+    hit: boolean
+  ): Promise<{ hash: BigInt; proof: number[][] }> => {
+    const _shipHash = mimcSponge.F.toObject(
+      await mimcSponge.multiHash(board.flat())
+    );
+    const { proof, publicSignals } = await groth16.fullProve(
+      { ships: board, hash: _shipHash, shot, hit },
+      'https://ipfs.infura.io/ipfs/QmW4GhGVofT9o1bGcGajuamWgY8QhMAp2vE8mKu4yfw3oW',
+      'https://ipfs.infura.io/ipfs/QmZFkHjGeCHfhE4xLYo3gAgRaqpTCm5YEmCWGtGFHfWTha'
+    );
+    await groth16.verify(
+      require('zk/shot_verification_key.json'),
+      publicSignals,
+      proof
+    );
+    const proofArgs = buildProofArgs(proof);
+    return { hash: _shipHash, proof: proofArgs };
+  };
+
+  const getShotProof = async (shotCoords: number[], hit: boolean) => {
+    const board: number[][] = [];
+    placedShips.forEach((ship: Ship) => {
+      const x = Math.floor(ship.sections[0] / 10);
+      const y = ship.sections[0] % 10;
+      const z = ship.orientation === 'x' ? 0 : 1;
+      board.push([x, y, z]);
+    });
+    const switchedBoard = board.map((entry) => [entry[1], entry[0], entry[2]]);
+    const { proof } = await shotProof(
+      switchedBoard,
+      [shotCoords[0], shotCoords[1]],
+      hit
+    );
+    return proof;
+  };
 
   const playing = async () => {
     if (!address || !provider) return;
@@ -122,21 +166,23 @@ export default function Game(): JSX.Element {
       } else {
         const lastShot = opponentShots[opponentShots.length - 1];
         const hit = !!wasHit(lastShot.x + lastShot.y * 10);
+        const proof = await getShotProof([lastShot.x, lastShot.y], hit);
         const tx = await turn(
           provider,
           +game.id,
           hit,
           [shot.x, shot.y],
-          [0, 0],
-          [0, 0],
-          [0, 0],
-          [0, 0]
+          proof[0],
+          proof[1],
+          proof[2],
+          proof[3]
         );
         await tx.wait();
       }
       toast.remove(loadingToast);
       toast.success('Shot fired');
     } catch (err) {
+      console.log('ERROR: ', err);
       toast.remove(loadingToast);
       toast.error('Error firing shot');
       setYourShots((prev) => prev.filter((prevShot) => prevShot !== shot));

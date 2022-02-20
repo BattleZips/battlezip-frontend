@@ -1,15 +1,15 @@
-import { Contract, providers, utils } from 'ethers';
+import { Contract, providers, utils, BigNumberish } from 'ethers';
 
 const { REACT_APP_BATTLESHIP_GAME_CONTRACT: BATTLESHIP_GAME_CONTRACT } =
   process.env;
 
 export const createGame = async (
   ethersProvider: providers.Web3Provider,
-  boardHash: number,
-  a: number[],
-  b_0: number[],
-  b_1: number[],
-  c: number[]
+  boardHash: BigNumberish,
+  a: BigNumberish[],
+  b_0: BigNumberish[],
+  b_1: BigNumberish[],
+  c: BigNumberish[]
 ) => {
   if (!BATTLESHIP_GAME_CONTRACT || !ethersProvider) return;
   const abi = new utils.Interface([
@@ -39,11 +39,11 @@ export const getGameIndex = async (ethersProvider: providers.Web3Provider) => {
 export const joinGame = async (
   ethersProvider: providers.Web3Provider,
   gameId: number,
-  boardHash: number,
-  a: number[],
-  b_0: number[],
-  b_1: number[],
-  c: number[]
+  boardHash: BigNumberish,
+  a: BigNumberish[],
+  b_0: BigNumberish[],
+  b_1: BigNumberish[],
+  c: BigNumberish[]
 ) => {
   if (!BATTLESHIP_GAME_CONTRACT || !ethersProvider) return;
   const abi = new utils.Interface([
@@ -91,10 +91,10 @@ export const turn = async (
   gameId: number,
   hit: boolean,
   next: number[],
-  a: number[],
-  b_0: number[],
-  b_1: number[],
-  c: number[]
+  a: BigNumberish[],
+  b_0: BigNumberish[],
+  b_1: BigNumberish[],
+  c: BigNumberish[]
 ) => {
   if (!BATTLESHIP_GAME_CONTRACT || !ethersProvider) return;
   console.log('GAME ID: ', gameId);

@@ -13,7 +13,11 @@ import { createGame, getGameIndex, joinGame } from 'web3/battleshipGame';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useWallet } from 'contexts/WalletContext';
 import { ActiveGameLocation } from 'Locations';
+import { useMiMCSponge } from 'hooks/useMiMCSponge';
+import { groth16 } from 'snarkjs';
+import { buildProofArgs } from 'utils';
 import { toast } from 'react-hot-toast';
+import { BigNumber as BN } from 'ethers';
 
 const useStyles = createUseStyles({
   content: {
@@ -78,6 +82,7 @@ export default function BuildBoard(): JSX.Element {
   const { id } = useParams();
   const styles = useStyles();
   const navigate = useNavigate();
+  const { mimcSponge } = useMiMCSponge();
   const { address, provider } = useWallet();
   const [placedShips, setPlacedShips] = useState<Ship[]>([]);
   const [rotationAxis, setRotationAxis] = useState('y');
@@ -110,6 +115,27 @@ export default function BuildBoard(): JSX.Element {
     }
   };
 
+  // given a board, return mimcSponge hash and zk proof of board integrity
+  const boardProof = async (
+    board: number[][]
+  ): Promise<{ hash: BigInt; proof: number[][] }> => {
+    const _shipHash = mimcSponge.F.toObject(
+      await mimcSponge.multiHash(board.flat())
+    );
+    const { proof, publicSignals } = await groth16.fullProve(
+      { ships: board, hash: _shipHash },
+      'https://ipfs.infura.io/ipfs/QmRt4Uzi5w57fUne4cgPoBdSDJzQhEgHNisnib4iKTQ7Xt',
+      'https://ipfs.infura.io/ipfs/Qmaope4n6y4zCSnLDNAHJYnPq1Kdf3yapbRPzGiFd11EUj'
+    );
+    await groth16.verify(
+      require('zk/board_verification_key.json'),
+      publicSignals,
+      proof
+    );
+    const proofArgs = buildProofArgs(proof);
+    return { hash: _shipHash, proof: proofArgs };
+  };
+
   const startGame = async () => {
     if (!provider) return;
     const board: number[][] = [];
@@ -119,6 +145,8 @@ export default function BuildBoard(): JSX.Element {
       const z = ship.orientation === 'x' ? 0 : 1;
       board.push([x, y, z]);
     });
+    const switchedBoard = board.map((entry) => [entry[1], entry[0], entry[2]]);
+    const { hash, proof } = await boardProof(switchedBoard);
     let loadingToast = '';
     try {
       if (id) {
@@ -126,11 +154,11 @@ export default function BuildBoard(): JSX.Element {
         const tx = await joinGame(
           provider,
           +id,
-          0,
-          [0, 0],
-          [0, 0],
-          [0, 0],
-          [0, 0]
+          BN.from(hash),
+          proof[0],
+          proof[1],
+          proof[2],
+          proof[3]
         );
         await tx.wait();
         localStorage.setItem(
@@ -142,14 +170,16 @@ export default function BuildBoard(): JSX.Element {
         navigate(ActiveGameLocation(id));
       } else {
         loadingToast = toast.loading(`Creating game...`);
+        console.log('flaga');
         const tx = await createGame(
           provider,
-          0,
-          [0, 0],
-          [0, 0],
-          [0, 0],
-          [0, 0]
+          BN.from(hash),
+          proof[0],
+          proof[1],
+          proof[2],
+          proof[3]
         );
+        console.log('flagb');
         await tx.wait();
         const currentIndex = await getGameIndex(provider);
         localStorage.setItem(
@@ -161,6 +191,7 @@ export default function BuildBoard(): JSX.Element {
         navigate(ActiveGameLocation(currentIndex + 1));
       }
     } catch (err) {
+      console.log('ERROR:', err);
       toast.remove(loadingToast);
       toast.error(id ? 'Error joining game' : 'Error creating game', {
         duration: 5000

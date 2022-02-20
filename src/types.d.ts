@@ -5,3 +5,9 @@ declare module 'fake-tag' {
   ): string;
   export = gql;
 }
+
+declare module "ffjavascript";
+declare module "circomlibjs";
+declare module "snarkjs";
+declare module "boardWasm";
+declare module "shotWasm";
