@@ -14,6 +14,9 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useWallet } from 'contexts/WalletContext';
 import { ActiveGameLocation } from 'Locations';
 import { useGame } from 'hooks/useGame';
+import { useMiMCSponge } from 'hooks/useMiMCSponge';
+import { groth16 } from 'snarkjs';
+import { buildProofArgs } from 'utils';
 
 const useStyles = createUseStyles({
   content: {
@@ -79,6 +82,8 @@ export default function BuildBoard(): JSX.Element {
   const styles = useStyles();
   const navigate = useNavigate();
   const { provider } = useWallet();
+  const { mimcSponge } = useMiMCSponge();
+  const [shipHash, setShipHash] = useState(0);
   const [gameStatus, setGameStatus] = useState('');
   const [placedShips, setPlacedShips] = useState<Ship[]>([]);
   const [rotationAxis, setRotationAxis] = useState('y');
@@ -121,6 +126,25 @@ export default function BuildBoard(): JSX.Element {
       const z = ship.orientation === 'x' ? 0 : 1;
       board.push([x, y, z]);
     });
+    debugger
+    const _shipHash = await mimcSponge.multiHash(board.flat())
+    setShipHash(_shipHash);
+    console.log('ship Hash: ', mimcSponge.F.toObject(_shipHash))
+    console.log('z', require('zk/board/board_verification_key.json'))
+    const boardWasm = await import("boardWasm")
+    const zkeyRes = await fetch('zk/board/board.zkey')
+    const { proof, publicSignals } = await groth16.fullProve(
+      { ships: board, hash: mimcSponge.F.toObject(_shipHash) },
+      boardWasm,
+      'zk/board/board_final.zkey'
+    )
+    await groth16.verify(
+      require('zk/board/board_verification_key.json'),
+      publicSignals,
+      proof
+    )
+    const proofArgs = buildProofArgs(proof)
+    console.log('proof: ', proofArgs)
     if (id) {
       // TODO: Join game
     } else {
