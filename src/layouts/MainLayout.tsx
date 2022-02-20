@@ -14,7 +14,7 @@ const useStyles = createUseStyles({
     marginTop: '250px'
   },
   content: {
-    marginBlock: '112px 0px',
+    marginBlock: '150px 40px',
     width: '100%'
   }
 });
