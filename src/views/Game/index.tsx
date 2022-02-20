@@ -14,6 +14,9 @@ import eth from 'images/eth.svg';
 import { firstTurn, turn } from 'web3/battleshipGame';
 import { Shot } from './types';
 import { toast } from 'react-hot-toast';
+import { useMiMCSponge } from 'hooks/useMiMCSponge';
+import { groth16 } from 'snarkjs';
+import { buildProofArgs } from 'utils';
 
 const useStyles = createUseStyles({
   content: {
@@ -54,10 +57,45 @@ export default function Game(): JSX.Element {
   const styles = useStyles();
   const navigate = useNavigate();
   const { address, provider } = useWallet();
+  const { mimcSponge } = useMiMCSponge();
   const [opponentShots, setOpponentShots] = useState<Shot[]>([]);
   const [placedShips, setPlacedShips] = useState<Ship[]>([]);
   const [yourShots, setYourShots] = useState<Shot[]>([]);
   const { fetching, game, refreshCount } = useGame(id ?? '');
+
+  // given a board, return mimcSponge hash and zk proof of board integrity
+  const boardProof = async (
+    board: number[][]
+  ): Promise<{ hash: BigInt; proof: number[][] }> => {
+    const _shipHash = mimcSponge.F.toObject(
+      await mimcSponge.multiHash(board.flat())
+    );
+    const { proof, publicSignals } = await groth16.fullProve(
+      { ships: board, hash: _shipHash },
+      'https://ipfs.infura.io/ipfs/QmRt4Uzi5w57fUne4cgPoBdSDJzQhEgHNisnib4iKTQ7Xt',
+      'https://ipfs.infura.io/ipfs/Qmaope4n6y4zCSnLDNAHJYnPq1Kdf3yapbRPzGiFd11EUj'
+    );
+    await groth16.verify(
+      require('zk/board_verification_key.json'),
+      publicSignals,
+      proof
+    );
+    const proofArgs = buildProofArgs(proof);
+    return { hash: _shipHash, proof: proofArgs };
+  };
+
+  const getBoardProof = async () => {
+    const board: number[][] = [];
+    placedShips.forEach((ship: Ship) => {
+      const x = Math.floor(ship.sections[0] / 10);
+      const y = ship.sections[0] % 10;
+      const z = ship.orientation === 'x' ? 0 : 1;
+      board.push([x, y, z]);
+    });
+    const switchedBoard = board.map((entry) => [entry[1], entry[0], entry[2]]);
+    const { proof } = await boardProof(switchedBoard);
+    return proof;
+  };
 
   const playing = async () => {
     if (!address || !provider) return;
@@ -112,6 +150,7 @@ export default function Game(): JSX.Element {
     setYourShots((prev) => [...prev, shot].sort((a, b) => b.turn - a.turn));
     let loadingToast = '';
     try {
+      const proof = await getBoardProof();
       const first = !opponentShots.length && !yourShots.length;
       loadingToast = toast.loading('Firing shot...');
       if (first) {
@@ -125,10 +164,10 @@ export default function Game(): JSX.Element {
           +game.id,
           hit,
           [shot.x, shot.y],
-          [0, 0],
-          [0, 0],
-          [0, 0],
-          [0, 0]
+          proof[0],
+          proof[1],
+          proof[2],
+          proof[3]
         );
         await tx.wait();
       }

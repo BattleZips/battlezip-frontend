@@ -16,7 +16,7 @@ export const useMiMCSponge = (): { error: Error | null; mimcSponge: any | null }
             setMimcSponge(null);
             setError(error as Error);
         }
-    }, [error]);
+    }, [chainId, error]);
 
     useEffect(() => {
         makeMimcSponge();
