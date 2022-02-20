@@ -5059,9 +5059,9 @@ css@^3.0.0:
     source-map-resolve "^0.6.0"
 
 cssdb@^6.3.1:
-  version "6.3.1"
-  resolved "https://registry.yarnpkg.com/cssdb/-/cssdb-6.3.1.tgz#d8e521c70b32df082ea5373cdd51ac4dc6b6c151"
-  integrity sha512-Ho3gIkGY4O8S3J54fHu7RP5GHWz85McDhimaXEwf7qV0MSPhLM0jdd61zqs1kkadIVDAvfqoku0kArbWaMYolw==
+  version "6.4.0"
+  resolved "https://registry.yarnpkg.com/cssdb/-/cssdb-6.4.0.tgz#54899b9042e302be3090b8510ea71fefd08c9e6b"
+  integrity sha512-8NMWrur/ewSNrRNZndbtOTXc2Xb2b+NCTPHj8VErFYvJUlgsMAiBGaFaxG6hjy9zbCjj2ZLwSQrMM+tormO8qA==
 
 cssesc@^3.0.0:
   version "3.0.0"
