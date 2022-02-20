@@ -1,5 +1,5 @@
 import gql from 'fake-tag';
-import { BattleshipGameDetails } from './fragments';
+import { BattleshipGamesDetails } from './fragments';
 import { CLIENTS } from './client';
 import {
   GameStatus,
@@ -7,13 +7,13 @@ import {
   GetBattleshipGamesQueryVariables
 } from './autogen/types';
 
-const battleshipGameQuery = gql`
+const battleshipGamesQuery = gql`
   query GetBattleshipGames($limit: Int!, $status: GameStatus!) {
     battleshipGames(first: $limit, where: { status: $status }) {
-      ...BattleshipGameDetails
+      ...BattleshipGamesDetails
     }
   }
-  ${BattleshipGameDetails}
+  ${BattleshipGamesDetails}
 `;
 
 export const getGames = async (
@@ -23,7 +23,7 @@ export const getGames = async (
 ): Promise<GetBattleshipGamesQuery | null> => {
   const { data, error } = await CLIENTS[chainId]
     .query<GetBattleshipGamesQuery, GetBattleshipGamesQueryVariables>(
-      battleshipGameQuery,
+      battleshipGamesQuery,
       { limit, status }
     )
     .toPromise();

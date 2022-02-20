@@ -54,8 +54,14 @@ const useStyles = createUseStyles({
 
 export default function Header(): JSX.Element {
   const styles = useStyles();
-  const { address, connectWallet, disconnect, isConnected, isConnecting } =
-    useWallet();
+  const {
+    address,
+    connectWallet,
+    disconnect,
+    ensName,
+    isConnected,
+    isConnecting
+  } = useWallet();
   return (
     <div className={styles.container}>
       <div className={styles.left}>
@@ -72,7 +78,7 @@ export default function Header(): JSX.Element {
         {address && <Avatar address={address} />}
         <div>
           {isConnected
-            ? formatAddress(address, undefined)
+            ? formatAddress(address, ensName)
             : isConnecting
             ? 'Connecting...'
             : 'Connect'}

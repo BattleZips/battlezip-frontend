@@ -1,14 +1,21 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { createUseStyles } from 'react-jss';
 import { useNavigate } from 'react-router-dom';
-import { GameLocation } from 'Locations';
+import {
+  ActiveGameLocation,
+  JoinGameLocation,
+  NewGameLocation
+} from 'Locations';
 import MainLayout from 'layouts/MainLayout';
 import { useMemo } from 'react';
 import { Game } from './types';
 import GameList from './components/GameList';
 import { useGames } from 'hooks/useGames';
 import { GameStatus } from 'web3/constants';
-// import { getRandomInt } from 'utils';
+import HomeSkeleton from './components/HomeSkeleton';
+import { useWallet } from 'contexts/WalletContext';
+import { playingGame } from 'web3/battleshipGame';
+import { getRandomInt } from 'utils';
 
 const useStyles = createUseStyles({
   content: {
@@ -36,10 +43,33 @@ const useStyles = createUseStyles({
     lineHeight: '34.68px',
     marginTop: '221px'
   },
+  isInGame: {
+    alignItems: 'center',
+    display: 'flex',
+    flexDirection: 'column',
+    fontSize: '48px',
+    fontWeight: 700,
+    height: '400px',
+    justifyContent: 'center',
+    letterSpacing: '3.6px'
+  },
   left: {
     display: 'flex',
     flexDirection: 'column',
     width: '551px'
+  },
+  rejoin: {
+    background: '#FF0055',
+    borderRadius: '3px',
+    color: '#FFFFFF',
+    cursor: 'pointer',
+    fontSize: '24px',
+    fontWeight: 700,
+    letterSpacing: '3.6px',
+    lineHeight: '34.68px',
+    margin: '48px auto 0 auto',
+    padding: '6px 12px',
+    textAlign: 'center'
   },
   right: {
     width: '523px'
@@ -87,15 +117,27 @@ const useStyles = createUseStyles({
 const GAME_OPTIONS = ['HOST GAME', 'JOIN GAME', 'JOIN RANDOM GAME'];
 
 export default function Home(): JSX.Element {
+  const { address, provider } = useWallet();
   const navigate = useNavigate();
   const styles = useStyles();
+  const [activeGame, setActiveGame] = useState(0);
   const [gameOption, setGameOption] = useState(0);
   const [selectedGame, setSelectedGame] = useState<Game | null>(null);
-  const { games } = useGames(1000, GameStatus.STARTED);
+  const { fetching, games } = useGames(
+    1000,
+    GameStatus.Started,
+    activeGame < 0
+  );
 
   const disabled = useMemo(() => {
-    return false;
-  }, []);
+    return gameOption === 1 && !selectedGame;
+  }, [gameOption, selectedGame]);
+
+  const playing = async () => {
+    if (!address || !provider) return;
+    const playing = await playingGame(provider, address);
+    setActiveGame(playing || -1);
+  };
 
   const handleOptionSelected = (option: number) => {
     if (option === gameOption) return;
@@ -108,68 +150,94 @@ export default function Home(): JSX.Element {
   const startGame = () => {
     switch (gameOption) {
       case 0: {
-        // TODO: Add smart contract function to start game
+        navigate(NewGameLocation);
         break;
       }
       case 1: {
-        if (!games) break;
-        // TODO: Add smart contract function to join game
+        if (!games || !selectedGame) break;
+        navigate(JoinGameLocation(`${selectedGame.id}`));
         break;
       }
       case 2: {
         if (!games) break;
-        // const gameId = getRandomInt(0, games.length - 1);
-        // TODO: Add smart contract function to join game
+        const gameId = getRandomInt(1, games.length - 1);
+        navigate(JoinGameLocation(`${gameId}`));
         break;
       }
     }
-    navigate(GameLocation);
   };
+
+  useEffect(() => {
+    playing();
+    // eslint-disable-next-line
+  }, [address, provider]);
 
   return (
     <MainLayout>
-      <div className={styles.content}>
-        <div className={styles.left}>
-          <div className={styles.sectionHead} style={{ background: '#FF0055' }}>
-            PLAY GAME
-          </div>
-          <div className={styles.gameOptions}>
-            {GAME_OPTIONS.map((option, index) => (
-              <div className={styles.gameOption} key={option}>
-                <div
-                  className={styles.select}
-                  onClick={() => handleOptionSelected(index)}
-                >
-                  {index === gameOption && <div className={styles.selected} />}
-                </div>
-                <div>{option}</div>
-              </div>
-            ))}
-          </div>
+      {fetching ? (
+        <HomeSkeleton />
+      ) : activeGame > 0 ? (
+        <div className={styles.isInGame}>
+          <div>YOU ARE ALREADY IN A GAME</div>
           <div
-            className={styles.startButton}
-            onClick={() => startGame()}
-            style={{
-              background: disabled ? '#C7C7C7' : '#2861E9',
-              cursor: disabled ? 'not-allowed' : 'pointer'
-            }}
+            className={styles.rejoin}
+            onClick={() => navigate(ActiveGameLocation(`${activeGame}`))}
           >
-            START GAME
+            REJOIN
           </div>
         </div>
-        <div className={styles.right}>
-          <div className={styles.sectionHead} style={{ background: '#717C96' }}>
-            OPEN GAMES
+      ) : (
+        <div className={styles.content}>
+          <div className={styles.left}>
+            <div
+              className={styles.sectionHead}
+              style={{ background: '#FF0055' }}
+            >
+              PLAY GAME
+            </div>
+            <div className={styles.gameOptions}>
+              {GAME_OPTIONS.map((option, index) => (
+                <div className={styles.gameOption} key={option}>
+                  <div
+                    className={styles.select}
+                    onClick={() => handleOptionSelected(index)}
+                  >
+                    {index === gameOption && (
+                      <div className={styles.selected} />
+                    )}
+                  </div>
+                  <div>{option}</div>
+                </div>
+              ))}
+            </div>
+            <div
+              className={styles.startButton}
+              onClick={() => startGame()}
+              style={{
+                background: disabled ? '#C7C7C7' : '#2861E9',
+                cursor: disabled ? 'not-allowed' : 'pointer'
+              }}
+            >
+              START GAME
+            </div>
           </div>
+          <div className={styles.right}>
+            <div
+              className={styles.sectionHead}
+              style={{ background: '#717C96' }}
+            >
+              OPEN GAMES
+            </div>
 
-          <GameList
-            games={games ?? []}
-            gameOption={gameOption}
-            selectedGame={selectedGame}
-            setSelectedGame={setSelectedGame}
-          />
+            <GameList
+              games={games ?? []}
+              gameOption={gameOption}
+              selectedGame={selectedGame}
+              setSelectedGame={setSelectedGame}
+            />
+          </div>
         </div>
-      </div>
+      )}
     </MainLayout>
   );
 }

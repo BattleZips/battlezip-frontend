@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
 import { createUseStyles, jss } from 'react-jss';
-import { EMPTY_SHIP, Ship } from '../../types';
+import { EMPTY_SHIP, Ship } from './types';
 import { DISPLAY_IMAGES } from './images';
 import { SHIP_STYLES } from './styles';
-import hitIcon from '../../images/hit.svg';
-import missIcon from '../../images/miss.svg';
+import hitIcon from './images/hit.svg';
+import missIcon from './images/miss.svg';
+import { Shot } from 'views/Game/types';
 
 const useStyles = createUseStyles({
   label: {
@@ -58,10 +59,10 @@ const useStyles = createUseStyles({
 });
 
 const BOARD = new Array(10).fill('').map((_) => new Array(10).fill(''));
-const FAKE_SHOTS = [0, 15, 36, 48, 78];
 
 type BoardProps = {
   allPlaced: boolean;
+  opponentShots: Shot[];
   placedShips: Ship[];
   rotationAxis: string;
   selectedShip: Ship;
@@ -70,6 +71,7 @@ type BoardProps = {
 
 export default function Board({
   allPlaced,
+  opponentShots,
   placedShips,
   rotationAxis,
   selectedShip,
@@ -127,7 +129,7 @@ export default function Board({
   const circleStyles = (ship: Ship) => {
     const hits: any = ship.sections.map((section, index) => [
       section,
-      FAKE_SHOTS.includes(section),
+      opponentShots.find((shot) => shot.x + shot.y * 10 === section),
       index + 1
     ]);
     const defaultClass = {
@@ -243,7 +245,9 @@ export default function Board({
                 const PlacedImage = occupied.length
                   ? DISPLAY_IMAGES[occupied.name].default
                   : undefined;
-                const shot = FAKE_SHOTS.includes(index);
+                const shot = opponentShots.find(
+                  (shot) => shot.x + shot.y * 10 === index
+                );
                 const hit = shot && occupied.length;
                 const validPlacement =
                   !occupied.length && !invalidPlacement && selectedShip.name;
@@ -305,7 +309,9 @@ export default function Board({
           );
         })}
       </div>
-      <div className={styles.rotateText}>[PRESS THE SPACE BAR TO ROTATE]</div>
+      {!allPlaced && (
+        <div className={styles.rotateText}>[PRESS THE SPACE BAR TO ROTATE]</div>
+      )}
     </div>
   );
 }
