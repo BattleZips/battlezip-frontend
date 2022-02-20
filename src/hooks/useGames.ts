@@ -4,6 +4,7 @@ import { Game } from 'views/Home/types';
 import { getENSDomains } from 'graphql/getENSNames';
 import { useWallet } from 'contexts/WalletContext';
 import { GameStatus } from 'graphql/autogen/types';
+import useInterval from './useInterval';
 
 export const useGames = (
   limit = 1000,
@@ -13,11 +14,13 @@ export const useGames = (
   fetching: boolean;
   error: Error | null;
   games: Array<Game> | null;
+  refreshCount: number;
 } => {
   const { chainId } = useWallet();
   const [error, setError] = useState<Error | null>(null);
   const [fetching, setFecthing] = useState(true);
   const [games, setGames] = useState<Array<Game> | null>(null);
+  const [refreshCount, setRefreshCount] = useState(0);
 
   const fetchData = useCallback(async () => {
     if (!chainId || isPlaying) return;
@@ -46,12 +49,20 @@ export const useGames = (
     }
   }, [chainId, error, isPlaying, limit, status]);
 
+  const intervalFunction = () => {
+    fetchData();
+    setRefreshCount((prev) => prev + 1);
+  };
+
+  useInterval(intervalFunction, 15000);
+
   useEffect(() => {
     fetchData();
   }, [fetchData]);
   return {
     error,
     fetching,
-    games
+    games,
+    refreshCount
   };
 };
