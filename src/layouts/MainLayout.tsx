@@ -21,8 +21,7 @@ const useStyles = createUseStyles({
   content: {
     transform: 'scale(0.9)',
     marginTop: '122px',
-    height: 'calc(100vh - 122px)',
-    width: '100%'
+    height: 'calc(100vh - 122px)'
   },
   [`@media (max-height: ${827}px)`]: {
     content: {

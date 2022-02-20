@@ -14,6 +14,7 @@ import eth from 'images/eth.svg';
 import { firstTurn, turn } from 'web3/battleshipGame';
 import { Shot } from './types';
 import { toast } from 'react-hot-toast';
+import GameOver from './components/GameOver';
 
 const useStyles = createUseStyles({
   content: {
@@ -54,6 +55,7 @@ export default function Game(): JSX.Element {
   const styles = useStyles();
   const navigate = useNavigate();
   const { address, provider } = useWallet();
+  const [gameOver, setGameOver] = useState({ over: false, winner: '' });
   const [opponentShots, setOpponentShots] = useState<Shot[]>([]);
   const [placedShips, setPlacedShips] = useState<Ship[]>([]);
   const [yourShots, setYourShots] = useState<Shot[]>([]);
@@ -170,6 +172,8 @@ export default function Game(): JSX.Element {
         const inGame = playing();
         if (!historic && !inGame) {
           navigate(RootLocation);
+        } else if (historic && inGame) {
+          setGameOver({ over: true, winner: game.winner });
         } else {
           restoreBoardState();
         }
@@ -184,6 +188,8 @@ export default function Game(): JSX.Element {
     <MainLayout>
       {fetching && !refreshCount ? (
         <GameSkeleton />
+      ) : gameOver.over ? (
+        <GameOver winner={gameOver.winner === address} />
       ) : (
         <div>
           <div className={styles.content}>
