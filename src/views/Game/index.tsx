@@ -58,9 +58,9 @@ export default function Game(): JSX.Element {
   const [yourShots, setYourShots] = useState<Shot[]>([]);
   const { fetching, game } = useGame(id ?? '');
 
-  // const wasHit = (tile: number) => {
-  //   return placedShips.find((ship) => ship.sections.includes(tile));
-  // };
+  const wasHit = (tile: number) => {
+    return placedShips.find((ship) => ship.sections.includes(tile));
+  };
 
   const playing = async () => {
     if (!address || !provider) return;
@@ -99,21 +99,27 @@ export default function Game(): JSX.Element {
     }
   };
 
+  const showOpponentBoard = useMemo(() => {
+    if (!address || !game) return false;
+    return (
+      (game.startedBy === address && game.joinedBy) ||
+      game.startedBy !== address
+    );
+  }, [address, game]);
+
   const takeShot = async (shot: Shot) => {
     if (!provider) return;
-    // const first = !opponentShots.length && !yourShots.length;
-    // TODO: Remove first shot hardcode
-    const harcode = false;
-    if (harcode) {
+    const first = !opponentShots.length && !yourShots.length;
+    if (first) {
       const tx = await firstTurn(provider, +game.id, [shot.x, shot.y]);
       await tx.wait();
     } else {
-      // const hit = !!wasHit(opponentShots[0].x + opponentShots[0].y * 10);
+      const lastShot = opponentShots[opponentShots.length - 1];
+      const hit = !!wasHit(lastShot.x + lastShot.y * 10);
       const tx = await turn(
         provider,
         +game.id,
-        // TODO: Remove first shot hardcode
-        false,
+        hit,
         [shot.x, shot.y],
         [0, 0],
         [0, 0],
@@ -171,13 +177,12 @@ export default function Game(): JSX.Element {
                   <img alt="Eth" className={styles.eth} src={eth} />
                 )}
               </div>
-              {game.joinedBy ? (
+              {showOpponentBoard ? (
                 <OpponentBoard
                   shots={yourShots}
                   takeShot={takeShot}
                   totalTurns={totalTurns}
-                  // TODO: Remove first shot hardcode
-                  yourTurn={true}
+                  yourTurn={yourTurn}
                 />
               ) : (
                 <div className={styles.waitingForOpponent}>

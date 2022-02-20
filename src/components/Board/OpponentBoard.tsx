@@ -108,11 +108,11 @@ export default function OpponentBoard({
                   >
                     {wasShot &&
                       (wasShot.hit === undefined ? (
-                        <HitIcon />
+                        <HitIcon style={{ opacity: 0.5 }} />
                       ) : wasShot.hit ? (
-                        <HitIcon fill="#FF0055" stroke="#FF0055" />
+                        <HitIcon />
                       ) : (
-                        <MissIcon fill="#A50037" stroke="#A50037" />
+                        <MissIcon />
                       ))}
                     {}
                     {index === selectedTile && (
