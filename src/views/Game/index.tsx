@@ -162,12 +162,11 @@ export default function Game(): JSX.Element {
     try {
       const first = !opponentShots.length && !yourShots.length;
       if (first) {
+        loadingToast = toast.loading('Firing shot...');
         const tx = await firstTurn(provider, +game.id, [shot.x, shot.y]);
         await tx.wait();
       } else {
-        loadingToast = toast.loading('Generating shot proof...', {
-          id: loadingToast
-        });
+        loadingToast = toast.loading('Generating shot proof...');
         const lastShot = opponentShots[opponentShots.length - 1];
         const hit = !!wasHit(lastShot.x + lastShot.y * 10);
         const proof = await getShotProof([lastShot.x, lastShot.y], hit);
@@ -216,6 +215,7 @@ export default function Game(): JSX.Element {
   useEffect(() => {
     if (!fetching) {
       if (game) {
+        console.log('GAME: ', game);
         const historic = game.status === 'OVER';
         const inGame = playing();
         if (!historic && !inGame) {
