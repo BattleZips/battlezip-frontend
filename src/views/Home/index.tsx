@@ -20,7 +20,6 @@ import { getRandomInt } from 'utils';
 const useStyles = createUseStyles({
   content: {
     display: 'flex',
-    marginTop: '55px',
     gap: '200px',
     marginInline: 'auto',
     width: 'fit-content'
