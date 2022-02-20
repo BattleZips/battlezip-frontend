@@ -58,10 +58,6 @@ export default function Game(): JSX.Element {
   const [yourShots, setYourShots] = useState<Shot[]>([]);
   const { fetching, game, refreshCount } = useGame(id ?? '');
 
-  const wasHit = (tile: number) => {
-    return placedShips.find((ship) => ship.sections.includes(tile));
-  };
-
   const playing = async () => {
     if (!address || !provider) return;
     const res = await playingGame(provider, address);
@@ -70,32 +66,35 @@ export default function Game(): JSX.Element {
 
   const restoreBoardState = () => {
     if (!game) return;
-    const storedBoard = localStorage.getItem(`BOARD_STATE_${id}_${address}`);
-    if (storedBoard) {
-      setPlacedShips(JSON.parse(storedBoard));
-    }
-    const evenShots = game.shots
-      .filter((shot: Shot, index: number) => index % 2 === 0)
-      .map((shot: Shot) => ({
-        hit: shot.hit,
-        turn: +shot.turn,
-        x: +shot.x,
-        y: +shot.y
-      }));
-    const oddShots = game.shots
-      .filter((shot: Shot, index: number) => index % 2 === 1)
-      .map((shot: Shot) => ({
-        hit: shot.hit,
-        turn: +shot.turn,
-        x: +shot.x,
-        y: +shot.y
-      }));
-    if (game.startedBy === address) {
-      setOpponentShots(oddShots);
-      setYourShots(evenShots);
-    } else {
-      setOpponentShots(evenShots);
-      setYourShots(oddShots);
+    const update = shouldUpdateShots();
+    if (update) {
+      const storedBoard = localStorage.getItem(`BOARD_STATE_${id}_${address}`);
+      if (storedBoard) {
+        setPlacedShips(JSON.parse(storedBoard));
+      }
+      const evenShots = game.shots
+        .filter((shot: Shot, index: number) => index % 2 === 0)
+        .map((shot: Shot) => ({
+          hit: shot.hit,
+          turn: +shot.turn,
+          x: +shot.x,
+          y: +shot.y
+        }));
+      const oddShots = game.shots
+        .filter((shot: Shot, index: number) => index % 2 === 1)
+        .map((shot: Shot) => ({
+          hit: shot.hit,
+          turn: +shot.turn,
+          x: +shot.x,
+          y: +shot.y
+        }));
+      if (game.startedBy === address) {
+        setOpponentShots(oddShots);
+        setYourShots(evenShots);
+      } else {
+        setOpponentShots(evenShots);
+        setYourShots(oddShots);
+      }
     }
   };
 
@@ -110,30 +109,44 @@ export default function Game(): JSX.Element {
   const takeShot = async (shot: Shot) => {
     if (!provider) return;
     setYourShots((prev) => [...prev, shot].sort((a, b) => b.turn - a.turn));
-    const first = !opponentShots.length && !yourShots.length;
-    if (first) {
-      const tx = await firstTurn(provider, +game.id, [shot.x, shot.y]);
-      await tx.wait();
-    } else {
-      const lastShot = opponentShots[opponentShots.length - 1];
-      const hit = !!wasHit(lastShot.x + lastShot.y * 10);
-      const tx = await turn(
-        provider,
-        +game.id,
-        hit,
-        [shot.x, shot.y],
-        [0, 0],
-        [0, 0],
-        [0, 0],
-        [0, 0]
-      );
-      await tx.wait();
+    try {
+      const first = !opponentShots.length && !yourShots.length;
+      if (first) {
+        const tx = await firstTurn(provider, +game.id, [shot.x, shot.y]);
+        await tx.wait();
+      } else {
+        const lastShot = opponentShots[opponentShots.length - 1];
+        const hit = !!wasHit(lastShot.x + lastShot.y * 10);
+        const tx = await turn(
+          provider,
+          +game.id,
+          hit,
+          [shot.x, shot.y],
+          [0, 0],
+          [0, 0],
+          [0, 0],
+          [0, 0]
+        );
+        await tx.wait();
+      }
+    } catch (err) {
+      setYourShots((prev) => prev.filter((prevShot) => prevShot !== shot));
     }
   };
 
   const totalTurns = useMemo(() => {
     return opponentShots.length + yourShots.length;
   }, [opponentShots, yourShots]);
+
+  const wasHit = (tile: number) => {
+    return placedShips.find((ship) => ship.sections.includes(tile));
+  };
+
+  const shouldUpdateShots = () => {
+    const newShotLength = game.shots.length;
+    const oldShotLength = opponentShots.length + yourShots.length;
+    return !oldShotLength || newShotLength > oldShotLength;
+  };
 
   const yourTurn = useMemo(() => {
     if (!game) return false;
