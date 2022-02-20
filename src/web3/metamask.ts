@@ -18,11 +18,6 @@ export const switchChainOnMetaMask = async (
   const networkName = NETWORK_NAMES[chainId];
   const rpcUrl = RPC_URLS[chainId];
   const explorerUrl = EXPLORER_URLS[chainId];
-  console.log('NAME: ', name);
-  console.log('SYMBOL: ', symbol);
-  console.log('NETWORK: ', networkName);
-  console.log('RPC: ', rpcUrl);
-  console.log('EXPLORER URL: ', explorerUrl);
   if (
     !(name && symbol && networkName && rpcUrl && explorerUrl && window.ethereum)
   )
