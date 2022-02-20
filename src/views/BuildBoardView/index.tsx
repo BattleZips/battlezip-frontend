@@ -13,6 +13,7 @@ import { createGame, getGameIndex, joinGame } from 'web3/battleshipGame';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useWallet } from 'contexts/WalletContext';
 import { ActiveGameLocation } from 'Locations';
+import { toast } from 'react-hot-toast';
 
 const useStyles = createUseStyles({
   content: {
@@ -118,33 +119,52 @@ export default function BuildBoard(): JSX.Element {
       const z = ship.orientation === 'x' ? 0 : 1;
       board.push([x, y, z]);
     });
-    if (id) {
-      const tx = await joinGame(
-        provider,
-        +id,
-        0,
-        [0, 0],
-        [0, 0],
-        [0, 0],
-        [0, 0]
-      );
-      await tx.wait();
-      localStorage.setItem(
-        `BOARD_STATE_${id}_${address}`,
-        JSON.stringify(placedShips)
-      );
-      navigate(ActiveGameLocation(id));
-    } else {
-      // TODO: Fetch game id from event
-      // TOOD: Add notification other player has already joined game
-      const tx = await createGame(provider, 0, [0, 0], [0, 0], [0, 0], [0, 0]);
-      await tx.wait();
-      const currentIndex = await getGameIndex(provider);
-      localStorage.setItem(
-        `BOARD_STATE_${currentIndex + 1}_${address}`,
-        JSON.stringify(placedShips)
-      );
-      navigate(ActiveGameLocation(currentIndex + 1));
+    let loadingToast = '';
+    try {
+      if (id) {
+        loadingToast = toast.loading(`Attempting to join game ${id}...`);
+        const tx = await joinGame(
+          provider,
+          +id,
+          0,
+          [0, 0],
+          [0, 0],
+          [0, 0],
+          [0, 0]
+        );
+        await tx.wait();
+        localStorage.setItem(
+          `BOARD_STATE_${id}_${address}`,
+          JSON.stringify(placedShips)
+        );
+        toast.remove(loadingToast);
+        toast.success(`Joined game ${id}`);
+        navigate(ActiveGameLocation(id));
+      } else {
+        loadingToast = toast.loading(`Creating game...`);
+        const tx = await createGame(
+          provider,
+          0,
+          [0, 0],
+          [0, 0],
+          [0, 0],
+          [0, 0]
+        );
+        await tx.wait();
+        const currentIndex = await getGameIndex(provider);
+        localStorage.setItem(
+          `BOARD_STATE_${currentIndex}_${address}`,
+          JSON.stringify(placedShips)
+        );
+        toast.remove(loadingToast);
+        toast.success('Game successfully created.', { duration: 5000 });
+        navigate(ActiveGameLocation(currentIndex + 1));
+      }
+    } catch (err) {
+      toast.remove(loadingToast);
+      toast.error(id ? 'Error joining game' : 'Error creating game', {
+        duration: 5000
+      });
     }
   };
 
