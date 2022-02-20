@@ -11,11 +11,10 @@ const useStyles = createUseStyles({
     fontWeight: 700,
     justifyContent: 'center',
     letterSpacing: '3.6px',
-    height: '100%'
+    marginTop: '250px'
   },
   content: {
-    marginBlock: '177px 40px',
-    minHeight: 'calc(100vh - 112px)',
+    marginBlock: '112px 0px',
     width: '100%'
   }
 });
