@@ -77,7 +77,7 @@ export default function BuildBoard(): JSX.Element {
   const { id } = useParams();
   const styles = useStyles();
   const navigate = useNavigate();
-  const { provider } = useWallet();
+  const { address, provider } = useWallet();
   const [placedShips, setPlacedShips] = useState<Ship[]>([]);
   const [rotationAxis, setRotationAxis] = useState('y');
   const [selectedShip, setSelectedShip] = useState<Ship>(EMPTY_SHIP);
@@ -129,14 +129,20 @@ export default function BuildBoard(): JSX.Element {
         [0, 0]
       );
       await tx.wait();
-      localStorage.setItem(`BOARD_STATE_${id}`, JSON.stringify(placedShips));
+      localStorage.setItem(
+        `BOARD_STATE_${id}_${address}`,
+        JSON.stringify(placedShips)
+      );
       navigate(ActiveGameLocation(id));
     } else {
       // TODO: Fetch game id from event
       // TOOD: Add notification other player has already joined game
       const tx = await createGame(provider, 0, [0, 0], [0, 0], [0, 0], [0, 0]);
       await tx.wait();
-      localStorage.setItem(`BOARD_STATE_${1}`, JSON.stringify(placedShips));
+      localStorage.setItem(
+        `BOARD_STATE_${1}_${address}`,
+        JSON.stringify(placedShips)
+      );
       navigate(ActiveGameLocation('1'));
     }
   };

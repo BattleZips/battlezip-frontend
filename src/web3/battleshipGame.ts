@@ -59,3 +59,45 @@ export const playingGame = async (
   );
   return contract.playing(player);
 };
+
+export const firstTurn = async (
+  ethersProvider: providers.Web3Provider,
+  gameId: number,
+  shot: number[]
+) => {
+  if (!BATTLESHIP_GAME_CONTRACT || !ethersProvider) return;
+  const abi = new utils.Interface([
+    'function firstTurn(uint256 _game, uint[2] memory _shot) external'
+  ]);
+  const contract = new Contract(
+    BATTLESHIP_GAME_CONTRACT,
+    abi,
+    ethersProvider.getSigner()
+  );
+  return contract.firstTurn(gameId, shot);
+};
+
+export const turn = async (
+  ethersProvider: providers.Web3Provider,
+  gameId: number,
+  hit: boolean,
+  next: number[],
+  a: number[],
+  b_0: number[],
+  b_1: number[],
+  c: number[]
+) => {
+  if (!BATTLESHIP_GAME_CONTRACT || !ethersProvider) return;
+  console.log('GAME ID: ', gameId)
+  const abi = new utils.Interface([
+    'function turn(uint256 _game, bool _hit, uint[2] memory _next, uint[2] memory a, uint[2] memory b_0, uint[2] memory b_1, uint[2] memory c) external'
+  ]);
+  const contract = new Contract(
+    BATTLESHIP_GAME_CONTRACT,
+    abi,
+    ethersProvider.getSigner()
+  );
+  return contract.turn(gameId, hit, next, a, b_0, b_1, c);
+};
+
+

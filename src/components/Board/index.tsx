@@ -5,6 +5,7 @@ import { DISPLAY_IMAGES } from './images';
 import { SHIP_STYLES } from './styles';
 import hitIcon from './images/hit.svg';
 import missIcon from './images/miss.svg';
+import { Shot } from 'views/Game/types';
 
 const useStyles = createUseStyles({
   label: {
@@ -61,7 +62,7 @@ const BOARD = new Array(10).fill('').map((_) => new Array(10).fill(''));
 
 type BoardProps = {
   allPlaced: boolean;
-  opponentShots: number[];
+  opponentShots: Shot[];
   placedShips: Ship[];
   rotationAxis: string;
   selectedShip: Ship;
@@ -128,7 +129,7 @@ export default function Board({
   const circleStyles = (ship: Ship) => {
     const hits: any = ship.sections.map((section, index) => [
       section,
-      opponentShots.includes(section),
+      opponentShots.find((shot) => shot.x + shot.y * 10 === section),
       index + 1
     ]);
     const defaultClass = {
@@ -244,7 +245,9 @@ export default function Board({
                 const PlacedImage = occupied.length
                   ? DISPLAY_IMAGES[occupied.name].default
                   : undefined;
-                const shot = opponentShots.includes(index);
+                const shot = opponentShots.find(
+                  (shot) => shot.x + shot.y * 10 === index
+                );
                 const hit = shot && occupied.length;
                 const validPlacement =
                   !occupied.length && !invalidPlacement && selectedShip.name;

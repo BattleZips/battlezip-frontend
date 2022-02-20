@@ -1,8 +1,9 @@
-import { SetStateAction, useState } from 'react';
+import { useState } from 'react';
 import { createUseStyles } from 'react-jss';
 // import hitIcon from '../../images/hit.svg';
 import missIcon from './images/miss.svg';
 import { ReactComponent as CrosshairIcon } from './images/crosshair.svg';
+import { Shot } from 'views/Game/types';
 
 const useStyles = createUseStyles({
   board: {
@@ -53,14 +54,16 @@ const useStyles = createUseStyles({
 const BOARD = new Array(10).fill('').map((_) => new Array(10).fill(''));
 
 type OpponentBoardProps = {
-  shots: number[];
-  takeShot: React.Dispatch<SetStateAction<number[]>>;
+  shots: Shot[];
+  takeShot: (shot: Shot) => void;
+  totalTurns: number;
   yourTurn: boolean;
 };
 
 export default function OpponentBoard({
   shots,
   takeShot,
+  totalTurns,
   yourTurn
 }: OpponentBoardProps): JSX.Element {
   const styles = useStyles();
@@ -68,7 +71,10 @@ export default function OpponentBoard({
   const [selectedTile, setSelectedTile] = useState(-1);
 
   const handleShot = () => {
-    takeShot((prev) => [...prev, selectedTile].sort((a, b) => b - a));
+    const x = selectedTile % 10;
+    const y = Math.floor(selectedTile / 10);
+    const turn = totalTurns + 1;
+    takeShot({ x, y, turn });
     setSelectedTile(-1);
   };
 
@@ -88,8 +94,9 @@ export default function OpponentBoard({
               <div className={styles.label}>{rowIndex + 1}</div>
               {row.map((_, colIndex) => {
                 const index = rowIndex * 10 + colIndex;
-                // TODO: Include hit or miss logic
-                const wasShot = shots.includes(index);
+                const wasShot = shots.find(
+                  (shot) => shot.x + shot.y * 10 === index
+                );
                 return (
                   <div
                     className={styles.tile}
