@@ -177,7 +177,7 @@ export default function BuildBoard(): JSX.Element {
         navigate(ActiveGameLocation(id));
       } else {
         toast.loading(`Creating game...`, { id: loadingToast });
-        console.log('flaga');
+        const currentIndex = await getGameIndex(provider);
         const tx = await createGame(
           provider,
           BN.from(hash),
@@ -186,9 +186,7 @@ export default function BuildBoard(): JSX.Element {
           proof[2],
           proof[3]
         );
-        console.log('flagb');
         await tx.wait();
-        const currentIndex = await getGameIndex(provider);
         localStorage.setItem(
           `BOARD_STATE_${currentIndex}_${address}`,
           JSON.stringify(placedShips)
@@ -197,7 +195,7 @@ export default function BuildBoard(): JSX.Element {
           duration: 5000,
           id: loadingToast
         });
-        navigate(ActiveGameLocation(currentIndex + 1));
+        navigate(ActiveGameLocation(`${+currentIndex + 1}`));
       }
     } catch (err) {
       console.log('ERROR:', err);

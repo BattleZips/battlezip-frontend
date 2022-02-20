@@ -108,6 +108,8 @@ export default function Game(): JSX.Element {
   const playing = async () => {
     if (!address || !provider) return;
     const res = await playingGame(provider, address);
+    console.log('RES: ', res);
+    console.log('ID: ', id);
     return `${res}` === id;
   };
 
