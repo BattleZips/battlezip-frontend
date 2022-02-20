@@ -4,6 +4,10 @@ import Header from 'components/Header';
 import { useWallet } from 'contexts/WalletContext';
 
 const useStyles = createUseStyles({
+  projectContainer: {
+    height: '100vh',
+    overflow: 'scroll'
+  },
   connectWallet: {
     alignItems: 'center',
     display: 'flex',
@@ -13,10 +17,36 @@ const useStyles = createUseStyles({
     letterSpacing: '3.6px',
     height: '100%'
   },
+
   content: {
-    marginBlock: '177px 40px',
-    minHeight: 'calc(100vh - 112px)',
+    transform: 'scale(0.9)',
+    marginTop: '122px',
+    height: 'calc(100vh - 122px)',
     width: '100%'
+  },
+  [`@media (max-height: ${827}px)`]: {
+    content: {
+      marginTop: '100px',
+      transform: 'scale(0.8)'
+    }
+  },
+  [`@media (max-height: ${766}px)`]: {
+    content: {
+      marginTop: '70px',
+      transform: 'scale(0.7)'
+    }
+  },
+  [`@media (max-height: ${676}px)`]: {
+    content: {
+      marginTop: '50px',
+      transform: 'scale(0.6)'
+    }
+  },
+  [`@media (max-height: ${596}px)`]: {
+    content: {
+      marginTop: '40px',
+      transform: 'scale(0.5)'
+    }
   }
 });
 
@@ -28,7 +58,7 @@ export default function MainLayout({ children }: MainLayoutProps): JSX.Element {
   const styles = useStyles();
   const { isConnected, isConnecting } = useWallet();
   return (
-    <div>
+    <div className={styles.projectContainer}>
       <Header />
       <div className={styles.content}>
         {isConnected || isConnecting ? (
