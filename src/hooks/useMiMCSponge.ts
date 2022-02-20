@@ -10,7 +10,6 @@ export const useMiMCSponge = (): { error: Error | null; mimcSponge: any | null }
     const makeMimcSponge = useCallback(async () => {
         if (!chainId) return;
         try {
-            debugger
             const _mimcSponge = await buildMimcSponge()
             setMimcSponge(_mimcSponge);
         } catch (err) {

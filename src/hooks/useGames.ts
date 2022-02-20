@@ -3,23 +3,27 @@ import { getGames } from 'graphql/getGames';
 import { Game } from 'views/Home/types';
 import { getENSDomains } from 'graphql/getENSNames';
 import { useWallet } from 'contexts/WalletContext';
-import { GameStatus, GetBattleshipGamesQuery } from 'graphql/autogen/types';
+import { GameStatus } from 'graphql/autogen/types';
+import useInterval from './useInterval';
 
 export const useGames = (
   limit = 1000,
-  status: GameStatus
+  status: GameStatus,
+  isPlaying: boolean
 ): {
   fetching: boolean;
   error: Error | null;
   games: Array<Game> | null;
+  refreshCount: number;
 } => {
   const { chainId } = useWallet();
   const [error, setError] = useState<Error | null>(null);
   const [fetching, setFecthing] = useState(true);
   const [games, setGames] = useState<Array<Game> | null>(null);
+  const [refreshCount, setRefreshCount] = useState(0);
 
   const fetchData = useCallback(async () => {
-    if (!chainId) return;
+    if (!chainId || isPlaying) return;
     try {
       setFecthing(true);
       const res = (await getGames(chainId, limit, status)) as any;
@@ -33,7 +37,8 @@ export const useGames = (
       const ensObj = Object.assign({}, ...ensDomains);
       const gameArr = res.battleshipGames.map((game: any) => ({
         address: game.startedBy,
-        ens: ensObj[game.address]
+        ens: ensObj[game.address],
+        id: game.id
       }));
       setGames(gameArr);
     } catch (err) {
@@ -42,12 +47,22 @@ export const useGames = (
     } finally {
       setFecthing(false);
     }
-  }, [chainId, error, limit]);
+  }, [chainId, error, isPlaying, limit, status]);
+
+  const intervalFunction = () => {
+    fetchData();
+    setRefreshCount((prev) => prev + 1);
+  };
+
+  useInterval(intervalFunction, 15000);
 
   useEffect(() => {
     fetchData();
   }, [fetchData]);
   return {
-    error, fetching, games
+    error,
+    fetching,
+    games,
+    refreshCount
   };
 };
