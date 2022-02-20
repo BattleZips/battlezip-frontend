@@ -13,6 +13,7 @@ import { createGame, getGameIndex, joinGame } from 'web3/battleshipGame';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useWallet } from 'contexts/WalletContext';
 import { ActiveGameLocation } from 'Locations';
+import { useGame } from 'hooks/useGame';
 import { useMiMCSponge } from 'hooks/useMiMCSponge';
 import { groth16 } from 'snarkjs';
 import { buildProofArgs } from 'utils';
@@ -83,6 +84,8 @@ export default function BuildBoard(): JSX.Element {
   const styles = useStyles();
   const navigate = useNavigate();
   const { mimcSponge } = useMiMCSponge();
+  const [shipHash, setShipHash] = useState(0);
+  const [gameStatus, setGameStatus] = useState('');
   const { address, provider } = useWallet();
   const [placedShips, setPlacedShips] = useState<Ship[]>([]);
   const [rotationAxis, setRotationAxis] = useState('y');
@@ -116,25 +119,21 @@ export default function BuildBoard(): JSX.Element {
   };
 
   // given a board, return mimcSponge hash and zk proof of board integrity
-  const boardProof = async (
-    board: number[][]
-  ): Promise<{ hash: BigInt; proof: number[][] }> => {
-    const _shipHash = mimcSponge.F.toObject(
-      await mimcSponge.multiHash(board.flat())
-    );
+  const boardProof = async (board: number[][]): Promise<{ hash: BigInt, proof: number[][] }> => {
+    const _shipHash = mimcSponge.F.toObject(await mimcSponge.multiHash(board.flat()))
     const { proof, publicSignals } = await groth16.fullProve(
       { ships: board, hash: _shipHash },
       'https://ipfs.infura.io/ipfs/QmRt4Uzi5w57fUne4cgPoBdSDJzQhEgHNisnib4iKTQ7Xt',
       'https://ipfs.infura.io/ipfs/Qmaope4n6y4zCSnLDNAHJYnPq1Kdf3yapbRPzGiFd11EUj'
-    );
+    )
     await groth16.verify(
       require('zk/board_verification_key.json'),
       publicSignals,
       proof
-    );
-    const proofArgs = buildProofArgs(proof);
-    return { hash: _shipHash, proof: proofArgs };
-  };
+    )
+    const proofArgs = buildProofArgs(proof)
+    return { hash: _shipHash, proof: proofArgs }
+  }
 
   const startGame = async () => {
     if (!provider) return;
@@ -145,21 +144,15 @@ export default function BuildBoard(): JSX.Element {
       const z = ship.orientation === 'x' ? 0 : 1;
       board.push([x, y, z]);
     });
-    const switchedBoard = board.map((entry) => [entry[1], entry[0], entry[2]]);
+    console.log('board: ', board)
+    const switchedBoard = board.map(entry => [entry[1], entry[0], entry[2]])
+    console.log('switched: ', switchedBoard)
     const { hash, proof } = await boardProof(switchedBoard);
     let loadingToast = '';
     try {
       if (id) {
         loadingToast = toast.loading(`Attempting to join game ${id}...`);
-        const tx = await joinGame(
-          provider,
-          +id,
-          BN.from(hash),
-          proof[0],
-          proof[1],
-          proof[2],
-          proof[3]
-        );
+        const tx = await joinGame(provider, +id, BN.from(hash), proof[0], proof[1], proof[2], proof[3]);
         await tx.wait();
         localStorage.setItem(
           `BOARD_STATE_${id}_${address}`,
@@ -170,16 +163,9 @@ export default function BuildBoard(): JSX.Element {
         navigate(ActiveGameLocation(id));
       } else {
         loadingToast = toast.loading(`Creating game...`);
-        console.log('flaga');
-        const tx = await createGame(
-          provider,
-          BN.from(hash),
-          proof[0],
-          proof[1],
-          proof[2],
-          proof[3]
-        );
-        console.log('flagb');
+        console.log('flaga')
+        const tx = await createGame(provider, BN.from(hash), proof[0], proof[1], proof[2], proof[3]);
+        console.log('flagb')
         await tx.wait();
         const currentIndex = await getGameIndex(provider);
         localStorage.setItem(
@@ -191,7 +177,7 @@ export default function BuildBoard(): JSX.Element {
         navigate(ActiveGameLocation(currentIndex + 1));
       }
     } catch (err) {
-      console.log('ERROR:', err);
+      console.log('ERROR:', err)
       toast.remove(loadingToast);
       toast.error(id ? 'Error joining game' : 'Error creating game', {
         duration: 5000
