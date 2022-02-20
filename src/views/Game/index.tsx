@@ -66,11 +66,21 @@ export default function Game(): JSX.Element {
       setPlacedShips(JSON.parse(storedBoard));
     }
     const evenShots = game.shots
-      .filter((shot: any, index: number) => index % 2 === 0)
-      .map((shot: any) => ({ x: +shot.x, y: +shot.y, turn: +shot.turn }));
+      .filter((shot: Shot, index: number) => index % 2 === 0)
+      .map((shot: Shot) => ({
+        hit: shot.hit,
+        turn: +shot.turn,
+        x: +shot.x,
+        y: +shot.y
+      }));
     const oddShots = game.shots
-      .filter((shot: any, index: number) => index % 2 === 1)
-      .map((shot: any) => ({ x: +shot.x, y: +shot.y, turn: +shot.turn }));
+      .filter((shot: Shot, index: number) => index % 2 === 1)
+      .map((shot: Shot) => ({
+        hit: shot.hit,
+        turn: +shot.turn,
+        x: +shot.x,
+        y: +shot.y
+      }));
     if (game.startedBy === address) {
       setOpponentShots(oddShots);
       setYourShots(evenShots);

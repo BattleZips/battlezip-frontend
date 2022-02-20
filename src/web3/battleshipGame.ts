@@ -23,6 +23,10 @@ export const createGame = async (
   return contract.newGame(boardHash, a, b_0, b_1, c);
 };
 
+export const getGameNonce = async () => {
+
+}
+
 export const joinGame = async (
   ethersProvider: providers.Web3Provider,
   gameId: number,

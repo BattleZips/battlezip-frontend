@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { createUseStyles } from 'react-jss';
-// import hitIcon from '../../images/hit.svg';
-import missIcon from './images/miss.svg';
+import { ReactComponent as HitIcon } from './images/hit.svg';
+import { ReactComponent as MissIcon } from './images/miss.svg';
 import { ReactComponent as CrosshairIcon } from './images/crosshair.svg';
 import { Shot } from 'views/Game/types';
 
@@ -106,7 +106,15 @@ export default function OpponentBoard({
                     onMouseOver={() => setHoveredTile(index)}
                     onMouseLeave={() => setHoveredTile(-1)}
                   >
-                    {wasShot && <img alt="Shot" src={missIcon} />}
+                    {wasShot &&
+                      (wasShot.hit === undefined ? (
+                        <HitIcon />
+                      ) : wasShot.hit ? (
+                        <HitIcon fill="#FF0055" stroke="#FF0055" />
+                      ) : (
+                        <MissIcon fill="#A50037" stroke="#A50037" />
+                      ))}
+                    {}
                     {index === selectedTile && (
                       <CrosshairIcon className={styles.crossHair} />
                     )}
