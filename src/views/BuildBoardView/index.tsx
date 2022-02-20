@@ -131,18 +131,18 @@ export default function BuildBoard(): JSX.Element {
     setShipHash(_shipHash);
     console.log('ship Hash: ', mimcSponge.F.toObject(_shipHash))
     console.log('z', require('zk/board/board_verification_key.json'))
-    const boardWasm = await import("boardWasm")
-    const zkeyRes = await fetch('zk/board/board.zkey')
+
     const { proof, publicSignals } = await groth16.fullProve(
       { ships: board, hash: mimcSponge.F.toObject(_shipHash) },
-      boardWasm,
-      'zk/board/board_final.zkey'
+      'https://ipfs.infura.io/ipfs/QmRt4Uzi5w57fUne4cgPoBdSDJzQhEgHNisnib4iKTQ7Xt',
+      'https://ipfs.infura.io/ipfs/Qmaope4n6y4zCSnLDNAHJYnPq1Kdf3yapbRPzGiFd11EUj'
     )
     await groth16.verify(
       require('zk/board/board_verification_key.json'),
       publicSignals,
       proof
     )
+    console.log('flag')
     const proofArgs = buildProofArgs(proof)
     console.log('proof: ', proofArgs)
     if (id) {
