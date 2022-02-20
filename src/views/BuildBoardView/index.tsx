@@ -138,19 +138,26 @@ export default function BuildBoard(): JSX.Element {
 
   const startGame = async () => {
     if (!provider) return;
-    const board: number[][] = [];
-    placedShips.forEach((ship: Ship) => {
-      const x = Math.floor(ship.sections[0] / 10);
-      const y = ship.sections[0] % 10;
-      const z = ship.orientation === 'x' ? 0 : 1;
-      board.push([x, y, z]);
-    });
-    const switchedBoard = board.map((entry) => [entry[1], entry[0], entry[2]]);
-    const { hash, proof } = await boardProof(switchedBoard);
     let loadingToast = '';
     try {
+      loadingToast = toast.loading('Generating board proof...');
+      const board: number[][] = [];
+      placedShips.forEach((ship: Ship) => {
+        const x = Math.floor(ship.sections[0] / 10);
+        const y = ship.sections[0] % 10;
+        const z = ship.orientation === 'x' ? 0 : 1;
+        board.push([x, y, z]);
+      });
+      const switchedBoard = board.map((entry) => [
+        entry[1],
+        entry[0],
+        entry[2]
+      ]);
+      const { hash, proof } = await boardProof(switchedBoard);
       if (id) {
-        loadingToast = toast.loading(`Attempting to join game ${id}...`);
+        toast.loading(`Attempting to join game ${id}...`, {
+          id: loadingToast
+        });
         const tx = await joinGame(
           provider,
           +id,
@@ -169,7 +176,7 @@ export default function BuildBoard(): JSX.Element {
         toast.success(`Joined game ${id}`);
         navigate(ActiveGameLocation(id));
       } else {
-        loadingToast = toast.loading(`Creating game...`);
+        toast.loading(`Creating game...`, { id: loadingToast });
         console.log('flaga');
         const tx = await createGame(
           provider,
@@ -186,14 +193,16 @@ export default function BuildBoard(): JSX.Element {
           `BOARD_STATE_${currentIndex}_${address}`,
           JSON.stringify(placedShips)
         );
-        toast.remove(loadingToast);
-        toast.success('Game successfully created.', { duration: 5000 });
+        toast.success('Game successfully created.', {
+          duration: 5000,
+          id: loadingToast
+        });
         navigate(ActiveGameLocation(currentIndex + 1));
       }
     } catch (err) {
       console.log('ERROR:', err);
-      toast.remove(loadingToast);
       toast.error(id ? 'Error joining game' : 'Error creating game', {
+        id: loadingToast,
         duration: 5000
       });
     }

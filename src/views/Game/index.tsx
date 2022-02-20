@@ -159,14 +159,17 @@ export default function Game(): JSX.Element {
     let loadingToast = '';
     try {
       const first = !opponentShots.length && !yourShots.length;
-      loadingToast = toast.loading('Firing shot...');
       if (first) {
         const tx = await firstTurn(provider, +game.id, [shot.x, shot.y]);
         await tx.wait();
       } else {
+        loadingToast = toast.loading('Generating shot proof...', {
+          id: loadingToast
+        });
         const lastShot = opponentShots[opponentShots.length - 1];
         const hit = !!wasHit(lastShot.x + lastShot.y * 10);
         const proof = await getShotProof([lastShot.x, lastShot.y], hit);
+        toast.loading('Firing shot...', { id: loadingToast });
         const tx = await turn(
           provider,
           +game.id,
@@ -179,12 +182,11 @@ export default function Game(): JSX.Element {
         );
         await tx.wait();
       }
-      toast.remove(loadingToast);
-      toast.success('Shot fired');
+      // toast.remove(loadingToast);
+      toast.success('Shot fired', { id: loadingToast });
     } catch (err) {
       console.log('ERROR: ', err);
-      toast.remove(loadingToast);
-      toast.error('Error firing shot');
+      toast.error('Error firing shot', { id: loadingToast });
       setYourShots((prev) => prev.filter((prevShot) => prevShot !== shot));
     }
   };
