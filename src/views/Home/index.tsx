@@ -123,15 +123,18 @@ export default function Home(): JSX.Element {
   const [activeGame, setActiveGame] = useState(0);
   const [gameOption, setGameOption] = useState(0);
   const [selectedGame, setSelectedGame] = useState<Game | null>(null);
-  const { fetching, games } = useGames(
+  const { fetching, games, refreshCount } = useGames(
     1000,
     GameStatus.Started,
     activeGame < 0
   );
 
   const disabled = useMemo(() => {
-    return gameOption === 1 && !selectedGame;
-  }, [gameOption, selectedGame]);
+    return (
+      (gameOption === 1 && !selectedGame) ||
+      (gameOption === 2 && !games?.length)
+    );
+  }, [games, gameOption, selectedGame]);
 
   const playing = async () => {
     if (!address || !provider) return;
@@ -160,8 +163,8 @@ export default function Home(): JSX.Element {
       }
       case 2: {
         if (!games) break;
-        const gameId = getRandomInt(1, games.length - 1);
-        navigate(JoinGameLocation(`${gameId}`));
+        const randomIndex = getRandomInt(0, games.length - 1);
+        navigate(JoinGameLocation(`${games[randomIndex].id}`));
         break;
       }
     }
@@ -174,7 +177,7 @@ export default function Home(): JSX.Element {
 
   return (
     <MainLayout>
-      {fetching ? (
+      {fetching && !refreshCount ? (
         <HomeSkeleton />
       ) : activeGame > 0 ? (
         <div className={styles.isInGame}>
