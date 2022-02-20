@@ -182,10 +182,8 @@ export default function Game(): JSX.Element {
         );
         await tx.wait();
       }
-      // toast.remove(loadingToast);
       toast.success('Shot fired', { id: loadingToast });
     } catch (err) {
-      console.log('ERROR: ', err);
       toast.error('Error firing shot', { id: loadingToast });
       setYourShots((prev) => prev.filter((prevShot) => prevShot !== shot));
     }
