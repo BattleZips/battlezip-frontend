@@ -23,8 +23,19 @@ export const createGame = async (
   return contract.newGame(boardHash, a, b_0, b_1, c);
 };
 
-export const getGameNonce = async () => {
-
+export const getGameIndex = async (
+  ethersProvider: providers.Web3Provider
+) => {
+  if (!BATTLESHIP_GAME_CONTRACT || !ethersProvider) return;
+  const abi = new utils.Interface([
+    'function gameIndex() external view returns(uint256)'
+  ]);
+  const contract = new Contract(
+    BATTLESHIP_GAME_CONTRACT,
+    abi,
+    ethersProvider.getSigner()
+  );
+  return contract.gameIndex();
 }
 
 export const joinGame = async (

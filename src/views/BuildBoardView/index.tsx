@@ -9,7 +9,7 @@ import battleship from 'components/Board/images/battleshipSelection.svg';
 import submarine from 'components/Board/images/submarineSelection.svg';
 import cruiser from 'components/Board/images/cruiserSelection.svg';
 import destroyer from 'components/Board/images/destroyerSelection.svg';
-import { createGame, joinGame } from 'web3/battleshipGame';
+import { createGame, getGameIndex, joinGame } from 'web3/battleshipGame';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useWallet } from 'contexts/WalletContext';
 import { ActiveGameLocation } from 'Locations';
@@ -139,11 +139,12 @@ export default function BuildBoard(): JSX.Element {
       // TOOD: Add notification other player has already joined game
       const tx = await createGame(provider, 0, [0, 0], [0, 0], [0, 0], [0, 0]);
       await tx.wait();
+      const currentIndex = await getGameIndex(provider);
       localStorage.setItem(
-        `BOARD_STATE_${1}_${address}`,
+        `BOARD_STATE_${currentIndex + 1}_${address}`,
         JSON.stringify(placedShips)
       );
-      navigate(ActiveGameLocation('1'));
+      navigate(ActiveGameLocation(currentIndex + 1));
     }
   };
 

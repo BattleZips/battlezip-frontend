@@ -36,6 +36,15 @@ const useStyles = createUseStyles({
     justifyContent: 'center',
     lineHeight: '34.68px',
     paddingBlock: '2px'
+  },
+  waitingForOpponent: {
+    alignItems: 'center',
+    display: 'flex',
+    fontSize: '24px',
+    fontWeight: 700,
+    height: '523px',
+    justifyContent: 'center',
+    lineHeight: '34.68px'
   }
 });
 
@@ -162,13 +171,19 @@ export default function Game(): JSX.Element {
                   <img alt="Eth" className={styles.eth} src={eth} />
                 )}
               </div>
-              <OpponentBoard
-                shots={yourShots}
-                takeShot={takeShot}
-                totalTurns={totalTurns}
-                // TODO: Remove first shot hardcode
-                yourTurn={true}
-              />
+              {game.joinedBy ? (
+                <OpponentBoard
+                  shots={yourShots}
+                  takeShot={takeShot}
+                  totalTurns={totalTurns}
+                  // TODO: Remove first shot hardcode
+                  yourTurn={true}
+                />
+              ) : (
+                <div className={styles.waitingForOpponent}>
+                  WAITING FOR OPPONENT
+                </div>
+              )}
             </div>
             <div style={{ width: '523px' }}>
               <div
