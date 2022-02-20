@@ -1,16 +1,24 @@
 import { useCallback, useEffect, useState } from 'react';
 import { getGame } from 'graphql/getGame';
 import { useWallet } from 'contexts/WalletContext';
+import useInterval from './useInterval';
 
 export const useGame = (
   id: string
-): { fetching: boolean; error: Error | null; game: any | null } => {
+): {
+  fetching: boolean;
+  error: Error | null;
+  game: any | null;
+  refreshCount: number;
+} => {
   const { chainId } = useWallet();
   const [error, setError] = useState<Error | null>(null);
   const [fetching, setFecthing] = useState(true);
   const [game, setGame] = useState<any | null>(null);
+  const [refreshCount, setRefreshCount] = useState(0);
 
   const fetchData = useCallback(async () => {
+    console.log('FLAG')
     if (!chainId) return;
     try {
       setFecthing(true);
@@ -24,8 +32,16 @@ export const useGame = (
     }
   }, [chainId, error, id]);
 
+  const intervalFunction = () => {
+    fetchData();
+    setRefreshCount((prev) => prev + 1);
+  };
+
   useEffect(() => {
     fetchData();
   }, [fetchData]);
-  return { error, fetching, game };
+
+  useInterval(intervalFunction, 15000);
+
+  return { error, fetching, game, refreshCount };
 };

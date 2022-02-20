@@ -56,7 +56,7 @@ export default function Game(): JSX.Element {
   const [opponentShots, setOpponentShots] = useState<Shot[]>([]);
   const [placedShips, setPlacedShips] = useState<Ship[]>([]);
   const [yourShots, setYourShots] = useState<Shot[]>([]);
-  const { fetching, game } = useGame(id ?? '');
+  const { fetching, game, refreshCount } = useGame(id ?? '');
 
   const wasHit = (tile: number) => {
     return placedShips.find((ship) => ship.sections.includes(tile));
@@ -162,7 +162,7 @@ export default function Game(): JSX.Element {
 
   return (
     <MainLayout>
-      {fetching ? (
+      {fetching && !refreshCount ? (
         <GameSkeleton />
       ) : (
         <div>

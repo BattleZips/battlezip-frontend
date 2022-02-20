@@ -23,9 +23,7 @@ export const createGame = async (
   return contract.newGame(boardHash, a, b_0, b_1, c);
 };
 
-export const getGameIndex = async (
-  ethersProvider: providers.Web3Provider
-) => {
+export const getGameIndex = async (ethersProvider: providers.Web3Provider) => {
   if (!BATTLESHIP_GAME_CONTRACT || !ethersProvider) return;
   const abi = new utils.Interface([
     'function gameIndex() external view returns(uint256)'
@@ -36,7 +34,7 @@ export const getGameIndex = async (
     ethersProvider.getSigner()
   );
   return contract.gameIndex();
-}
+};
 
 export const joinGame = async (
   ethersProvider: providers.Web3Provider,
@@ -67,11 +65,7 @@ export const playingGame = async (
   const abi = new utils.Interface([
     'function playing(address player) public view returns(uint256)'
   ]);
-  const contract = new Contract(
-    BATTLESHIP_GAME_CONTRACT,
-    abi,
-    ethersProvider
-  );
+  const contract = new Contract(BATTLESHIP_GAME_CONTRACT, abi, ethersProvider);
   return contract.playing(player);
 };
 
@@ -103,7 +97,7 @@ export const turn = async (
   c: number[]
 ) => {
   if (!BATTLESHIP_GAME_CONTRACT || !ethersProvider) return;
-  console.log('GAME ID: ', gameId)
+  console.log('GAME ID: ', gameId);
   const abi = new utils.Interface([
     'function turn(uint256 _game, bool _hit, uint[2] memory _next, uint[2] memory a, uint[2] memory b_0, uint[2] memory b_1, uint[2] memory c) external'
   ]);
@@ -114,5 +108,3 @@ export const turn = async (
   );
   return contract.turn(gameId, hit, next, a, b_0, b_1, c);
 };
-
-
