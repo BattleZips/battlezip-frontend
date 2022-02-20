@@ -1,16 +1,16 @@
-import WalletConnectProvider from '@walletconnect/web3-provider';
+// import WalletConnectProvider from '@walletconnect/web3-provider';
 import { IProviderOptions } from 'web3modal';
 
 export const providerOptions: IProviderOptions = {
-  walletconnect: {
-    package: WalletConnectProvider,
-    options: {
-      rpc: {
-        1: process.env.REACT_APP_MAINNET_RPC,
-        4: process.env.REACT_APP_RINKEBY_RPC
-      }
-    }
-  }
+  // walletconnect: {
+  //   package: WalletConnectProvider,
+  //   options: {
+  //     rpc: {
+  //       1: process.env.REACT_APP_MAINNET_RPC,
+  //       4: process.env.REACT_APP_RINKEBY_RPC
+  //     }
+  //   }
+  // }
   /*'custom-torus-rinkeby': {
     display: {
       logo: TorusLogo,

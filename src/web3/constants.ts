@@ -15,10 +15,12 @@ type CurrencyInfo = {
   };
 };
 
+export const TESTNET_CHAIN_IDS = [4, 5];
+
 export const RPC_URLS: StringInfo = {
-  1: MAINNET_RPC || '',
-  4: RINKEBY_RPC || '',
-  5: GOERLI_RPC || ''
+  1: MAINNET_RPC || 'TODO',
+  4: RINKEBY_RPC || 'TODO',
+  5: GOERLI_RPC || 'TODO'
 };
 
 export const EXPLORER_URLS: StringInfo = {

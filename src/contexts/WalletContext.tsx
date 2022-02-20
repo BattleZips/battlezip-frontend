@@ -76,7 +76,7 @@ export const WalletProvider: React.FC = ({ children }) => {
   const disconnect = useCallback(async () => {
     web3Modal.clearCachedProvider();
     setWalletState({});
-    window.location.reload();
+    // window.location.reload();
   }, []);
 
   const setWalletProvider = useCallback(async (prov) => {

@@ -4,7 +4,8 @@ import {
   NETWORK_CURRENCIES,
   EXPLORER_URLS,
   NETWORK_NAMES,
-  RPC_URLS
+  RPC_URLS,
+  TESTNET_CHAIN_IDS
 } from './constants';
 import { isSupportedChain } from './helpers';
 
@@ -17,12 +18,15 @@ export const switchChainOnMetaMask = async (
   const networkName = NETWORK_NAMES[chainId];
   const rpcUrl = RPC_URLS[chainId];
   const explorerUrl = EXPLORER_URLS[chainId];
-
+  console.log('NAME: ', name);
+  console.log('SYMBOL: ', symbol);
+  console.log('NETWORK: ', networkName);
+  console.log('RPC: ', rpcUrl);
+  console.log('EXPLORER URL: ', explorerUrl);
   if (
     !(name && symbol && networkName && rpcUrl && explorerUrl && window.ethereum)
   )
     return false;
-
   try {
     await window.ethereum.request({
       method: 'wallet_switchEthereumChain',
@@ -38,22 +42,42 @@ export const switchChainOnMetaMask = async (
     // @ts-ignore
     if (switchError.code === 4902) {
       try {
-        await window.ethereum.request({
-          method: 'wallet_addEthereumChain',
-          params: [
-            {
-              chainId: utils.hexValue(chainId),
-              chainName: networkName,
-              nativeCurrency: {
-                name,
-                symbol,
-                decimals: 18
-              },
-              rpcUrls: [rpcUrl],
-              blockExplorerUrls: [explorerUrl]
-            }
-          ]
-        });
+        const isTestNet = TESTNET_CHAIN_IDS.includes(chainId);
+        if (isTestNet) {
+          await window.ethereum.request({
+            method: 'wallet_addEthereumChain',
+            params: [
+              {
+                chainId: utils.hexValue(chainId),
+                chainName: networkName,
+                nativeCurrency: {
+                  name,
+                  symbol,
+                  decimals: 18
+                },
+                rpcUrls: [rpcUrl],
+                blockExplorerUrls: [explorerUrl]
+              }
+            ]
+          });
+        } else {
+          await window.ethereum.request({
+            method: 'wallet_switchEthereumChain',
+            params: [
+              {
+                chainId: utils.hexValue(chainId),
+                chainName: networkName,
+                nativeCurrency: {
+                  name,
+                  symbol,
+                  decimals: 18
+                },
+                rpcUrls: [rpcUrl],
+                blockExplorerUrls: [explorerUrl]
+              }
+            ]
+          });
+        }
         return true;
       } catch (addError) {
         // eslint-disable-next-line no-console
