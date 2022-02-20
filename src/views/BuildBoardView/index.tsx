@@ -141,7 +141,7 @@ export default function BuildBoard(): JSX.Element {
       await tx.wait();
       const currentIndex = await getGameIndex(provider);
       localStorage.setItem(
-        `BOARD_STATE_${currentIndex + 1}_${address}`,
+        `BOARD_STATE_${+currentIndex + 1}_${address}`,
         JSON.stringify(placedShips)
       );
       navigate(ActiveGameLocation(currentIndex + 1));

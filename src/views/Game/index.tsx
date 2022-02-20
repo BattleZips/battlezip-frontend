@@ -109,6 +109,7 @@ export default function Game(): JSX.Element {
 
   const takeShot = async (shot: Shot) => {
     if (!provider) return;
+    setYourShots((prev) => [...prev, shot].sort((a, b) => b.turn - a.turn));
     const first = !opponentShots.length && !yourShots.length;
     if (first) {
       const tx = await firstTurn(provider, +game.id, [shot.x, shot.y]);
@@ -128,7 +129,6 @@ export default function Game(): JSX.Element {
       );
       await tx.wait();
     }
-    setYourShots((prev) => [...prev, shot].sort((a, b) => b.turn - a.turn));
   };
 
   const totalTurns = useMemo(() => {

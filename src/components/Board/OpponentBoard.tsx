@@ -103,11 +103,11 @@ export default function OpponentBoard({
                     onClick={() =>
                       yourTurn && !wasShot && setSelectedTile(index)
                     }
-                    onMouseOver={() => setHoveredTile(index)}
+                    onMouseOver={() => yourTurn && setHoveredTile(index)}
                     onMouseLeave={() => setHoveredTile(-1)}
                   >
                     {wasShot &&
-                      (wasShot.hit === undefined ? (
+                      (wasShot.hit === null || wasShot.hit === undefined ? (
                         <HitIcon style={{ opacity: 0.5 }} />
                       ) : wasShot.hit ? (
                         <HitIcon />
@@ -120,7 +120,8 @@ export default function OpponentBoard({
                     )}
                     {!wasShot &&
                       index === hoveredTile &&
-                      index !== selectedTile && (
+                      index !== selectedTile &&
+                      yourTurn && (
                         <CrosshairIcon
                           className={styles.crossHair}
                           style={{ opacity: 0.6 }}
