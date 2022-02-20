@@ -188,7 +188,7 @@ export default function BuildBoard(): JSX.Element {
         );
         await tx.wait();
         localStorage.setItem(
-          `BOARD_STATE_${currentIndex}_${address}`,
+          `BOARD_STATE_${+currentIndex + 1}_${address}`,
           JSON.stringify(placedShips)
         );
         toast.success('Game successfully created.', {
