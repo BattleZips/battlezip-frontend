@@ -144,9 +144,7 @@ export default function BuildBoard(): JSX.Element {
       const z = ship.orientation === 'x' ? 0 : 1;
       board.push([x, y, z]);
     });
-    console.log('board: ', board)
     const switchedBoard = board.map(entry => [entry[1], entry[0], entry[2]])
-    console.log('switched: ', switchedBoard)
     const { hash, proof } = await boardProof(switchedBoard);
     let loadingToast = '';
     try {

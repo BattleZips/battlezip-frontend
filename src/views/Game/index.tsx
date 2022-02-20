@@ -72,8 +72,6 @@ export default function Game(): JSX.Element {
     const _shipHash = mimcSponge.F.toObject(
       await mimcSponge.multiHash(board.flat())
     );
-    debugger
-    console.log({ ships: board, hash: _shipHash, shot, hit });
     const { proof, publicSignals } = await groth16.fullProve(
       { ships: board, hash: _shipHash, shot, hit },
       'https://ipfs.infura.io/ipfs/QmW4GhGVofT9o1bGcGajuamWgY8QhMAp2vE8mKu4yfw3oW',
@@ -89,7 +87,6 @@ export default function Game(): JSX.Element {
   };
 
   const getShotProof = async (shotCoords: number[], hit: boolean) => {
-    console.log('COORDS: ', shotCoords);
     const board: number[][] = [];
     placedShips.forEach((ship: Ship) => {
       const x = Math.floor(ship.sections[0] / 10);
@@ -97,11 +94,8 @@ export default function Game(): JSX.Element {
       const z = ship.orientation === 'x' ? 0 : 1;
       board.push([x, y, z]);
     });
-    console.log('bboard', board);
     const switchedBoard = board.map((entry) => [entry[1], entry[0], entry[2]]);
-    console.log('switched bboard', switchedBoard);
-    debugger;
-    const { proof } = await shotProof(switchedBoard, [shotCoords[1], shotCoords[0]], hit);
+    const { proof } = await shotProof(switchedBoard, [shotCoords[0], shotCoords[1]], hit);
     return proof;
   };
 
