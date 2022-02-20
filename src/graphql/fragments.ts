@@ -6,7 +6,7 @@ export const BattleshipGameDetails = gql`
     joinedBy
     startedBy
     status
-    shots(first: 200, orderBy: turn, orderDir: asc) {
+    shots(first: 200, orderBy: turn, orderDirection: asc) {
       hit
       x
       y
