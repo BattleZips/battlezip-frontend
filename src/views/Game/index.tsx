@@ -13,6 +13,7 @@ import { playingGame } from 'web3/battleshipGame';
 import eth from 'images/eth.svg';
 import { firstTurn, turn } from 'web3/battleshipGame';
 import { Shot } from './types';
+import { toast } from 'react-hot-toast';
 
 const useStyles = createUseStyles({
   content: {
@@ -109,8 +110,10 @@ export default function Game(): JSX.Element {
   const takeShot = async (shot: Shot) => {
     if (!provider) return;
     setYourShots((prev) => [...prev, shot].sort((a, b) => b.turn - a.turn));
+    let loadingToast = '';
     try {
       const first = !opponentShots.length && !yourShots.length;
+      loadingToast = toast.loading('Firing shot...');
       if (first) {
         const tx = await firstTurn(provider, +game.id, [shot.x, shot.y]);
         await tx.wait();
@@ -129,7 +132,11 @@ export default function Game(): JSX.Element {
         );
         await tx.wait();
       }
+      toast.remove(loadingToast);
+      toast.success('Shot fired');
     } catch (err) {
+      toast.remove(loadingToast);
+      toast.error('Error firing shot');
       setYourShots((prev) => prev.filter((prevShot) => prevShot !== shot));
     }
   };

@@ -130,8 +130,11 @@ export default function Home(): JSX.Element {
   );
 
   const disabled = useMemo(() => {
-    return gameOption === 1 && !selectedGame;
-  }, [gameOption, selectedGame]);
+    return (
+      (gameOption === 1 && !selectedGame) ||
+      (gameOption === 2 && !games?.length)
+    );
+  }, [games, gameOption, selectedGame]);
 
   const playing = async () => {
     if (!address || !provider) return;
@@ -160,8 +163,8 @@ export default function Home(): JSX.Element {
       }
       case 2: {
         if (!games) break;
-        const gameId = getRandomInt(1, games.length - 1);
-        navigate(JoinGameLocation(`${gameId}`));
+        const randomIndex = getRandomInt(0, games.length - 1);
+        navigate(JoinGameLocation(`${games[randomIndex].id}`));
         break;
       }
     }
