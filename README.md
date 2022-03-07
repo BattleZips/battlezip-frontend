@@ -23,3 +23,17 @@ yarn
 npm install
 ```
 
+3. Add .env file and add the following line:
+
+ ```
+ REACT_APP_BATTLESHIP_GAME_CONTRACT_MUMBAI=0xfD38c8C8dC0d56230A19013B3b213E0f823d2Df7
+ ```
+ 
+ 4. Start app
+
+```
+yarn start
+---
+npm start
+```
+
