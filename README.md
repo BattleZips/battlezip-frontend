@@ -9,3 +9,17 @@ This is the frontend implementation of the BattleZips protocol which debuted at 
 Subgraph: https://github.com/Ian-Bright/battlezip-subgraph  
 Contracts: https://github.com/jp4g/BattleZips
 
+## Setup
+
+1. Clone repo
+```
+git clone git@github.com:Ian-Bright/battlezip-frontend.git
+```
+
+2. Install dependenices with yarn or npm install
+```
+yarn
+---
+npm install
+```
+
