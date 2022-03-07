@@ -9,6 +9,12 @@ This is the frontend implementation of the BattleZips protocol which debuted at 
 Subgraph: https://github.com/Ian-Bright/battlezip-subgraph  
 Contracts: https://github.com/jp4g/BattleZips
 
+### Supported Networks
+
+* Goerli
+* Mumbai
+* Polygon
+
 ## Setup
 
 1. Clone repo
@@ -23,10 +29,12 @@ yarn
 npm install
 ```
 
-3. Add .env file and add the following line:
+3. Add .env file and add the following lines:
 
  ```
+ REACT_APP_BATTLESHIP_GAME_CONTRACT_GOERLI=0x75649E85EeA2b90fdcDF40DA18f38b3FCecB83A5
  REACT_APP_BATTLESHIP_GAME_CONTRACT_MUMBAI=0xfD38c8C8dC0d56230A19013B3b213E0f823d2Df7
+ REACT_APP_BATTLESHIP_GAME_CONTRACT_POLYGON=0xfaf0eD1F58132C88279dBB24C33787eAFc365DfD
  ```
  
  4. Start app
