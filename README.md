@@ -1,4 +1,4 @@
-# battlezip-frontend
+### BattleZips Frontend
 
 ## Background
 
