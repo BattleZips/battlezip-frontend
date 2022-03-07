@@ -2,24 +2,28 @@ import { useCallback, useEffect, useState } from 'react';
 import { useWallet } from 'contexts/WalletContext';
 import { buildMimcSponge } from 'circomlibjs';
 
-export const useMiMCSponge = (): { error: Error | null; mimcSponge: any | null } => {
-    const { chainId } = useWallet();
-    const [error, setError] = useState<Error | null>(null);
-    const [mimcSponge, setMimcSponge] = useState<any | null>(null);
+export const useMiMCSponge = (): {
+  error: Error | null;
+  mimcSponge: any | null;
+} => {
+  console.log('mim', buildMimcSponge)
+  const { chainId } = useWallet();
+  const [error, setError] = useState<Error | null>(null);
+  const [mimcSponge, setMimcSponge] = useState<any | null>(null);
 
-    const makeMimcSponge = useCallback(async () => {
-        if (!chainId) return;
-        try {
-            const _mimcSponge = await buildMimcSponge()
-            setMimcSponge(_mimcSponge);
-        } catch (err) {
-            setMimcSponge(null);
-            setError(error as Error);
-        }
-    }, [chainId, error]);
+  const makeMimcSponge = useCallback(async () => {
+    if (!chainId) return;
+    try {
+      const _mimcSponge = await buildMimcSponge();
+      setMimcSponge(_mimcSponge);
+    } catch (err) {
+      setMimcSponge(null);
+      setError(error as Error);
+    }
+  }, [chainId, error]);
 
-    useEffect(() => {
-        makeMimcSponge();
-    }, [makeMimcSponge]);
-    return { error, mimcSponge };
+  useEffect(() => {
+    makeMimcSponge();
+  }, [makeMimcSponge]);
+  return { error, mimcSponge };
 };

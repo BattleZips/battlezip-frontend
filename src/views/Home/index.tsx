@@ -116,7 +116,7 @@ const useStyles = createUseStyles({
 const GAME_OPTIONS = ['HOST GAME', 'JOIN GAME', 'JOIN RANDOM GAME'];
 
 export default function Home(): JSX.Element {
-  const { address, provider } = useWallet();
+  const { address, chainId, provider } = useWallet();
   const navigate = useNavigate();
   const styles = useStyles();
   const [activeGame, setActiveGame] = useState(0);
@@ -136,8 +136,8 @@ export default function Home(): JSX.Element {
   }, [games, gameOption, selectedGame]);
 
   const playing = async () => {
-    if (!address || !provider) return;
-    const playing = await playingGame(provider, address);
+    if (!address || !chainId || !provider) return;
+    const playing = await playingGame(chainId, provider, address);
     setActiveGame(playing || -1);
   };
 

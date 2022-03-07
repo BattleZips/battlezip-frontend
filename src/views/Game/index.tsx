@@ -57,7 +57,7 @@ export default function Game(): JSX.Element {
   const { id } = useParams();
   const styles = useStyles();
   const navigate = useNavigate();
-  const { address, provider } = useWallet();
+  const { address, chainId, provider } = useWallet();
   const { mimcSponge } = useMiMCSponge();
   const [gameOver, setGameOver] = useState({ over: false, winner: '' });
   const [opponentShots, setOpponentShots] = useState<Shot[]>([]);
@@ -106,10 +106,8 @@ export default function Game(): JSX.Element {
   };
 
   const playing = async () => {
-    if (!address || !provider) return;
-    const res = await playingGame(provider, address);
-    console.log('RES: ', res);
-    console.log('ID: ', id);
+    if (!address || !chainId || !provider) return;
+    const res = await playingGame(chainId, provider, address);
     return `${res}` === id;
   };
 
@@ -156,14 +154,17 @@ export default function Game(): JSX.Element {
   }, [address, game]);
 
   const takeShot = async (shot: Shot) => {
-    if (!provider) return;
+    if (!chainId || !provider) return;
     setYourShots((prev) => [...prev, shot].sort((a, b) => b.turn - a.turn));
     let loadingToast = '';
     try {
       const first = !opponentShots.length && !yourShots.length;
       if (first) {
         loadingToast = toast.loading('Firing shot...');
-        const tx = await firstTurn(provider, +game.id, [shot.x, shot.y]);
+        const tx = await firstTurn(chainId, provider, +game.id, [
+          shot.x,
+          shot.y
+        ]);
         await tx.wait();
       } else {
         loadingToast = toast.loading('Generating shot proof...');
@@ -172,6 +173,7 @@ export default function Game(): JSX.Element {
         const proof = await getShotProof([lastShot.x, lastShot.y], hit);
         toast.loading('Firing shot...', { id: loadingToast });
         const tx = await turn(
+          chainId,
           provider,
           +game.id,
           hit,

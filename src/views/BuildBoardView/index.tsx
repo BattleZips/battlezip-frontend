@@ -83,7 +83,7 @@ export default function BuildBoard(): JSX.Element {
   const styles = useStyles();
   const navigate = useNavigate();
   const { mimcSponge } = useMiMCSponge();
-  const { address, provider } = useWallet();
+  const { address, chainId, provider } = useWallet();
   const [placedShips, setPlacedShips] = useState<Ship[]>([]);
   const [rotationAxis, setRotationAxis] = useState('y');
   const [selectedShip, setSelectedShip] = useState<Ship>(EMPTY_SHIP);
@@ -137,7 +137,7 @@ export default function BuildBoard(): JSX.Element {
   };
 
   const startGame = async () => {
-    if (!provider) return;
+    if (!chainId || !provider) return;
     let loadingToast = '';
     try {
       loadingToast = toast.loading('Generating board proof...');
@@ -159,6 +159,7 @@ export default function BuildBoard(): JSX.Element {
           id: loadingToast
         });
         const tx = await joinGame(
+          chainId,
           provider,
           +id,
           BN.from(hash),
@@ -177,8 +178,9 @@ export default function BuildBoard(): JSX.Element {
         navigate(ActiveGameLocation(id));
       } else {
         toast.loading(`Creating game...`, { id: loadingToast });
-        const currentIndex = await getGameIndex(provider);
+        const currentIndex = await getGameIndex(chainId, provider);
         const tx = await createGame(
+          chainId,
           provider,
           BN.from(hash),
           proof[0],
