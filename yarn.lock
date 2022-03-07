@@ -2024,7 +2024,7 @@
   resolved "https://registry.yarnpkg.com/@iden3/bigarray/-/bigarray-0.0.2.tgz#6fc4ba5be18daf8a26ee393f2fb62b80d98c05e9"
   integrity sha512-Xzdyxqm1bOFF6pdIsiHLLl3HkSLjbhqJHVyqaTxXt3RqXBEnmsUmEW47H7VOi/ak7TdkRpNkxjyK5Zbkm+y52g==
 
-"@iden3/binfileutils@0.0.10":
+"@iden3/binfileutils@0.0.10", "@iden3/binfileutils@^0.0.10":
   version "0.0.10"
   resolved "https://registry.yarnpkg.com/@iden3/binfileutils/-/binfileutils-0.0.10.tgz#8791330780f6ea6bc063dda08c27b750d2233625"
   integrity sha512-mDtBiKYcHs9K8vnznd8md0In6e5hL6i7ITzlHQ6Xxx6kvGAgB8UZeHJ0KswS6IJK4x9v2mwHsh5kIDl245cQZg==
@@ -3650,10 +3650,10 @@ assert@^1.1.1:
     object-assign "^4.1.1"
     util "0.10.3"
 
-assert@^2.0.0:
+"assert@npm:assert-browserify":
   version "2.0.0"
-  resolved "https://registry.yarnpkg.com/assert/-/assert-2.0.0.tgz#95fc1c616d48713510680f2eaf2d10dd22e02d32"
-  integrity sha512-se5Cd+js9dXJnu6Ag2JFc00t+HmHOen+8Q+L7O9zI0PqQXr20uk2J0XQqMxZEeo5U50o8Nvmmx7dZrl+Ufr35A==
+  resolved "https://registry.yarnpkg.com/assert-browserify/-/assert-browserify-2.0.0.tgz#cd31acb6a4687582381ab2c8e0b4876a03b8648a"
+  integrity sha512-SJvtrHmyaOT57oKWIpzWZr2hLkFyXjg5ajNT+RHvd9fhpruhrJF0OYT0yy8rIgvSn3xQp/VpLQAOwO0KNVKrJw==
   dependencies:
     es6-object-assign "^1.1.0"
     is-nan "^1.2.1"
@@ -7131,6 +7131,16 @@ ffjavascript@0.2.48, ffjavascript@^0.2.45, ffjavascript@^0.2.48:
   version "0.2.48"
   resolved "https://registry.yarnpkg.com/ffjavascript/-/ffjavascript-0.2.48.tgz#0ca408471d7b18bfc096a9631aa3ef3549c8c82b"
   integrity sha512-uNrWP+odLofNmmO+iCCPi/Xt/sJh1ku3pVKmKWVWCLFfdCP69hvRrogKUIGnsdiINcWn0lGxcEh5oEjStMFXQQ==
+  dependencies:
+    big-integer "^1.6.48"
+    wasmbuilder "^0.0.12"
+    wasmcurves "0.1.0"
+    web-worker "^1.2.0"
+
+ffjavascript@^0.2.50:
+  version "0.2.50"
+  resolved "https://registry.yarnpkg.com/ffjavascript/-/ffjavascript-0.2.50.tgz#26a11624b0f6736f44299cc9f39d8692152f7199"
+  integrity sha512-fQyzkLj3XShhJx9KjIjgWuYS6e6quJQqKF+anPPDuIC/aA+isb+w+8Rf9ih6MSlQYYUu2T8Rh9y8jbuVscESbw==
   dependencies:
     big-integer "^1.6.48"
     wasmbuilder "^0.0.12"
@@ -11006,7 +11016,7 @@ original@^1.0.0:
   dependencies:
     url-parse "^1.4.3"
 
-os-browserify@^0.3.0:
+os-browserify@^0.3.0, "os@npm:os-browserify":
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/os-browserify/-/os-browserify-0.3.0.tgz#854373c7f5c2315914fc9bfc6bd8238fdda1ec27"
   integrity sha1-hUNzx/XCMVkU/Jv8a9gjj92h7Cc=
@@ -11015,11 +11025,6 @@ os-tmpdir@~1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/os-tmpdir/-/os-tmpdir-1.0.2.tgz#bbe67406c79aa85c5cfec766fe5734555dfa1274"
   integrity sha1-u+Z0BseaqFxc/sdm/lc0VV36EnQ=
-
-os@^0.1.2:
-  version "0.1.2"
-  resolved "https://registry.yarnpkg.com/os/-/os-0.1.2.tgz#f29a50c62908516ba42652de42f7038600cadbc2"
-  integrity sha512-ZoXJkvAnljwvc56MbvhtKVWmSkzV712k42Is2mA0+0KTSRakq5XXuXpjZjgAt9ctzl51ojhQWakQQpmOvXWfjQ==
 
 p-cancelable@^1.0.0:
   version "1.1.0"
@@ -12415,13 +12420,6 @@ react-app-polyfill@^2.0.0:
     raf "^3.4.1"
     regenerator-runtime "^0.13.7"
     whatwg-fetch "^3.4.1"
-
-react-app-rewired@^2.2.1:
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/react-app-rewired/-/react-app-rewired-2.2.1.tgz#84901ee1e3f26add0377ebec0b41bcdfce9fc211"
-  integrity sha512-uFQWTErXeLDrMzOJHKp0h8P1z0LV9HzPGsJ6adOtGlA/B9WfT6Shh4j2tLTTGlXOfiVx6w6iWpp7SOC5pvk+gA==
-  dependencies:
-    semver "^5.6.0"
 
 react-dev-utils@^11.0.3:
   version "11.0.4"

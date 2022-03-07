@@ -6,8 +6,9 @@ declare module 'fake-tag' {
   export = gql;
 }
 
-declare module "ffjavascript";
-declare module "circomlibjs";
-declare module "snarkjs";
-declare module "boardWasm";
-declare module "shotWasm";
+declare module 'ffjavascript';
+declare module 'circomlibjs';
+declare module 'snarkjs';
+declare module 'boardWasm';
+declare module 'shotWasm';
+declare module '@iden3/binfileutils';

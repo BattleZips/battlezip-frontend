@@ -12,19 +12,16 @@
     "@types/react": "^17.0.20",
     "@types/react-dom": "^17.0.9",
     "@walletconnect/web3-provider": "^1.7.1",
-    "assert": "^2.0.0",
     "circomlibjs": "^0.1.1",
     "crypto-browserify": "^3.12.0",
     "ethereum-blockies-base64": "^1.0.2",
     "ethers": "^5.5.4",
     "fake-tag": "^4.0.0",
-    "ffjavascript": "^0.2.48",
+    "ffjavascript": "^0.2.50",
     "graphql": "^16.3.0",
     "https-browserify": "^1.0.0",
-    "os": "^0.1.2",
     "os-browserify": "^0.3.0",
     "react": "^17.0.2",
-    "react-app-rewired": "^2.2.1",
     "react-dom": "^17.0.2",
     "react-hot-toast": "^2.2.0",
     "react-jss": "^10.9.0",
@@ -41,14 +38,13 @@
     "web3modal": "^1.9.5"
   },
   "scripts": {
-    "start": "react-app-rewired start",
-    "build": "yarn generate && react-app-rewired build",
+    "start": "react-scripts start",
+    "build": "yarn generate && react-scripts build",
     "format": "prettier --config .prettierrc 'src/' --write",
     "generate": "graphql-codegen --config=codegen.yml",
-    "test": "react-app-rewired test",
-    "eject": "react-app-rewired eject",
-    "postinstall": "./postinstall.sh",
-    "prebuild": "./postinstall.sh"
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "postinstall": "./postinstall.sh"
   },
   "eslintConfig": {
     "extends": [
@@ -74,6 +70,7 @@
     "@graphql-codegen/typescript": "^2.4.3",
     "@graphql-codegen/typescript-operations": "^2.3.0",
     "@graphql-codegen/typescript-urql": "^3.5.1",
+    "@iden3/binfileutils": "^0.0.10",
     "assert": "npm:assert-browserify",
     "concurrently": "^7.0.0",
     "http": "npm:http-browserify",
