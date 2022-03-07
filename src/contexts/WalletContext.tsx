@@ -84,7 +84,6 @@ export const WalletProvider: React.FC = ({ children }) => {
 
     await ethersProvider.ready;
     const providerNetwork = await ethersProvider.getNetwork();
-
     let network = Number(providerNetwork.chainId);
     if (!isSupportedChain(network)) {
       const success =
@@ -97,9 +96,12 @@ export const WalletProvider: React.FC = ({ children }) => {
       }
       network = DEFAULT_NETWORK;
     }
-
+    // TODO: Move to better location
+    const isPolygonChain = network === 137 || network === 80001;
     const signerAddress = await ethersProvider.getSigner().getAddress();
-    const signerName = await ethersProvider.lookupAddress(signerAddress);
+    const signerName = !isPolygonChain
+      ? await ethersProvider.lookupAddress(signerAddress)
+      : '';
     setWalletState({
       rawProvider: prov,
       provider: ethersProvider,
@@ -112,13 +114,11 @@ export const WalletProvider: React.FC = ({ children }) => {
   const connectWallet = useCallback(async () => {
     try {
       setConnecting(true);
-
       const modalProvider = await (async () => {
         const choosenProvider = await web3Modal.connect();
         await setWalletProvider(choosenProvider);
         return choosenProvider;
       })();
-
       modalProvider.on('accountsChanged', () => {
         disconnect();
       });

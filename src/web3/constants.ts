@@ -2,6 +2,9 @@ const {
   REACT_APP_MAINNET_RPC: MAINNET_RPC,
   REACT_APP_RINKEBY_RPC: RINKEBY_RPC,
   REACT_APP_GOERLI_RPC: GOERLI_RPC,
+  REACT_APP_BATTLESHIP_GAME_CONTRACT_GOERLI: BATTLESHIP_GAME_CONTRACT_GOERLI,
+  REACT_APP_BATTLESHIP_GAME_CONTRACT_MUMBAI: BATTLESHIP_GAME_CONTRACT_MUMBAI,
+  REACT_APP_BATTLESHIP_GAME_CONTRACT_POLYGON: BATTLESHIP_GAME_CONTRACT_POLYGON,
 } = process.env;
 
 type StringInfo = {
@@ -14,6 +17,12 @@ type CurrencyInfo = {
     symbol: string;
   };
 };
+
+export const BATTLESHIP_GAME_CONTRACT: { [key: number]: string } = {
+  5: BATTLESHIP_GAME_CONTRACT_GOERLI || '',
+  137: BATTLESHIP_GAME_CONTRACT_POLYGON || '',
+  80001: BATTLESHIP_GAME_CONTRACT_MUMBAI || '',
+}
 
 export const TESTNET_CHAIN_IDS = [4, 5, 80001];
 
@@ -64,7 +73,7 @@ export const SUBGRAPH_URLS: StringInfo = {
   1: 'https://api.thegraph.com/subgraphs/name/ensdomains/ens',
   4: 'https://api.thegraph.com/subgraphs/name/ian-bright/zk_battleship_rinkeby',
   5: 'https://api.thegraph.com/subgraphs/name/ian-bright/battlezips_goerli',
-  137: 'https://api.thegraph.com/subgraphs/name/ian-bright/battlezips_mumbai', //placeholder
+  137: 'https://api.thegraph.com/subgraphs/name/ian-bright/battlezips_polygon', //placeholder
   80001: 'https://api.thegraph.com/subgraphs/name/ian-bright/battlezips_mumbai'
 };
 
