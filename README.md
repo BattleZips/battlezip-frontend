@@ -15,6 +15,9 @@ Contracts: https://github.com/jp4g/BattleZips
 * Mumbai
 * Polygon
 
+## Video Walkthrough
+[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/FBux07B76SQ/0.jpg)](https://www.youtube.com/watch?v=FBux07B76SQ)
+
 ## Setup
 
 1. Clone repo
