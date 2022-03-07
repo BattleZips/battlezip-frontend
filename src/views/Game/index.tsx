@@ -215,7 +215,6 @@ export default function Game(): JSX.Element {
   useEffect(() => {
     if (!fetching) {
       if (game) {
-        console.log('GAME: ', game);
         const historic = game.status === 'OVER';
         const inGame = playing();
         if (!historic && !inGame) {

@@ -41,7 +41,7 @@
     "web3modal": "^1.9.5"
   },
   "scripts": {
-    "start": "react-app-rewired start",
+    "start": "concurrently \"react-app-rewired start\" \"yarn generate --watch\"",
     "build": "yarn generate && react-app-rewired build",
     "format": "prettier --config .prettierrc 'src/' --write",
     "generate": "graphql-codegen --config=codegen.yml",
