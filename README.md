@@ -6,6 +6,6 @@ This is the frontend implementation of the BattleZips protocol which debuted at 
 
 ### Links to relevant repos
 
-Subgraph: https://github.com/Ian-Bright/battlezip-subgraph
+Subgraph: https://github.com/Ian-Bright/battlezip-subgraph  
 Contracts: https://github.com/jp4g/BattleZips
 
