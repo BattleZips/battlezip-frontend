@@ -85,6 +85,6 @@ export const NETWORK_NAMES: StringInfo = {
   80001: 'Polygon Mumbai Testnet'
 };
 
-export const SUPPORTED_NETWORKS: number[] = [80001];
+export const SUPPORTED_NETWORKS: number[] = [5, 137, 80001];
 
-export const DEFAULT_NETWORK = SUPPORTED_NETWORKS[0];
+export const DEFAULT_NETWORK = SUPPORTED_NETWORKS[2];
