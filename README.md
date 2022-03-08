@@ -1,5 +1,8 @@
 # BattleZips Frontend
-
+<p align="center">
+  <img width="460" height="460" src="battlezips.png">
+  <img src="qr-code.png">
+</p>
 ## Background
 
 This is the frontend implementation of the BattleZips protocol which debuted at Eth Denver 2022. This is still a WIP and will have a hosted version soon that will be linked here.
