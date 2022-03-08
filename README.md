@@ -1,6 +1,6 @@
 # BattleZips Frontend
 
-<div style="display: flex; gap: 16px;">
+<div style="align-items: center; display: flex; gap: 16px;">
   <img width="460" height="460" src="battlezips.png">
   <img width="200" height="200" src="qr-code.png">
 </div>
