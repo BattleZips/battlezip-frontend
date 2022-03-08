@@ -32,5 +32,6 @@ export const getENSDomains = async (
 
     return null;
   }
+  console.log('DATA: ', data);
   return data;
 };
