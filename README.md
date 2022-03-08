@@ -2,7 +2,7 @@
 
 <div style="align-items: center; display: flex;">
   <img width="460" height="460" src="battlezips.png">
-  <img width="200" height="200" style="margin-left: 24px" src="qr-code.png">
+  <img width="200" height="200" style="margin-left: 24px;" src="qr-code.png">
 </div>
 
 ## Background
