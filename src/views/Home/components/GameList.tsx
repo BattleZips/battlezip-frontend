@@ -73,7 +73,7 @@ export default function GameList({
                 }}
               >
                 <Avatar address={game.address} />
-                <div>{game.ens ?? game.address}</div>
+                <div>{game.ens || game.address}</div>
               </div>
             ))}
           </div>
