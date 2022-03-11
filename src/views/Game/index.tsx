@@ -76,11 +76,11 @@ export default function Game(): JSX.Element {
     );
     const { proof, publicSignals } = await groth16.fullProve(
       { ships: board, hash: _shipHash, shot, hit },
-      'https://ipfs.infura.io/ipfs/QmW4GhGVofT9o1bGcGajuamWgY8QhMAp2vE8mKu4yfw3oW',
-      'https://ipfs.infura.io/ipfs/QmZFkHjGeCHfhE4xLYo3gAgRaqpTCm5YEmCWGtGFHfWTha'
+      'https://ipfs.infura.io/ipfs/QmbhiRD8LYSJx4ss9DW4A2QXNh8dnJFgNdL9ofGSVr8T4o',
+      'https://ipfs.infura.io/ipfs/QmYqPPLhPg8kjUcHLPi8FkoZQVfMHdywBhb6zWjKP4WmZ6'
     );
     await groth16.verify(
-      require('zk/shot_verification_key.json'),
+      'https://ipfs.infura.io/ipfs/QmTVSaQvuUrqwVNT962gceEFH9UBEw1GYk2z9u3t5iAJse',
       publicSignals,
       proof
     );

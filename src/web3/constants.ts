@@ -74,7 +74,7 @@ export const SUBGRAPH_URLS: StringInfo = {
   4: 'https://api.thegraph.com/subgraphs/name/ian-bright/zk_battleship_rinkeby',
   5: 'https://api.thegraph.com/subgraphs/name/ian-bright/battlezips_goerli',
   137: 'https://api.thegraph.com/subgraphs/name/ian-bright/battlezips_polygon', //placeholder
-  80001: 'https://api.thegraph.com/subgraphs/name/ian-bright/battlezips_mumbai'
+  80001: 'https://api.thegraph.com/subgraphs/name/jp4g/battlezips-mumbai'
 };
 
 export const NETWORK_NAMES: StringInfo = {

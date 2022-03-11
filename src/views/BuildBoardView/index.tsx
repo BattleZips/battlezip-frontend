@@ -122,13 +122,16 @@ export default function BuildBoard(): JSX.Element {
     const _shipHash = mimcSponge.F.toObject(
       await mimcSponge.multiHash(board.flat())
     );
+    debugger;
     const { proof, publicSignals } = await groth16.fullProve(
       { ships: board, hash: _shipHash },
-      'https://ipfs.infura.io/ipfs/QmRt4Uzi5w57fUne4cgPoBdSDJzQhEgHNisnib4iKTQ7Xt',
-      'https://ipfs.infura.io/ipfs/Qmaope4n6y4zCSnLDNAHJYnPq1Kdf3yapbRPzGiFd11EUj'
+      'https://ipfs.infura.io/ipfs/QmZ274ZUF3JAAdtnCaYNr2tEDFwu4ThqG6Hkbj7rvYbiDs',
+      'https://ipfs.infura.io/ipfs/QmQMfy99jyvzQ9wPSmHwYvxfXL929yjDFZ2dzyouvotBsk'
     );
+    const vkey = await fetch('https://ipfs.infura.io/ipfs/QmWCeoJy8ZEmN33htuvzDUxk2YmoQqF9VymMJUzay4XdLo')
+      .then((res) => { return res.json() })
     await groth16.verify(
-      require('zk/board_verification_key.json'),
+      vkey,
       publicSignals,
       proof
     );
