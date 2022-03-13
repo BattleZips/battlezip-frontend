@@ -14,7 +14,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useWallet } from 'contexts/WalletContext';
 import { ActiveGameLocation } from 'Locations';
 import { useMiMCSponge } from 'hooks/useMiMCSponge';
-import { groth16 } from 'snarkjs';
 import { buildProofArgs } from 'utils';
 import { toast } from 'react-hot-toast';
 import { BigNumber as BN } from 'ethers';
@@ -122,16 +121,17 @@ export default function BuildBoard(): JSX.Element {
     const _shipHash = mimcSponge.F.toObject(
       await mimcSponge.multiHash(board.flat())
     );
-    const { proof, publicSignals } = await groth16.fullProve(
+    const { proof, publicSignals } = await window.snarkjs.groth16.fullProve(
       { ships: board, hash: _shipHash },
-      'https://ipfs.infura.io/ipfs/QmRt4Uzi5w57fUne4cgPoBdSDJzQhEgHNisnib4iKTQ7Xt',
-      'https://ipfs.infura.io/ipfs/Qmaope4n6y4zCSnLDNAHJYnPq1Kdf3yapbRPzGiFd11EUj'
+      'https://ipfs.infura.io/ipfs/QmZ274ZUF3JAAdtnCaYNr2tEDFwu4ThqG6Hkbj7rvYbiDs',
+      'https://ipfs.infura.io/ipfs/QmQMfy99jyvzQ9wPSmHwYvxfXL929yjDFZ2dzyouvotBsk'
     );
-    await groth16.verify(
-      require('zk/board_verification_key.json'),
-      publicSignals,
-      proof
-    );
+    const vkey = await fetch(
+      'https://ipfs.infura.io/ipfs/QmWCeoJy8ZEmN33htuvzDUxk2YmoQqF9VymMJUzay4XdLo'
+    ).then((res) => {
+      return res.json();
+    });
+    await window.snarkjs.groth16.verify(vkey, publicSignals, proof);
     const proofArgs = buildProofArgs(proof);
     return { hash: _shipHash, proof: proofArgs };
   };
@@ -200,7 +200,7 @@ export default function BuildBoard(): JSX.Element {
         navigate(ActiveGameLocation(`${+currentIndex + 1}`));
       }
     } catch (err) {
-      console.log('ERROR:', err);
+      console.log('ERROR: ', err);
       toast.error(id ? 'Error joining game' : 'Error creating game', {
         id: loadingToast,
         duration: 5000

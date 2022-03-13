@@ -6,7 +6,6 @@ export const useMiMCSponge = (): {
   error: Error | null;
   mimcSponge: any | null;
 } => {
-  console.log('mim', buildMimcSponge)
   const { chainId } = useWallet();
   const [error, setError] = useState<Error | null>(null);
   const [mimcSponge, setMimcSponge] = useState<any | null>(null);

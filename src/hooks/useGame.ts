@@ -18,7 +18,6 @@ export const useGame = (
   const [refreshCount, setRefreshCount] = useState(0);
 
   const fetchData = useCallback(async () => {
-    console.log('FLAG');
     if (!chainId) return;
     try {
       setFecthing(true);
