@@ -62,7 +62,6 @@ export const playingGame = async (
   ethersProvider: providers.Web3Provider,
   player: string
 ) => {
-  console.log('FLAG: ', BATTLESHIP_GAME_CONTRACT[chainId])
   if (!ethersProvider) return;
   const abi = new utils.Interface([
     'function playing(address player) public view returns(uint256)'

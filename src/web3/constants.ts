@@ -7,6 +7,12 @@ const {
   REACT_APP_BATTLESHIP_GAME_CONTRACT_POLYGON: BATTLESHIP_GAME_CONTRACT_POLYGON,
 } = process.env;
 
+type IpfsInfo = {
+  verification_key: string;
+  zkey: string;
+  circuit: string;
+}
+
 type StringInfo = {
   [chainId: number]: string;
 };
@@ -74,7 +80,7 @@ export const SUBGRAPH_URLS: StringInfo = {
   4: 'https://api.thegraph.com/subgraphs/name/ian-bright/zk_battleship_rinkeby',
   5: 'https://api.thegraph.com/subgraphs/name/ian-bright/battlezips_goerli',
   137: 'https://api.thegraph.com/subgraphs/name/ian-bright/battlezips_polygon', //placeholder
-  80001: 'https://api.thegraph.com/subgraphs/name/ian-bright/battlezips_mumbai'
+  80001: 'https://api.thegraph.com/subgraphs/name/jp4g/battlezips-mumbai'
 };
 
 export const NETWORK_NAMES: StringInfo = {
@@ -84,6 +90,21 @@ export const NETWORK_NAMES: StringInfo = {
   137: 'Polygon Mainnet',
   80001: 'Polygon Mumbai Testnet'
 };
+
+const IPFS_PREFIX = "https://ipfs.infura.io/ipfs/"
+
+export const IPFS_CIDS: { [key: string]: IpfsInfo } = {
+  board: {
+    verification_key: `${IPFS_PREFIX}QmWCeoJy8ZEmN33htuvzDUxk2YmoQqF9VymMJUzay4XdLo`,
+    zkey: `${IPFS_PREFIX}QmQMfy99jyvzQ9wPSmHwYvxfXL929yjDFZ2dzyouvotBsk`,
+    circuit: `${IPFS_PREFIX}QmZ274ZUF3JAAdtnCaYNr2tEDFwu4ThqG6Hkbj7rvYbiDs`
+  },
+  shot: {
+    verification_key: `${IPFS_PREFIX}QmTVSaQvuUrqwVNT962gceEFH9UBEw1GYk2z9u3t5iAJse`,
+    zkey: `${IPFS_PREFIX}QmYqPPLhPg8kjUcHLPi8FkoZQVfMHdywBhb6zWjKP4WmZ6`,
+    circuit: `${IPFS_PREFIX}QmbhiRD8LYSJx4ss9DW4A2QXNh8dnJFgNdL9ofGSVr8T4o`
+  }
+}
 
 export const SUPPORTED_NETWORKS: number[] = [5, 137, 80001];
 

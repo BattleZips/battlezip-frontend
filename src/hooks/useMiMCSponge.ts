@@ -1,12 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useWallet } from 'contexts/WalletContext';
-import { buildMimcSponge } from 'circomlibjs';
-
 export const useMiMCSponge = (): {
   error: Error | null;
   mimcSponge: any | null;
 } => {
-  console.log('mim', buildMimcSponge)
   const { chainId } = useWallet();
   const [error, setError] = useState<Error | null>(null);
   const [mimcSponge, setMimcSponge] = useState<any | null>(null);
@@ -14,7 +11,7 @@ export const useMiMCSponge = (): {
   const makeMimcSponge = useCallback(async () => {
     if (!chainId) return;
     try {
-      const _mimcSponge = await buildMimcSponge();
+      const _mimcSponge = await window.circomlibjs.buildMimcSponge();
       setMimcSponge(_mimcSponge);
     } catch (err) {
       setMimcSponge(null);

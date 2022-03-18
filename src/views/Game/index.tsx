@@ -10,12 +10,12 @@ import { RootLocation } from 'Locations';
 import { useGame } from 'hooks/useGame';
 import GameSkeleton from './components/GameSkeleton';
 import { playingGame } from 'web3/battleshipGame';
+import { IPFS_CIDS } from 'web3/constants';
 import eth from 'images/eth.svg';
 import { firstTurn, turn } from 'web3/battleshipGame';
 import { Shot } from './types';
 import { toast } from 'react-hot-toast';
 import { useMiMCSponge } from 'hooks/useMiMCSponge';
-import { groth16 } from 'snarkjs';
 import { buildProofArgs } from 'utils';
 import GameOver from './components/GameOver';
 
@@ -74,16 +74,13 @@ export default function Game(): JSX.Element {
     const _shipHash = mimcSponge.F.toObject(
       await mimcSponge.multiHash(board.flat())
     );
-    const { proof, publicSignals } = await groth16.fullProve(
+    const { proof, publicSignals } = await window.snarkjs.groth16.fullProve(
       { ships: board, hash: _shipHash, shot, hit },
-      'https://ipfs.infura.io/ipfs/QmW4GhGVofT9o1bGcGajuamWgY8QhMAp2vE8mKu4yfw3oW',
-      'https://ipfs.infura.io/ipfs/QmZFkHjGeCHfhE4xLYo3gAgRaqpTCm5YEmCWGtGFHfWTha'
+      IPFS_CIDS.shot.circuit,
+      IPFS_CIDS.shot.zkey
     );
-    await groth16.verify(
-      require('zk/shot_verification_key.json'),
-      publicSignals,
-      proof
-    );
+    const vkey = await fetch(IPFS_CIDS.shot.verification_key).then((res) => { return res.json() });
+    await window.snarkjs.groth16.verify(vkey, publicSignals, proof);
     const proofArgs = buildProofArgs(proof);
     return { hash: _shipHash, proof: proofArgs };
   };
