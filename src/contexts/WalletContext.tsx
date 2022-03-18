@@ -1,4 +1,4 @@
-import { providers } from 'ethers';
+import { ethers, providers } from 'ethers';
 import {
   createContext,
   useCallback,
@@ -15,7 +15,8 @@ import { switchChainOnMetaMask } from 'web3/metamask';
 
 export type WalletContextType = {
   rawProvider: providers.Provider | null | undefined;
-  provider: providers.Web3Provider | null | undefined;
+  fallbackProvider: providers.Web3Provider | null | undefined; // ethers provider
+  provider: providers.Web3Provider | null | undefined; // biconomy provider
   chainId: number | null | undefined;
   address: string | null | undefined;
   // authToken: string | null | undefined;
@@ -35,6 +36,7 @@ const web3Modal = new Web3Modal({
 
 export const WalletContext = createContext<WalletContextType>({
   rawProvider: null,
+  fallbackProvider: null,
   provider: null,
   chainId: null,
   address: null,
@@ -50,6 +52,7 @@ export const WalletContext = createContext<WalletContextType>({
 
 type WalletStateType = {
   rawProvider?: providers.Provider | null;
+  fallbackProvider?: providers.Web3Provider | null;
   provider?: providers.Web3Provider | null;
   chainId?: number | null;
   address?: string | null;
@@ -62,7 +65,7 @@ const isMetamaskProvider = (
 ) => provider?.connection?.url === 'metamask';
 
 export const WalletProvider: React.FC = ({ children }) => {
-  const [{ rawProvider, provider, chainId, address, ensName }, setWalletState] =
+  const [{ rawProvider, fallbackProvider, provider, chainId, address, ensName }, setWalletState] =
     useState<WalletStateType>({});
 
   const isConnected: boolean = useMemo(
@@ -76,12 +79,28 @@ export const WalletProvider: React.FC = ({ children }) => {
   const disconnect = useCallback(async () => {
     web3Modal.clearCachedProvider();
     setWalletState({});
-    // window.location.reload();
   }, []);
+
+  const setBiconomyProvider = useCallback(async (prov): Promise<providers.Web3Provider | null> => {
+    const biconomy = new window.Biconomy(prov, {
+      apiKey: process.env.REACT_APP_BICONOMY_API,
+      debug: true
+    })
+    try {
+      const res: providers.Web3Provider | null = await new Promise((resolve, reject) => {
+        biconomy
+          .onEvent(biconomy.READY, () => resolve(new ethers.providers.Web3Provider(biconomy)))
+          .onEvent(biconomy.ERROR, (err: Error) => reject(err))
+      })
+      return res
+    } catch (err) {
+      console.log("Biconomy mexa integration failed: ", err)
+      return null
+    }
+  }, [])
 
   const setWalletProvider = useCallback(async (prov) => {
     const ethersProvider = new providers.Web3Provider(prov);
-
     await ethersProvider.ready;
     const providerNetwork = await ethersProvider.getNetwork();
     let network = Number(providerNetwork.chainId);
@@ -96,6 +115,7 @@ export const WalletProvider: React.FC = ({ children }) => {
       }
       network = DEFAULT_NETWORK;
     }
+    const biconomyProvider = await setBiconomyProvider(ethersProvider);
     // TODO: Move to better location
     const isPolygonChain = network === 137 || network === 80001;
     const signerAddress = await ethersProvider.getSigner().getAddress();
@@ -104,12 +124,13 @@ export const WalletProvider: React.FC = ({ children }) => {
       : '';
     setWalletState({
       rawProvider: prov,
+      fallbackProvider: null,
       provider: ethersProvider,
       chainId: network,
       address: signerAddress.toLowerCase(),
       ensName: signerName
     });
-  }, []);
+  }, [setBiconomyProvider]);
 
   const connectWallet = useCallback(async () => {
     try {
@@ -117,6 +138,7 @@ export const WalletProvider: React.FC = ({ children }) => {
       const modalProvider = await (async () => {
         const choosenProvider = await web3Modal.connect();
         await setWalletProvider(choosenProvider);
+
         return choosenProvider;
       })();
       modalProvider.on('accountsChanged', () => {
@@ -149,6 +171,7 @@ export const WalletProvider: React.FC = ({ children }) => {
     <WalletContext.Provider
       value={{
         rawProvider,
+        fallbackProvider,
         provider,
         address,
         chainId,

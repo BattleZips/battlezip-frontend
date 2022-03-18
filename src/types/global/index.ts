@@ -5,5 +5,6 @@ declare global {
         /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
         snarkjs: any;
         circomlibjs: any;
+        Biconomy: any;
     }
 }
