@@ -1,5 +1,5 @@
 overwrite: true
-schema: ['https://api.thegraph.com/subgraphs/name/ian-bright/battlezips_mumbai', 'https://api.thegraph.com/subgraphs/name/ensdomains/ens']
+schema: ['https://api.thegraph.com/subgraphs/name/jp4g/battlezips-mumbai', 'https://api.thegraph.com/subgraphs/name/ensdomains/ens']
 generates:
   ./src/graphql/autogen/types.tsx:
     documents:

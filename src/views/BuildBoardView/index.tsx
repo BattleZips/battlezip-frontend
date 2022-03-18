@@ -10,6 +10,7 @@ import submarine from 'components/Board/images/submarineSelection.svg';
 import cruiser from 'components/Board/images/cruiserSelection.svg';
 import destroyer from 'components/Board/images/destroyerSelection.svg';
 import { createGame, getGameIndex, joinGame } from 'web3/battleshipGame';
+import { IPFS_CIDS } from 'web3/constants';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useWallet } from 'contexts/WalletContext';
 import { ActiveGameLocation } from 'Locations';
@@ -118,19 +119,16 @@ export default function BuildBoard(): JSX.Element {
   const boardProof = async (
     board: number[][]
   ): Promise<{ hash: BigInt; proof: number[][] }> => {
+    debugger
     const _shipHash = mimcSponge.F.toObject(
       await mimcSponge.multiHash(board.flat())
     );
     const { proof, publicSignals } = await window.snarkjs.groth16.fullProve(
       { ships: board, hash: _shipHash },
-      'https://ipfs.infura.io/ipfs/QmZ274ZUF3JAAdtnCaYNr2tEDFwu4ThqG6Hkbj7rvYbiDs',
-      'https://ipfs.infura.io/ipfs/QmQMfy99jyvzQ9wPSmHwYvxfXL929yjDFZ2dzyouvotBsk'
+      IPFS_CIDS.board.circuit,
+      IPFS_CIDS.board.zkey
     );
-    const vkey = await fetch(
-      'https://ipfs.infura.io/ipfs/QmWCeoJy8ZEmN33htuvzDUxk2YmoQqF9VymMJUzay4XdLo'
-    ).then((res) => {
-      return res.json();
-    });
+    const vkey = await fetch(IPFS_CIDS.board.verification_key).then((res) => { return res.json() });
     await window.snarkjs.groth16.verify(vkey, publicSignals, proof);
     const proofArgs = buildProofArgs(proof);
     return { hash: _shipHash, proof: proofArgs };
