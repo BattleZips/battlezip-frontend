@@ -4981,15 +4981,16 @@ circom_runtime@0.1.17:
   dependencies:
     ffjavascript "0.2.48"
 
-circomlibjs@^0.1.2:
+circomlibjs@jp4g/circomlibjs#browser-compatibility:
   version "0.1.2"
-  resolved "https://registry.yarnpkg.com/circomlibjs/-/circomlibjs-0.1.2.tgz#627a903fe0d5e1efceee19c47a57097d9e63faa1"
-  integrity sha512-F1ZQvfV6KuWAft/te4wKL2dm9DuK0y1e1Ix73qhOduVscRPsIurRg7zO7GrRVBQ/gb0THbWUY238XWRgbvGp6w==
+  resolved "https://codeload.github.com/jp4g/circomlibjs/tar.gz/b2e6ed19f44c26be8fcaeba0c4155b13956411cc"
   dependencies:
     blake-hash "^2.0.0"
     blake2b "^2.1.3"
     ethers "^5.5.1"
     ffjavascript "^0.2.45"
+    global "^4.4.0"
+    rollup "^2.70.1"
 
 cjs-module-lexer@^1.0.0:
   version "1.2.2"
@@ -7461,7 +7462,7 @@ global-prefix@^3.0.0:
     kind-of "^6.0.2"
     which "^1.3.1"
 
-global@~4.4.0:
+global@^4.4.0, global@~4.4.0:
   version "4.4.0"
   resolved "https://registry.yarnpkg.com/global/-/global-4.4.0.tgz#3e7b105179006a323ed71aafca3e9c57a5cc6406"
   integrity sha512-wv/LAoHdRE3BeTGz53FAamhGlPLhlssK45usmGFThIi4XqnBmjKQ16u+RNbP7WvigRZDxUsM0J3gcQ5yicaL0w==
@@ -11895,7 +11896,7 @@ rollup-plugin-terser@^7.0.0:
     serialize-javascript "^4.0.0"
     terser "^5.0.0"
 
-rollup@^2.43.1:
+rollup@^2.43.1, rollup@^2.70.1:
   version "2.70.1"
   resolved "https://registry.yarnpkg.com/rollup/-/rollup-2.70.1.tgz#824b1f1f879ea396db30b0fc3ae8d2fead93523e"
   integrity sha512-CRYsI5EuzLbXdxC6RnYhOuRdtz4bhejPMSWjsFLfVM/7w/85n2szZv6yExqUXsBdz5KT8eoubeyDUDjhLHEslA==
