@@ -17,6 +17,7 @@ export type WalletContextType = {
   rawProvider: providers.Provider | null | undefined;
   fallbackProvider: providers.Web3Provider | null | undefined; // ethers provider
   provider: providers.Web3Provider | null | undefined; // biconomy provider
+  biconomy: any; // biconomy object
   chainId: number | null | undefined;
   address: string | null | undefined;
   // authToken: string | null | undefined;
@@ -38,6 +39,7 @@ export const WalletContext = createContext<WalletContextType>({
   rawProvider: null,
   fallbackProvider: null,
   provider: null,
+  biconomy: null,
   chainId: null,
   address: null,
   ensName: null,
@@ -54,6 +56,7 @@ type WalletStateType = {
   rawProvider?: providers.Provider | null;
   fallbackProvider?: providers.Web3Provider | null;
   provider?: providers.Web3Provider | null;
+  biconomy?: any | null;
   chainId?: number | null;
   address?: string | null;
   authToken?: string | null;
@@ -65,7 +68,7 @@ const isMetamaskProvider = (
 ) => provider?.connection?.url === 'metamask';
 
 export const WalletProvider: React.FC = ({ children }) => {
-  const [{ rawProvider, fallbackProvider, provider, chainId, address, ensName }, setWalletState] =
+  const [{ rawProvider, fallbackProvider, provider, biconomy, chainId, address, ensName }, setWalletState] =
     useState<WalletStateType>({});
 
   const isConnected: boolean = useMemo(
@@ -81,24 +84,6 @@ export const WalletProvider: React.FC = ({ children }) => {
     setWalletState({});
   }, []);
 
-  const setBiconomyProvider = useCallback(async (prov): Promise<providers.Web3Provider | null> => {
-    const biconomy = new window.Biconomy(prov, {
-      apiKey: process.env.REACT_APP_BICONOMY_API,
-      debug: true
-    })
-    try {
-      const res: providers.Web3Provider | null = await new Promise((resolve, reject) => {
-        biconomy
-          .onEvent(biconomy.READY, () => resolve(new ethers.providers.Web3Provider(biconomy)))
-          .onEvent(biconomy.ERROR, (err: Error) => reject(err))
-      })
-      return res
-    } catch (err) {
-      console.log("Biconomy mexa integration failed: ", err)
-      return null
-    }
-  }, [])
-
   const setWalletProvider = useCallback(async (prov) => {
     const ethersProvider = new providers.Web3Provider(prov);
     await ethersProvider.ready;
@@ -113,9 +98,23 @@ export const WalletProvider: React.FC = ({ children }) => {
         // toast.error(errorMsg);
         throw new Error(errorMsg);
       }
+
       network = DEFAULT_NETWORK;
     }
-    const biconomyProvider = await setBiconomyProvider(ethersProvider);
+    const biconomy = new window.Biconomy(window.ethereum, {
+      strictMode: true,
+      apiKey: process.env.REACT_APP_BICONOMY_API,
+      debug: true
+    })
+    try {
+      new Promise((resolve, reject) => {
+        biconomy
+          .onEvent(biconomy.READY, () => resolve(0))
+          .onEvent(biconomy.ERROR, (err: Error) => reject(err))
+      })
+    } catch (err) {
+      throw new Error("Biconomy failed to connect")
+    }
     // TODO: Move to better location
     const isPolygonChain = network === 137 || network === 80001;
     const signerAddress = await ethersProvider.getSigner().getAddress();
@@ -124,13 +123,14 @@ export const WalletProvider: React.FC = ({ children }) => {
       : '';
     setWalletState({
       rawProvider: prov,
-      fallbackProvider: null,
-      provider: ethersProvider,
+      fallbackProvider: ethersProvider,
+      provider: new ethers.providers.Web3Provider(biconomy),
+      biconomy, 
       chainId: network,
       address: signerAddress.toLowerCase(),
       ensName: signerName
     });
-  }, [setBiconomyProvider]);
+  }, []);
 
   const connectWallet = useCallback(async () => {
     try {
@@ -173,6 +173,7 @@ export const WalletProvider: React.FC = ({ children }) => {
         rawProvider,
         fallbackProvider,
         provider,
+        biconomy,
         address,
         chainId,
         ensName,

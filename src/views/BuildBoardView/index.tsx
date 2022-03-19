@@ -18,6 +18,7 @@ import { useMiMCSponge } from 'hooks/useMiMCSponge';
 import { buildProofArgs } from 'utils';
 import { toast } from 'react-hot-toast';
 import { BigNumber as BN } from 'ethers';
+import { metatransaction } from 'web3/erc2771';
 
 const useStyles = createUseStyles({
   content: {
@@ -83,7 +84,7 @@ export default function BuildBoard(): JSX.Element {
   const styles = useStyles();
   const navigate = useNavigate();
   const { mimcSponge } = useMiMCSponge();
-  const { address, chainId, provider } = useWallet();
+  const { address, chainId, provider, biconomy } = useWallet();
   const [placedShips, setPlacedShips] = useState<Ship[]>([]);
   const [rotationAxis, setRotationAxis] = useState('y');
   const [selectedShip, setSelectedShip] = useState<Ship>(EMPTY_SHIP);
@@ -119,7 +120,6 @@ export default function BuildBoard(): JSX.Element {
   const boardProof = async (
     board: number[][]
   ): Promise<{ hash: BigInt; proof: number[][] }> => {
-    debugger
     const _shipHash = mimcSponge.F.toObject(
       await mimcSponge.multiHash(board.flat())
     );
@@ -135,7 +135,7 @@ export default function BuildBoard(): JSX.Element {
   };
 
   const startGame = async () => {
-    if (!chainId || !provider) return;
+    if (!chainId || !provider || !biconomy) return;
     let loadingToast = '';
     try {
       loadingToast = toast.loading('Generating board proof...');
@@ -156,17 +156,17 @@ export default function BuildBoard(): JSX.Element {
         toast.loading(`Attempting to join game ${id}...`, {
           id: loadingToast
         });
-        const tx = await joinGame(
-          chainId,
-          provider,
+        debugger;
+        const params = [
           +id,
           BN.from(hash),
           proof[0],
           proof[1],
           proof[2],
           proof[3]
-        );
-        await tx.wait();
+        ]
+        const tx = await metatransaction(biconomy, 'joinGame', params)
+        console.log("tx: ", tx)
         localStorage.setItem(
           `BOARD_STATE_${id}_${address}`,
           JSON.stringify(placedShips)
@@ -177,16 +177,16 @@ export default function BuildBoard(): JSX.Element {
       } else {
         toast.loading(`Creating game...`, { id: loadingToast });
         const currentIndex = await getGameIndex(chainId, provider);
-        const tx = await createGame(
-          chainId,
-          provider,
+        debugger;
+        const params = [
           BN.from(hash),
           proof[0],
           proof[1],
           proof[2],
           proof[3]
-        );
-        await tx.wait();
+        ]
+        const tx = await metatransaction(biconomy, 'newGame', params)
+        console.log("tx: ", tx)
         localStorage.setItem(
           `BOARD_STATE_${+currentIndex + 1}_${address}`,
           JSON.stringify(placedShips)
