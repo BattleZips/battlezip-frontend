@@ -84,6 +84,18 @@ export const WalletProvider: React.FC = ({ children }) => {
     setWalletState({});
   }, []);
 
+  const addMetaMaskListeners = useCallback(
+    (modalProvider: any) => {
+      modalProvider.on('accountsChanged', () => {
+        disconnect();
+      });
+      modalProvider.on('chainChanged', () => {
+        disconnect();
+      });
+    },
+    [disconnect]
+  );
+
   const setWalletProvider = useCallback(async (prov) => {
     const ethersProvider = new providers.Web3Provider(prov);
     await ethersProvider.ready;
@@ -141,12 +153,7 @@ export const WalletProvider: React.FC = ({ children }) => {
 
         return choosenProvider;
       })();
-      modalProvider.on('accountsChanged', () => {
-        disconnect();
-      });
-      modalProvider.on('chainChanged', () => {
-        disconnect();
-      });
+      if (modalProvider.isMetaMask) addMetaMaskListeners(modalProvider);
     } catch (web3Error) {
       // eslint-disable-next-line no-console
       console.error(web3Error);
@@ -154,7 +161,7 @@ export const WalletProvider: React.FC = ({ children }) => {
     } finally {
       setConnecting(false);
     }
-  }, [setWalletProvider, disconnect]);
+  }, [addMetaMaskListeners, setWalletProvider, disconnect]);
 
   useEffect(() => {
     const load = async () => {
