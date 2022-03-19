@@ -9,7 +9,7 @@ import battleship from 'components/Board/images/battleshipSelection.svg';
 import submarine from 'components/Board/images/submarineSelection.svg';
 import cruiser from 'components/Board/images/cruiserSelection.svg';
 import destroyer from 'components/Board/images/destroyerSelection.svg';
-import { createGame, getGameIndex, joinGame } from 'web3/battleshipGame';
+import { getGameIndex } from 'web3/battleshipGame';
 import { IPFS_CIDS } from 'web3/constants';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useWallet } from 'contexts/WalletContext';
@@ -156,7 +156,6 @@ export default function BuildBoard(): JSX.Element {
         toast.loading(`Attempting to join game ${id}...`, {
           id: loadingToast
         });
-        debugger;
         const params = [
           +id,
           BN.from(hash),
@@ -166,7 +165,6 @@ export default function BuildBoard(): JSX.Element {
           proof[3]
         ]
         const tx = await metatransaction(biconomy, 'joinGame', params)
-        console.log("tx: ", tx)
         localStorage.setItem(
           `BOARD_STATE_${id}_${address}`,
           JSON.stringify(placedShips)
@@ -177,7 +175,6 @@ export default function BuildBoard(): JSX.Element {
       } else {
         toast.loading(`Creating game...`, { id: loadingToast });
         const currentIndex = await getGameIndex(chainId, provider);
-        debugger;
         const params = [
           BN.from(hash),
           proof[0],
@@ -186,7 +183,6 @@ export default function BuildBoard(): JSX.Element {
           proof[3]
         ]
         const tx = await metatransaction(biconomy, 'newGame', params)
-        console.log("tx: ", tx)
         localStorage.setItem(
           `BOARD_STATE_${+currentIndex + 1}_${address}`,
           JSON.stringify(placedShips)
