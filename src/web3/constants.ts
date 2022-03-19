@@ -1,3 +1,5 @@
+import { utils } from "ethers";
+
 const {
   REACT_APP_MAINNET_RPC: MAINNET_RPC,
   REACT_APP_RINKEBY_RPC: RINKEBY_RPC,
@@ -109,3 +111,11 @@ export const IPFS_CIDS: { [key: string]: IpfsInfo } = {
 export const SUPPORTED_NETWORKS: number[] = [5, 137, 80001];
 
 export const DEFAULT_NETWORK = SUPPORTED_NETWORKS[2];
+
+export const ABI = new utils.Interface([
+  'function newGame(uint256 _boardHash, uint256[2] a, uint256[2] b_0, uint256[2] b_1, uint256[2] c) external',
+  'function joinGame(uint256 _game, uint256 _boardHash, uint256[2] a, uint256[2] b_0, uint256[2] b_1, uint256[2] c) external',
+  'function playing(address player) public view returns(uint256)',
+  'function firstTurn(uint256 _game, uint[2] memory _shot) external',
+  'function turn(uint256 _game, bool _hit, uint[2] memory _next, uint[2] memory a, uint[2] memory b_0, uint[2] memory b_1, uint[2] memory c) external'
+]);
