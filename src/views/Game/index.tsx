@@ -12,7 +12,7 @@ import GameSkeleton from './components/GameSkeleton';
 import { playingGame } from 'web3/battleshipGame';
 import { IPFS_CIDS } from 'web3/constants';
 import eth from 'images/eth.svg';
-import { firstTurn, turn } from 'web3/battleshipGame';
+import { metatransaction } from 'web3/erc2771';
 import { Shot } from './types';
 import { toast } from 'react-hot-toast';
 import { useMiMCSponge } from 'hooks/useMiMCSponge';
@@ -57,7 +57,7 @@ export default function Game(): JSX.Element {
   const { id } = useParams();
   const styles = useStyles();
   const navigate = useNavigate();
-  const { address, chainId, provider } = useWallet();
+  const { address, chainId, provider, biconomy } = useWallet();
   const { mimcSponge } = useMiMCSponge();
   const [gameOver, setGameOver] = useState({ over: false, winner: '' });
   const [opponentShots, setOpponentShots] = useState<Shot[]>([]);
@@ -151,27 +151,22 @@ export default function Game(): JSX.Element {
   }, [address, game]);
 
   const takeShot = async (shot: Shot) => {
-    if (!chainId || !provider) return;
+    if (!chainId || !provider || !biconomy) return;
     setYourShots((prev) => [...prev, shot].sort((a, b) => b.turn - a.turn));
     let loadingToast = '';
     try {
       const first = !opponentShots.length && !yourShots.length;
       if (first) {
         loadingToast = toast.loading('Firing shot...');
-        const tx = await firstTurn(chainId, provider, +game.id, [
-          shot.x,
-          shot.y
-        ]);
-        await tx.wait();
+        const params = [+game.id, [shot.x, shot.y]];
+        const tx = await metatransaction(biconomy, 'firstTurn', params);
       } else {
         loadingToast = toast.loading('Generating shot proof...');
         const lastShot = opponentShots[opponentShots.length - 1];
         const hit = !!wasHit(lastShot.x + lastShot.y * 10);
         const proof = await getShotProof([lastShot.x, lastShot.y], hit);
         toast.loading('Firing shot...', { id: loadingToast });
-        const tx = await turn(
-          chainId,
-          provider,
+        const params = [
           +game.id,
           hit,
           [shot.x, shot.y],
@@ -179,8 +174,8 @@ export default function Game(): JSX.Element {
           proof[1],
           proof[2],
           proof[3]
-        );
-        await tx.wait();
+        ]
+        const tx = await metatransaction(biconomy, 'turn', params);
       }
       toast.success('Shot fired', { id: loadingToast });
     } catch (err) {
