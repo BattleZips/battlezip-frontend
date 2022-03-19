@@ -68,8 +68,18 @@ const isMetamaskProvider = (
 ) => provider?.connection?.url === 'metamask';
 
 export const WalletProvider: React.FC = ({ children }) => {
-  const [{ rawProvider, fallbackProvider, provider, biconomy, chainId, address, ensName }, setWalletState] =
-    useState<WalletStateType>({});
+  const [
+    {
+      rawProvider,
+      fallbackProvider,
+      provider,
+      biconomy,
+      chainId,
+      address,
+      ensName
+    },
+    setWalletState
+  ] = useState<WalletStateType>({});
 
   const isConnected: boolean = useMemo(
     () => !!provider && !!address && !!chainId,
@@ -82,6 +92,7 @@ export const WalletProvider: React.FC = ({ children }) => {
   const disconnect = useCallback(async () => {
     web3Modal.clearCachedProvider();
     setWalletState({});
+    window.location.reload();
   }, []);
 
   const addMetaMaskListeners = useCallback(
@@ -113,19 +124,20 @@ export const WalletProvider: React.FC = ({ children }) => {
 
       network = DEFAULT_NETWORK;
     }
-    const biconomy = new window.Biconomy(window.ethereum, {
+    console.log('PROV: ', prov);
+    const biconomy = new window.Biconomy(prov, {
       strictMode: true,
       apiKey: process.env.REACT_APP_BICONOMY_API,
       debug: true
-    })
+    });
     try {
       new Promise((resolve, reject) => {
         biconomy
           .onEvent(biconomy.READY, () => resolve(0))
-          .onEvent(biconomy.ERROR, (err: Error) => reject(err))
-      })
+          .onEvent(biconomy.ERROR, (err: Error) => reject(err));
+      });
     } catch (err) {
-      throw new Error("Biconomy failed to connect")
+      throw new Error('Biconomy failed to connect');
     }
     // TODO: Move to better location
     const isPolygonChain = network === 137 || network === 80001;
@@ -137,7 +149,7 @@ export const WalletProvider: React.FC = ({ children }) => {
       rawProvider: prov,
       fallbackProvider: ethersProvider,
       provider: new ethers.providers.Web3Provider(biconomy),
-      biconomy, 
+      biconomy,
       chainId: network,
       address: signerAddress.toLowerCase(),
       ensName: signerName

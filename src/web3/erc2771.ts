@@ -16,7 +16,7 @@ export const metatransaction = async (biconomy: any, name: string, args: any[]):
     Promise<any> => {
     const provider = biconomy.getEthersProvider();
     const sender = provider.getSigner();
-    const contractAddress = BATTLESHIP_GAME_CONTRACT[parseInt(provider.provider.chainId, 16)];
+    const contractAddress = BATTLESHIP_GAME_CONTRACT[provider.provider.networkId];
     const instance = new Contract(contractAddress, ABI, sender);
     const { data } = await instance.populateTransaction[name](...args);
     const gasLimit = await provider.estimateGas({
@@ -31,7 +31,7 @@ export const metatransaction = async (biconomy: any, name: string, args: any[]):
         gasLimit,
         signatureType: "EIP712_SIGN"
     }
-    
+
     let tx = await provider.send("eth_sendTransaction", [params])
     provider.once(tx, (transaction: any) => {
         console.log('xxx', tx)
