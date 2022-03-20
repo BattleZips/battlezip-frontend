@@ -12,7 +12,7 @@ import GameSkeleton from './components/GameSkeleton';
 import { playingGame } from 'web3/battleshipGame';
 import { IPFS_CIDS } from 'web3/constants';
 import eth from 'images/eth.svg';
-import { metatransaction } from 'web3/erc2771';
+import { IMetaTx, metatransaction } from 'web3/erc2771';
 import { Shot } from './types';
 import { toast } from 'react-hot-toast';
 import { useMiMCSponge } from 'hooks/useMiMCSponge';
@@ -159,7 +159,13 @@ export default function Game(): JSX.Element {
       if (first) {
         loadingToast = toast.loading('Firing shot...');
         const params = [+game.id, [shot.x, shot.y]];
-        const tx = await metatransaction(biconomy, 'firstTurn', params);
+        const metatx: IMetaTx = {
+          provider,
+          biconomy,
+          functionName: 'firstTurn',
+          args: params
+        }
+        const tx = await metatransaction(metatx);
       } else {
         loadingToast = toast.loading('Generating shot proof...');
         const lastShot = opponentShots[opponentShots.length - 1];
@@ -175,7 +181,13 @@ export default function Game(): JSX.Element {
           proof[2],
           proof[3]
         ]
-        const tx = await metatransaction(biconomy, 'turn', params);
+        const metatx: IMetaTx = {
+          provider,
+          biconomy,
+          functionName: 'turn',
+          args: params
+        }
+        const tx = await metatransaction(metatx);
       }
       toast.success('Shot fired', { id: loadingToast });
     } catch (err) {

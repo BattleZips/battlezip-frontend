@@ -18,7 +18,7 @@ import { useMiMCSponge } from 'hooks/useMiMCSponge';
 import { buildProofArgs } from 'utils';
 import { toast } from 'react-hot-toast';
 import { BigNumber as BN } from 'ethers';
-import { metatransaction } from 'web3/erc2771';
+import { IMetaTx, metatransaction } from 'web3/erc2771';
 
 const useStyles = createUseStyles({
   content: {
@@ -166,7 +166,13 @@ export default function BuildBoard(): JSX.Element {
           proof[2],
           proof[3]
         ];
-        const tx = await metatransaction(biconomy, 'joinGame', params);
+        const metatx: IMetaTx = {
+          provider,
+          biconomy,
+          functionName: 'joinGame',
+          args: params
+        }
+        const tx = await metatransaction(metatx);
         localStorage.setItem(
           `BOARD_STATE_${id}_${address}`,
           JSON.stringify(placedShips)
@@ -178,8 +184,13 @@ export default function BuildBoard(): JSX.Element {
         toast.loading(`Creating game...`, { id: loadingToast });
         const currentIndex = await getGameIndex(chainId, provider);
         const params = [BN.from(hash), proof[0], proof[1], proof[2], proof[3]];
-        debugger;
-        const tx = await metatransaction(biconomy, 'newGame', params);
+        const metatx: IMetaTx = {
+          provider,
+          biconomy,
+          functionName: 'newGame',
+          args: params
+        }
+        const tx = await metatransaction(metatx);
         localStorage.setItem(
           `BOARD_STATE_${+currentIndex + 1}_${address}`,
           JSON.stringify(placedShips)

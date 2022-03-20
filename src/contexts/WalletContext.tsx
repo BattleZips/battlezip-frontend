@@ -14,16 +14,14 @@ import { DEFAULT_NETWORK, NETWORK_NAMES } from 'web3/constants';
 import { switchChainOnMetaMask } from 'web3/metamask';
 
 export type WalletContextType = {
-  rawProvider: providers.Provider | null | undefined;
-  fallbackProvider: providers.Web3Provider | null | undefined; // ethers provider
-  provider: providers.Web3Provider | null | undefined; // biconomy provider
+  provider: providers.Web3Provider | null | undefined; // ethers provider
   biconomy: any; // biconomy object
-  chainId: number | null | undefined;
-  address: string | null | undefined;
+  chainId: number | null | undefined; // network id
+  address: string | null | undefined; // signer public key
   // authToken: string | null | undefined;
-  ensName: string | null | undefined;
-  connectWallet: () => Promise<void>;
-  disconnect: () => void;
+  ensName: string | null | undefined; // public key ENS resolution
+  connectWallet: () => Promise<void>; // connect an eip1193 object
+  disconnect: () => void; // disconnect an eip1193 object
   isConnecting: boolean;
   isConnected: boolean;
   isMetamask: boolean;
@@ -36,16 +34,12 @@ const web3Modal = new Web3Modal({
 });
 
 export const WalletContext = createContext<WalletContextType>({
-  rawProvider: null,
-  fallbackProvider: null,
   provider: null,
   biconomy: null,
   chainId: null,
   address: null,
   ensName: null,
-  connectWallet: async () => {
-    return;
-  },
+  connectWallet: async () => { return },
   disconnect: () => undefined,
   isConnecting: true,
   isConnected: false,
@@ -53,8 +47,6 @@ export const WalletContext = createContext<WalletContextType>({
 });
 
 type WalletStateType = {
-  rawProvider?: providers.Provider | null;
-  fallbackProvider?: providers.Web3Provider | null;
   provider?: providers.Web3Provider | null;
   biconomy?: any | null;
   chainId?: number | null;
@@ -70,8 +62,6 @@ const isMetamaskProvider = (
 export const WalletProvider: React.FC = ({ children }) => {
   const [
     {
-      rawProvider,
-      fallbackProvider,
       provider,
       biconomy,
       chainId,
@@ -107,8 +97,13 @@ export const WalletProvider: React.FC = ({ children }) => {
     [disconnect]
   );
 
-  const setWalletProvider = useCallback(async (prov) => {
-    const ethersProvider = new providers.Web3Provider(prov);
+  /**
+   * Set the EIP-1193 Compliant web3 Provider with Signer in context
+   * 
+   * @param prov - the eip1193 object being set
+   */
+  const setWalletProvider = useCallback(async (_provider) => {
+    const ethersProvider = new providers.Web3Provider(_provider);
     await ethersProvider.ready;
     const providerNetwork = await ethersProvider.getNetwork();
     let network = Number(providerNetwork.chainId);
@@ -121,11 +116,9 @@ export const WalletProvider: React.FC = ({ children }) => {
         // toast.error(errorMsg);
         throw new Error(errorMsg);
       }
-
       network = DEFAULT_NETWORK;
     }
-    console.log('PROV: ', prov);
-    const biconomy = new window.Biconomy(prov, {
+    const biconomy = new window.Biconomy(_provider, {
       strictMode: true,
       apiKey: process.env.REACT_APP_BICONOMY_API,
       debug: true
@@ -137,6 +130,7 @@ export const WalletProvider: React.FC = ({ children }) => {
           .onEvent(biconomy.ERROR, (err: Error) => reject(err));
       });
     } catch (err) {
+      // TODO: handle switch to non-metatransactions gracefully
       throw new Error('Biconomy failed to connect');
     }
     // TODO: Move to better location
@@ -146,9 +140,7 @@ export const WalletProvider: React.FC = ({ children }) => {
       ? await ethersProvider.lookupAddress(signerAddress)
       : '';
     setWalletState({
-      rawProvider: prov,
-      fallbackProvider: ethersProvider,
-      provider: new ethers.providers.Web3Provider(biconomy),
+      provider: ethersProvider,
       biconomy,
       chainId: network,
       address: signerAddress.toLowerCase(),
@@ -160,10 +152,9 @@ export const WalletProvider: React.FC = ({ children }) => {
     try {
       setConnecting(true);
       const modalProvider = await (async () => {
-        const choosenProvider = await web3Modal.connect();
-        await setWalletProvider(choosenProvider);
-
-        return choosenProvider;
+        const chosenProvider = await web3Modal.connect();
+        await setWalletProvider(chosenProvider);
+        return chosenProvider;
       })();
       if (modalProvider.isMetaMask) addMetaMaskListeners(modalProvider);
     } catch (web3Error) {
@@ -189,8 +180,6 @@ export const WalletProvider: React.FC = ({ children }) => {
   return (
     <WalletContext.Provider
       value={{
-        rawProvider,
-        fallbackProvider,
         provider,
         biconomy,
         address,
