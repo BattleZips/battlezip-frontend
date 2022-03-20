@@ -25,6 +25,7 @@ export type WalletContextType = {
   isConnecting: boolean;
   isConnected: boolean;
   isMetamask: boolean;
+  isBiconomy: boolean;
 };
 
 const web3Modal = new Web3Modal({
@@ -43,7 +44,8 @@ export const WalletContext = createContext<WalletContextType>({
   disconnect: () => undefined,
   isConnecting: true,
   isConnected: false,
-  isMetamask: false
+  isMetamask: false,
+  isBiconomy: false
 });
 
 type WalletStateType = {
@@ -58,6 +60,10 @@ type WalletStateType = {
 const isMetamaskProvider = (
   provider: providers.Web3Provider | null | undefined
 ) => provider?.connection?.url === 'metamask';
+
+const isBiconomyProvider = (
+  biconomy: typeof window.Biconomy | null | undefined
+) => biconomy?.isBiconomy === true && biconomy?.status === 'biconomy_ready';
 
 export const WalletProvider: React.FC = ({ children }) => {
   const [
@@ -78,7 +84,8 @@ export const WalletProvider: React.FC = ({ children }) => {
 
   const [isConnecting, setConnecting] = useState<boolean>(true);
   const isMetamask = useMemo(() => isMetamaskProvider(provider), [provider]);
-
+  const isBiconomy = useMemo(() => isBiconomyProvider(biconomy), [biconomy]);
+  console.log('isBiconomy: ', isBiconomy)
   const disconnect = useCallback(async () => {
     web3Modal.clearCachedProvider();
     setWalletState({});
@@ -100,7 +107,7 @@ export const WalletProvider: React.FC = ({ children }) => {
   /**
    * Set the EIP-1193 Compliant web3 Provider with Signer in context
    * 
-   * @param prov - the eip1193 object being set
+   * @param _provider - the eip1193 object being set
    */
   const setWalletProvider = useCallback(async (_provider) => {
     const ethersProvider = new providers.Web3Provider(_provider);
@@ -126,7 +133,9 @@ export const WalletProvider: React.FC = ({ children }) => {
     try {
       new Promise((resolve, reject) => {
         biconomy
-          .onEvent(biconomy.READY, () => resolve(0))
+          .onEvent(biconomy.READY, () => {
+            resolve(0);
+          })
           .onEvent(biconomy.ERROR, (err: Error) => reject(err));
       });
     } catch (err) {
@@ -189,7 +198,8 @@ export const WalletProvider: React.FC = ({ children }) => {
         isConnected,
         isConnecting,
         disconnect,
-        isMetamask
+        isMetamask,
+        isBiconomy
       }}
     >
       {children}
