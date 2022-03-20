@@ -10,7 +10,12 @@ import {
 import Web3Modal from 'web3modal';
 import { providerOptions } from 'web3/providerOptions';
 import { isSupportedChain } from 'web3/helpers';
-import { DEFAULT_NETWORK, NETWORK_NAMES } from 'web3/constants';
+import {
+  BICONOMY_CHAINS,
+  DEFAULT_NETWORK,
+  ENS_CHAINS,
+  NETWORK_NAMES
+} from 'web3/constants';
 import { switchChainOnMetaMask } from 'web3/metamask';
 
 export type WalletContextType = {
@@ -25,7 +30,6 @@ export type WalletContextType = {
   isConnecting: boolean;
   isConnected: boolean;
   isMetamask: boolean;
-  isBiconomy: boolean;
 };
 
 const web3Modal = new Web3Modal({
@@ -40,12 +44,13 @@ export const WalletContext = createContext<WalletContextType>({
   chainId: null,
   address: null,
   ensName: null,
-  connectWallet: async () => { return },
+  connectWallet: async () => {
+    return;
+  },
   disconnect: () => undefined,
   isConnecting: true,
   isConnected: false,
-  isMetamask: false,
-  isBiconomy: false
+  isMetamask: false
 });
 
 type WalletStateType = {
@@ -61,21 +66,9 @@ const isMetamaskProvider = (
   provider: providers.Web3Provider | null | undefined
 ) => provider?.connection?.url === 'metamask';
 
-const isBiconomyProvider = (
-  biconomy: typeof window.Biconomy | null | undefined
-) => biconomy?.isBiconomy === true && biconomy?.status === 'biconomy_ready';
-
 export const WalletProvider: React.FC = ({ children }) => {
-  const [
-    {
-      provider,
-      biconomy,
-      chainId,
-      address,
-      ensName
-    },
-    setWalletState
-  ] = useState<WalletStateType>({});
+  const [{ provider, biconomy, chainId, address, ensName }, setWalletState] =
+    useState<WalletStateType>({});
 
   const isConnected: boolean = useMemo(
     () => !!provider && !!address && !!chainId,
@@ -84,12 +77,11 @@ export const WalletProvider: React.FC = ({ children }) => {
 
   const [isConnecting, setConnecting] = useState<boolean>(true);
   const isMetamask = useMemo(() => isMetamaskProvider(provider), [provider]);
-  const isBiconomy = useMemo(() => isBiconomyProvider(biconomy), [biconomy]);
-  console.log('isBiconomy: ', isBiconomy)
+
   const disconnect = useCallback(async () => {
     web3Modal.clearCachedProvider();
     setWalletState({});
-    window.location.reload();
+    // window.location.reload();
   }, []);
 
   const addMetaMaskListeners = useCallback(
@@ -106,7 +98,7 @@ export const WalletProvider: React.FC = ({ children }) => {
 
   /**
    * Set the EIP-1193 Compliant web3 Provider with Signer in context
-   * 
+   *
    * @param _provider - the eip1193 object being set
    */
   const setWalletProvider = useCallback(async (_provider) => {
@@ -125,27 +117,29 @@ export const WalletProvider: React.FC = ({ children }) => {
       }
       network = DEFAULT_NETWORK;
     }
-    const biconomy = new window.Biconomy(_provider, {
-      strictMode: true,
-      apiKey: process.env.REACT_APP_BICONOMY_API,
-      debug: true
-    });
-    try {
-      new Promise((resolve, reject) => {
-        biconomy
-          .onEvent(biconomy.READY, () => {
-            resolve(0);
-          })
-          .onEvent(biconomy.ERROR, (err: Error) => reject(err));
-      });
-    } catch (err) {
-      // TODO: handle switch to non-metatransactions gracefully
-      throw new Error('Biconomy failed to connect');
+    const biconomy = BICONOMY_CHAINS.includes(network)
+      ? new window.Biconomy(_provider, {
+          strictMode: true,
+          apiKey: process.env.REACT_APP_BICONOMY_API,
+          debug: true
+        })
+      : null;
+    if (biconomy) {
+      try {
+        new Promise((resolve, reject) => {
+          biconomy
+            .onEvent(biconomy.READY, () => resolve(0))
+            .onEvent(biconomy.ERROR, (err: Error) => reject(err));
+        });
+      } catch (err) {
+        // TODO: handle switch to non-metatransactions gracefully
+        throw new Error('Biconomy failed to connect');
+      }
     }
     // TODO: Move to better location
-    const isPolygonChain = network === 137 || network === 80001;
+    const supportsENS = ENS_CHAINS.includes(network);
     const signerAddress = await ethersProvider.getSigner().getAddress();
-    const signerName = !isPolygonChain
+    const signerName = supportsENS
       ? await ethersProvider.lookupAddress(signerAddress)
       : '';
     setWalletState({
@@ -198,8 +192,7 @@ export const WalletProvider: React.FC = ({ children }) => {
         isConnected,
         isConnecting,
         disconnect,
-        isMetamask,
-        isBiconomy
+        isMetamask
       }}
     >
       {children}

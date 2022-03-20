@@ -84,7 +84,7 @@ export default function BuildBoard(): JSX.Element {
   const styles = useStyles();
   const navigate = useNavigate();
   const { mimcSponge } = useMiMCSponge();
-  const { address, chainId, provider, biconomy, isBiconomy } = useWallet();
+  const { address, chainId, provider, biconomy } = useWallet();
   const [placedShips, setPlacedShips] = useState<Ship[]>([]);
   const [rotationAxis, setRotationAxis] = useState('y');
   const [selectedShip, setSelectedShip] = useState<Ship>(EMPTY_SHIP);
@@ -137,7 +137,7 @@ export default function BuildBoard(): JSX.Element {
   };
 
   const startGame = async () => {
-    if (!chainId || !provider || !biconomy) return;
+    if (!chainId || !provider) return;
     let loadingToast = '';
     try {
       loadingToast = toast.loading('Generating board proof...');
@@ -166,20 +166,20 @@ export default function BuildBoard(): JSX.Element {
           proof[2],
           proof[3]
         ];
-        if (isBiconomy) {
+        if (biconomy) {
           const metatx: IMetaTx = {
             provider,
             biconomy,
             functionName: 'joinGame',
             args: params
-          }
+          };
           await metatransaction(metatx);
         } else {
           const tx: ITx = {
             provider,
             functionName: 'joinGame',
             args: params
-          }
+          };
           await transaction(tx);
         }
         localStorage.setItem(
@@ -193,20 +193,20 @@ export default function BuildBoard(): JSX.Element {
         toast.loading(`Creating game...`, { id: loadingToast });
         const currentIndex = await getGameIndex(chainId, provider);
         const params = [BN.from(hash), proof[0], proof[1], proof[2], proof[3]];
-        if (isBiconomy) {
+        if (biconomy) {
           const metatx: IMetaTx = {
             provider,
             biconomy,
             functionName: 'newGame',
             args: params
-          }
+          };
           await metatransaction(metatx);
         } else {
           const tx: ITx = {
             provider,
             functionName: 'newGame',
             args: params
-          }
+          };
           await transaction(tx);
         }
         localStorage.setItem(

@@ -57,7 +57,7 @@ export default function Game(): JSX.Element {
   const { id } = useParams();
   const styles = useStyles();
   const navigate = useNavigate();
-  const { address, chainId, provider, biconomy, isBiconomy } = useWallet();
+  const { address, chainId, provider, biconomy } = useWallet();
   const { mimcSponge } = useMiMCSponge();
   const [gameOver, setGameOver] = useState({ over: false, winner: '' });
   const [opponentShots, setOpponentShots] = useState<Shot[]>([]);
@@ -79,7 +79,9 @@ export default function Game(): JSX.Element {
       IPFS_CIDS.shot.circuit,
       IPFS_CIDS.shot.zkey
     );
-    const vkey = await fetch(IPFS_CIDS.shot.verification_key).then((res) => { return res.json() });
+    const vkey = await fetch(IPFS_CIDS.shot.verification_key).then((res) => {
+      return res.json();
+    });
     await window.snarkjs.groth16.verify(vkey, publicSignals, proof);
     const proofArgs = buildProofArgs(proof);
     return { hash: _shipHash, proof: proofArgs };
@@ -159,20 +161,20 @@ export default function Game(): JSX.Element {
       if (first) {
         loadingToast = toast.loading('Firing shot...');
         const params = [+game.id, [shot.x, shot.y]];
-        if (isBiconomy) {
+        if (biconomy) {
           const metatx: IMetaTx = {
             provider,
             biconomy,
             functionName: 'firstTurn',
             args: params
-          }
+          };
           await metatransaction(metatx);
         } else {
           const tx: ITx = {
             provider,
             functionName: 'firstTurn',
             args: params
-          }
+          };
           await transaction(tx);
         }
       } else {
@@ -189,21 +191,21 @@ export default function Game(): JSX.Element {
           proof[1],
           proof[2],
           proof[3]
-        ]
-        if (isBiconomy) {
+        ];
+        if (biconomy) {
           const metatx: IMetaTx = {
             provider,
             biconomy,
             functionName: 'turn',
             args: params
-          }
+          };
           await metatransaction(metatx);
         } else {
           const tx: ITx = {
             provider,
             functionName: 'turn',
             args: params
-          }
+          };
           await transaction(tx);
         }
       }
