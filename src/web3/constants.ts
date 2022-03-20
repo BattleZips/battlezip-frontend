@@ -31,6 +31,7 @@ export const BATTLESHIP_GAME_CONTRACT: { [key: number]: string } = {
   5: BATTLESHIP_GAME_CONTRACT_GOERLI || '',
   137: BATTLESHIP_GAME_CONTRACT_POLYGON || '',
   1337: BATTLESHIP_GAME_CONTRACT_LOCAL || '',
+  31337: BATTLESHIP_GAME_CONTRACT_LOCAL || '',
   80001: BATTLESHIP_GAME_CONTRACT_MUMBAI || '',
 }
 
@@ -50,6 +51,7 @@ export const EXPLORER_URLS: StringInfo = {
   5: 'https://goerli.etherscan.io',
   137: 'https://polygonscan.com',
   1337: '',
+  31337: '',
   80001: 'https://mumbai.polygonscan.com'
 };
 
@@ -74,6 +76,10 @@ export const NETWORK_CURRENCIES: CurrencyInfo = {
     name: 'Localhost',
     symbol: 'ETH'
   },
+  31337: {
+    name: 'Localhost',
+    symbol: 'ETH'
+  },
   80001: {
     name: 'Polygon Mumbai',
     symbol: 'MATIC'
@@ -92,7 +98,8 @@ export const SUBGRAPH_URLS: StringInfo = {
   5: 'https://api.thegraph.com/subgraphs/name/ian-bright/battlezips_goerli',
   137: 'https://api.thegraph.com/subgraphs/name/ian-bright/battlezips_polygon', //placeholder
   1337: 'http://127.0.0.1:8000/subgraphs/name/ian-bright/zk-battleship-subgraph/graphql',
-  80001: 'https://api.thegraph.com/subgraphs/name/jp4g/battlezips-mumbai'
+  31337: 'http://127.0.0.1:8000/subgraphs/name/ian-bright/zk-battleship-subgraph/graphql',
+  80001: 'https://api.thegraph.com/subgraphs/name/ian-bright/battlezips_mumbai'
 };
 
 export const NETWORK_NAMES: StringInfo = {
@@ -101,6 +108,7 @@ export const NETWORK_NAMES: StringInfo = {
   5: 'Goerli Testnet',
   137: 'Polygon Mainnet',
   1337: 'Localhost',
+  31337: 'Localhost',
   80001: 'Polygon Mumbai Testnet'
 };
 
@@ -119,7 +127,7 @@ export const IPFS_CIDS: { [key: string]: IpfsInfo } = {
   }
 }
 
-export const SUPPORTED_NETWORKS: number[] = [5, 137, 1337, 80001];
+export const SUPPORTED_NETWORKS: number[] = [5, 137, 1337, 31337, 80001];
 
-export const DEFAULT_NETWORK = SUPPORTED_NETWORKS[2];
+export const DEFAULT_NETWORK = SUPPORTED_NETWORKS[3];
 export const ABI = abi;
