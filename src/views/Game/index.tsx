@@ -9,7 +9,7 @@ import { useWallet } from 'contexts/WalletContext';
 import { RootLocation } from 'Locations';
 import { useGame } from 'hooks/useGame';
 import GameSkeleton from './components/GameSkeleton';
-import { playingGame } from 'web3/battleshipGame';
+import { playingGame, ITx, transaction } from 'web3/battleshipGame';
 import { IPFS_CIDS } from 'web3/constants';
 import eth from 'images/eth.svg';
 import { IMetaTx, metatransaction } from 'web3/erc2771';
@@ -57,7 +57,7 @@ export default function Game(): JSX.Element {
   const { id } = useParams();
   const styles = useStyles();
   const navigate = useNavigate();
-  const { address, chainId, provider, biconomy } = useWallet();
+  const { address, chainId, provider, biconomy, isBiconomy } = useWallet();
   const { mimcSponge } = useMiMCSponge();
   const [gameOver, setGameOver] = useState({ over: false, winner: '' });
   const [opponentShots, setOpponentShots] = useState<Shot[]>([]);
@@ -159,13 +159,22 @@ export default function Game(): JSX.Element {
       if (first) {
         loadingToast = toast.loading('Firing shot...');
         const params = [+game.id, [shot.x, shot.y]];
-        const metatx: IMetaTx = {
-          provider,
-          biconomy,
-          functionName: 'firstTurn',
-          args: params
+        if (isBiconomy) {
+          const metatx: IMetaTx = {
+            provider,
+            biconomy,
+            functionName: 'firstTurn',
+            args: params
+          }
+          await metatransaction(metatx);
+        } else {
+          const tx: ITx = {
+            provider,
+            functionName: 'firstTurn',
+            args: params
+          }
+          await transaction(tx);
         }
-        const tx = await metatransaction(metatx);
       } else {
         loadingToast = toast.loading('Generating shot proof...');
         const lastShot = opponentShots[opponentShots.length - 1];
@@ -181,13 +190,22 @@ export default function Game(): JSX.Element {
           proof[2],
           proof[3]
         ]
-        const metatx: IMetaTx = {
-          provider,
-          biconomy,
-          functionName: 'turn',
-          args: params
+        if (isBiconomy) {
+          const metatx: IMetaTx = {
+            provider,
+            biconomy,
+            functionName: 'turn',
+            args: params
+          }
+          await metatransaction(metatx);
+        } else {
+          const tx: ITx = {
+            provider,
+            functionName: 'turn',
+            args: params
+          }
+          await transaction(tx);
         }
-        const tx = await metatransaction(metatx);
       }
       toast.success('Shot fired', { id: loadingToast });
     } catch (err) {
