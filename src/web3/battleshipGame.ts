@@ -1,5 +1,30 @@
 import { Contract, providers, utils, BigNumberish } from 'ethers';
-import { BATTLESHIP_GAME_CONTRACT } from './constants';
+import { BATTLESHIP_GAME_CONTRACT, ABI } from './constants';
+
+// define everything needed for a transaction
+export interface ITx {
+  provider: providers.Web3Provider; // wallet/ rpc to send to
+  functionName: string, // name of BattleshipGame.sol function being called
+  args: any[] // function parameters
+}
+
+/**
+ * Send an arbitrary transaction to the BattleshipGame.sol contract
+ * @param {ITx} - the transaction parameters as defined in the ITx interface
+ * @return {providers.TransactionReceipt} - transaction confirmation receipt
+ */
+export const transaction = async ({ provider, functionName, args }: ITx):
+  Promise<providers.TransactionReceipt> => {
+  // instantiate new contract
+  const chainId = (await provider.getNetwork()).chainId;
+  const contract = new Contract(
+    BATTLESHIP_GAME_CONTRACT[chainId],
+    ABI,
+    provider.getSigner()
+  )
+  const tx = await contract[functionName](...args);
+  return await tx.wait()
+}
 
 export const createGame = async (
   chainId: number,
