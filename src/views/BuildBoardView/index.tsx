@@ -9,7 +9,7 @@ import battleship from 'components/Board/images/battleshipSelection.svg';
 import submarine from 'components/Board/images/submarineSelection.svg';
 import cruiser from 'components/Board/images/cruiserSelection.svg';
 import destroyer from 'components/Board/images/destroyerSelection.svg';
-import { getGameIndex } from 'web3/battleshipGame';
+import { ITx, transaction, getGameIndex } from 'web3/battleshipGame';
 import { IPFS_CIDS } from 'web3/constants';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useWallet } from 'contexts/WalletContext';
@@ -137,7 +137,7 @@ export default function BuildBoard(): JSX.Element {
   };
 
   const startGame = async () => {
-    if (!chainId || !provider || !biconomy) return;
+    if (!chainId || !provider) return;
     let loadingToast = '';
     try {
       loadingToast = toast.loading('Generating board proof...');
@@ -166,13 +166,22 @@ export default function BuildBoard(): JSX.Element {
           proof[2],
           proof[3]
         ];
-        const metatx: IMetaTx = {
-          provider,
-          biconomy,
-          functionName: 'joinGame',
-          args: params
+        if (biconomy) {
+          const metatx: IMetaTx = {
+            provider,
+            biconomy,
+            functionName: 'joinGame',
+            args: params
+          };
+          await metatransaction(metatx);
+        } else {
+          const tx: ITx = {
+            provider,
+            functionName: 'joinGame',
+            args: params
+          };
+          await transaction(tx);
         }
-        const tx = await metatransaction(metatx);
         localStorage.setItem(
           `BOARD_STATE_${id}_${address}`,
           JSON.stringify(placedShips)
@@ -184,13 +193,22 @@ export default function BuildBoard(): JSX.Element {
         toast.loading(`Creating game...`, { id: loadingToast });
         const currentIndex = await getGameIndex(chainId, provider);
         const params = [BN.from(hash), proof[0], proof[1], proof[2], proof[3]];
-        const metatx: IMetaTx = {
-          provider,
-          biconomy,
-          functionName: 'newGame',
-          args: params
+        if (biconomy) {
+          const metatx: IMetaTx = {
+            provider,
+            biconomy,
+            functionName: 'newGame',
+            args: params
+          };
+          await metatransaction(metatx);
+        } else {
+          const tx: ITx = {
+            provider,
+            functionName: 'newGame',
+            args: params
+          };
+          await transaction(tx);
         }
-        const tx = await metatransaction(metatx);
         localStorage.setItem(
           `BOARD_STATE_${+currentIndex + 1}_${address}`,
           JSON.stringify(placedShips)
