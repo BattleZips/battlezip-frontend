@@ -1,4 +1,4 @@
-import { ethers, providers } from 'ethers';
+import { providers } from 'ethers';
 import {
   createContext,
   useCallback,

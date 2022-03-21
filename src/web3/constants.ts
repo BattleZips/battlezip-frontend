@@ -129,5 +129,5 @@ export const IPFS_CIDS: { [key: string]: IpfsInfo } = {
 
 export const SUPPORTED_NETWORKS: number[] = [5, 137, 1337, 31337, 80001];
 
-export const DEFAULT_NETWORK = SUPPORTED_NETWORKS[3];
+export const DEFAULT_NETWORK = SUPPORTED_NETWORKS[4];
 export const ABI = abi;
