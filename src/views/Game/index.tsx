@@ -153,7 +153,7 @@ export default function Game(): JSX.Element {
   }, [address, game]);
 
   const takeShot = async (shot: Shot) => {
-    if (!chainId || !provider || !biconomy) return;
+    if (!chainId || !provider) return;
     setYourShots((prev) => [...prev, shot].sort((a, b) => b.turn - a.turn));
     let loadingToast = '';
     try {
