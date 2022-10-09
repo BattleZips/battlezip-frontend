@@ -11,7 +11,7 @@ import Web3Modal from 'web3modal';
 import { providerOptions } from 'web3/providerOptions';
 import { isSupportedChain } from 'web3/helpers';
 import {
-  BICONOMY_CHAINS,
+  // BICONOMY_CHAINS,
   DEFAULT_NETWORK,
   ENS_CHAINS,
   NETWORK_NAMES
