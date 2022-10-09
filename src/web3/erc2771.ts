@@ -1,7 +1,5 @@
-import { Contract, providers, BytesLike } from 'ethers';
+import { Contract, providers } from 'ethers';
 import { BATTLESHIP_GAME_CONTRACT, ABI } from 'web3/constants';
-import { TransactionReceipt } from '@ethersproject/abstract-provider'
-import { EtherscanProvider } from '@ethersproject/providers';
 import { poll } from 'ethers/lib/utils';
 
 // defines required objects to send a meta transaction to BattleshipGame.sol
