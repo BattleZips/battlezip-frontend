@@ -83,6 +83,7 @@ export default function Game(): JSX.Element {
       return res.json();
     });
     await window.snarkjs.groth16.verify(vkey, publicSignals, proof);
+    console.log('PUBLIC SIGNALS: ', publicSignals);
     const proofArgs = buildProofArgs(proof);
     return { hash: _shipHash, proof: proofArgs };
   };
@@ -153,7 +154,7 @@ export default function Game(): JSX.Element {
   }, [address, game]);
 
   const takeShot = async (shot: Shot) => {
-    if (!chainId || !provider || !biconomy) return;
+    if (!chainId || !provider) return;
     setYourShots((prev) => [...prev, shot].sort((a, b) => b.turn - a.turn));
     let loadingToast = '';
     try {
@@ -183,6 +184,7 @@ export default function Game(): JSX.Element {
         const hit = !!wasHit(lastShot.x + lastShot.y * 10);
         const proof = await getShotProof([lastShot.x, lastShot.y], hit);
         toast.loading('Firing shot...', { id: loadingToast });
+        console.log('Proof: ', proof);
         const params = [
           +game.id,
           hit,

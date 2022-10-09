@@ -3,12 +3,14 @@ import {
   ActiveGameLocationTemplate,
   JoinGameLocationTemplate,
   NewGameLocation,
+  ResourcesLocation,
   RootLocation
 } from 'Locations';
 import { Navigate, useRoutes } from 'react-router-dom';
 import BuildBoard from 'views/BuildBoardView';
 import Game from 'views/Game';
 import Home from 'views/Home';
+import Resources from 'views/Resources';
 
 const routeList = (isConnected: boolean) => [
   {
@@ -26,6 +28,10 @@ const routeList = (isConnected: boolean) => [
   {
     path: NewGameLocation,
     element: isConnected ? <BuildBoard /> : <Navigate to={RootLocation} />
+  },
+  {
+    path: ResourcesLocation,
+    element: <Resources />
   }
 ];
 

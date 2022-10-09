@@ -11,7 +11,7 @@ import Web3Modal from 'web3modal';
 import { providerOptions } from 'web3/providerOptions';
 import { isSupportedChain } from 'web3/helpers';
 import {
-  BICONOMY_CHAINS,
+  // BICONOMY_CHAINS,
   DEFAULT_NETWORK,
   ENS_CHAINS,
   NETWORK_NAMES
@@ -117,25 +117,26 @@ export const WalletProvider: React.FC = ({ children }) => {
       }
       network = DEFAULT_NETWORK;
     }
-    const biconomy = BICONOMY_CHAINS.includes(network)
-      ? new window.Biconomy(_provider, {
-          strictMode: true,
-          apiKey: process.env.REACT_APP_BICONOMY_API,
-          debug: true
-        })
-      : null;
-    if (biconomy) {
-      try {
-        new Promise((resolve, reject) => {
-          biconomy
-            .onEvent(biconomy.READY, () => resolve(0))
-            .onEvent(biconomy.ERROR, (err: Error) => reject(err));
-        });
-      } catch (err) {
-        // TODO: handle switch to non-metatransactions gracefully
-        throw new Error('Biconomy failed to connect');
-      }
-    }
+    // const biconomy = BICONOMY_CHAINS.includes(network)
+    //   ? new window.Biconomy(_provider, {
+    //       strictMode: true,
+    //       apiKey: process.env.REACT_APP_BICONOMY_API,
+    //       debug: true
+    //     })
+    //   : null;
+    const biconomy = null;
+    // if (biconomy) {
+    //   try {
+    //     new Promise((resolve, reject) => {
+    //       biconomy
+    //         .onEvent(biconomy.READY, () => resolve(0))
+    //         .onEvent(biconomy.ERROR, (err: Error) => reject(err));
+    //     });
+    //   } catch (err) {
+    //     // TODO: handle switch to non-metatransactions gracefully
+    //     throw new Error('Biconomy failed to connect');
+    //   }
+    // }
     // TODO: Move to better location
     const supportsENS = ENS_CHAINS.includes(network);
     const signerAddress = await ethersProvider.getSigner().getAddress();

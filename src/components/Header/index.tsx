@@ -18,6 +18,11 @@ const useStyles = createUseStyles({
     width: 'calc(100% - 108px)',
     zIndex: 10
   },
+  docs: {
+    cursor: 'pointer',
+    fontSize: '16px',
+    fontWeight: 600
+  },
   left: {
     alignItems: 'center',
     display: 'flex',
@@ -45,6 +50,11 @@ const useStyles = createUseStyles({
     letterSpacing: '5.4px',
     lineHieght: '52px'
   },
+  right: {
+    alignItems: 'center',
+    display: 'flex',
+    gap: '16px'
+  },
   separator: {
     background: '#D1D2DE',
     height: '44px',
@@ -69,19 +79,29 @@ export default function Header(): JSX.Element {
         <div className={styles.separator} />
         <div className={styles.logoText}>BATTLEZIPS</div>
       </div>
-      <div
-        className={styles.loginButton}
-        onClick={() =>
-          !isConnecting && (!isConnected ? connectWallet() : disconnect())
-        }
-      >
-        {address && <Avatar address={address} />}
-        <div>
-          {isConnected
-            ? formatAddress(address, ensName)
-            : isConnecting
-            ? 'Connecting...'
-            : 'Connect'}
+      <div className={styles.right}>
+        <div
+          className={styles.docs}
+          onClick={() =>
+            window.open('https://battlezips.gitbook.io/battlezips')
+          }
+        >
+          Docs
+        </div>
+        <div
+          className={styles.loginButton}
+          onClick={() =>
+            !isConnecting && (!isConnected ? connectWallet() : disconnect())
+          }
+        >
+          {address && <Avatar address={address} />}
+          <div>
+            {isConnected
+              ? formatAddress(address, ensName)
+              : isConnecting
+              ? 'Connecting...'
+              : 'Connect'}
+          </div>
         </div>
       </div>
     </div>

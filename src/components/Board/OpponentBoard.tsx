@@ -84,14 +84,14 @@ export default function OpponentBoard({
       <div className={styles.board}>
         <div className={styles.row} style={{ marginLeft: '46px' }}>
           {new Array(10).fill('').map((_, index) => (
-            <div className={styles.label}>
+            <div className={styles.label} key={index}>
               {String.fromCharCode(65 + index)}
             </div>
           ))}
         </div>
         {BOARD.map((row, rowIndex) => {
           return (
-            <div className={styles.row}>
+            <div className={styles.row} key={rowIndex}>
               <div className={styles.label}>{rowIndex + 1}</div>
               {row.map((_, colIndex) => {
                 const index = rowIndex * 10 + colIndex;
@@ -101,6 +101,7 @@ export default function OpponentBoard({
                 return (
                   <div
                     className={styles.tile}
+                    key={index}
                     onClick={() =>
                       yourTurn && !wasShot && setSelectedTile(index)
                     }

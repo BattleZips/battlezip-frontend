@@ -226,7 +226,7 @@ export default function Board({
       <div className={styles.wrapper}>
         <div className={styles.row} style={{ marginLeft: '46px' }}>
           {new Array(10).fill('').map((_, index) => (
-            <div className={styles.label}>
+            <div className={styles.label} key={index}>
               {String.fromCharCode(65 + index)}
             </div>
           ))}
@@ -255,7 +255,7 @@ export default function Board({
                 return (
                   <div
                     className={styles.tile}
-                    key={colIndex}
+                    key={index}
                     onClick={() =>
                       validPlacement && handleShipPlacement(index, rowIndex)
                     }

@@ -111,19 +111,18 @@ export const NETWORK_NAMES: StringInfo = {
   31337: 'Localhost',
   80001: 'Polygon Mumbai Testnet'
 };
-
-const IPFS_PREFIX = "https://ipfs.infura.io/ipfs/"
+const IPFS_PREFIX = "https://battlezips.infura-ipfs.io/ipfs/"
 
 export const IPFS_CIDS: { [key: string]: IpfsInfo } = {
   board: {
-    verification_key: `${IPFS_PREFIX}QmWCeoJy8ZEmN33htuvzDUxk2YmoQqF9VymMJUzay4XdLo`,
-    zkey: `${IPFS_PREFIX}QmQMfy99jyvzQ9wPSmHwYvxfXL929yjDFZ2dzyouvotBsk`,
-    circuit: `${IPFS_PREFIX}QmZ274ZUF3JAAdtnCaYNr2tEDFwu4ThqG6Hkbj7rvYbiDs`
+    verification_key: `${IPFS_PREFIX}QmaDcGAYgCQmXTyw2kQXmTS6XNtiFG5JGu2zKmz6scdJrr`,
+    zkey: `${IPFS_PREFIX}QmYYTYoK23MPNmwSs2gEtXYPdSrhUWXHGtFhC9yWDHpjpW`,
+    circuit: `${IPFS_PREFIX}QmT1opMJ4UVMqwcQPghZVVhtp65wYUxn516Cn9rmnowRqs`
   },
   shot: {
-    verification_key: `${IPFS_PREFIX}QmTVSaQvuUrqwVNT962gceEFH9UBEw1GYk2z9u3t5iAJse`,
-    zkey: `${IPFS_PREFIX}QmYqPPLhPg8kjUcHLPi8FkoZQVfMHdywBhb6zWjKP4WmZ6`,
-    circuit: `${IPFS_PREFIX}QmbhiRD8LYSJx4ss9DW4A2QXNh8dnJFgNdL9ofGSVr8T4o`
+    verification_key: `${IPFS_PREFIX}QmVFSihF9UcWYEpwWg6XSDzD3dXb3qMVTiBYmGwvbLTcdv`,
+    zkey: `${IPFS_PREFIX}QmPkNSB7U2p1XBMmZwpXSQernMtuaXE2F34NGhNmNsPq8u`,
+    circuit: `${IPFS_PREFIX}QmVfrxEzAL8BRKyE6xmmxBAQPUv75vmv53UN8V6vUJQAc1`
   }
 }
 
