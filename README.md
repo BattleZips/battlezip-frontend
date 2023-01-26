@@ -10,8 +10,8 @@ This is the frontend implementation of the BattleZips protocol which debuted at 
 
 ### BattleZips Repos
 
-Subgraph: https://github.com/Ian-Bright/battlezip-subgraph  
-Contracts: https://github.com/jp4g/BattleZips
+Subgraph: https://github.com/battlezips/battlezip-subgraph  
+Contracts: https://github.com/battlezips/BattleZips
 
 ### Supported Networks
 
@@ -26,7 +26,7 @@ Contracts: https://github.com/jp4g/BattleZips
 
 1. Clone repo
 ```
-git clone git@github.com:Ian-Bright/battlezip-frontend.git
+git clone git@github.com:battlezips/battlezip-frontend.git
 ```
 
 2. Install dependenices with yarn or npm install
